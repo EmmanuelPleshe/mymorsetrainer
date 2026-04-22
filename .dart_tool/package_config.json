@@ -302,6 +302,12 @@
       "languageVersion": "3.5"
     },
     {
+      "name": "sqflite_common_ffi",
+      "rootUri": "file:///home/eman/.pub-cache/hosted/pub.dev/sqflite_common_ffi-2.3.4+4",
+      "packageUri": "lib/",
+      "languageVersion": "3.5"
+    },
+    {
       "name": "sqflite_darwin",
       "rootUri": "file:///home/eman/.pub-cache/hosted/pub.dev/sqflite_darwin-2.4.1+1",
       "packageUri": "lib/",
@@ -310,6 +316,12 @@
     {
       "name": "sqflite_platform_interface",
       "rootUri": "file:///home/eman/.pub-cache/hosted/pub.dev/sqflite_platform_interface-2.4.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.5"
+    },
+    {
+      "name": "sqlite3",
+      "rootUri": "file:///home/eman/.pub-cache/hosted/pub.dev/sqlite3-2.9.4",
       "packageUri": "lib/",
       "languageVersion": "3.5"
     },
@@ -392,7 +404,7 @@
       "languageVersion": "3.5"
     }
   ],
-  "generated": "2026-04-22T02:11:48.407131Z",
+  "generated": "2026-04-22T02:32:33.515638Z",
   "generator": "pub",
   "generatorVersion": "3.5.0",
   "flutterRoot": "file:///tmp/flutter",

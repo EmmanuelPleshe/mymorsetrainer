@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'data/repositories/character_repository.dart';
 import 'data/repositories/settings_repository.dart';
 import 'data/repositories/user_progress_repository.dart';
@@ -12,8 +13,15 @@ import 'ui/screens/practice_screen.dart';
 import 'ui/screens/progress_screen.dart';
 import 'ui/screens/settings_screen.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  sqfliteFfiInit();
+  databaseFactory = databaseFactoryFfi;
+
+  // Initialize database with default characters
+  final characterRepo = CharacterRepository();
+  await characterRepo.initializeCharacters();
+
   runApp(const MorseTrainerApp());
 }
 
@@ -27,6 +35,9 @@ class MorseTrainerApp extends StatelessWidget {
         RepositoryProvider(create: (_) => CharacterRepository()),
         RepositoryProvider(create: (_) => UserProgressRepository()),
         RepositoryProvider(create: (_) => SettingsRepository()),
+        RepositoryProvider(
+          create: (context) => GamificationService(context.read<UserProgressRepository>()),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
