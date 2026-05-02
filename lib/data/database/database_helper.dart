@@ -20,8 +20,16 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _createDB,
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          try {
+            await db.execute("ALTER TABLE settings ADD COLUMN effWpm REAL NOT NULL DEFAULT 10.0");
+            await db.execute("ALTER TABLE settings ADD COLUMN extraWordSpace REAL NOT NULL DEFAULT 0.0");
+          } catch (_) {}
+        }
+      },
     );
   }
 
@@ -71,6 +79,8 @@ class DatabaseHelper {
         id TEXT PRIMARY KEY,
         toneFrequency REAL NOT NULL DEFAULT 600.0,
         wpm REAL NOT NULL DEFAULT 20.0,
+        effWpm REAL NOT NULL DEFAULT 10.0,
+        extraWordSpace REAL NOT NULL DEFAULT 0.0,
         volume REAL NOT NULL DEFAULT 1.0,
         inputMethod INTEGER NOT NULL DEFAULT 0,
         enableGamification INTEGER NOT NULL DEFAULT 1,
@@ -83,6 +93,8 @@ class DatabaseHelper {
       'id': 'current',
       'toneFrequency': 600.0,
       'wpm': 20.0,
+      'effWpm': 10.0,
+      'extraWordSpace': 0.0,
       'volume': 1.0,
       'inputMethod': 0,
       'enableGamification': 1,

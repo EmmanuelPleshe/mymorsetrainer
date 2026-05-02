@@ -64,4 +64,14 @@ class UserProgressRepository {
       lastSessionDate: DateTime.now(),
     ));
   }
+
+  Future<void> setCurrentLevel(int level) async {
+    final progress = await getUserProgress();
+    await updateUserProgress(progress.copyWith(currentLevel: level));
+  }
+
+  Future<int> getCurrentLevel() async {
+    final progress = await getUserProgress();
+    return progress.currentLevel;
+  }
 }

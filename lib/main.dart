@@ -49,6 +49,7 @@ class MorseTrainerApp extends StatelessWidget {
                 kochService: KochProgressionService(characterRepo),
                 gamificationService: GamificationService(userProgressRepo),
                 spacedRepetitionService: SpacedRepetitionService(characterRepo),
+                userProgressRepository: userProgressRepo,
               );
             },
           ),
@@ -75,7 +76,10 @@ class MorseTrainerApp extends StatelessWidget {
           home: const HomeScreen(),
           routes: {
             '/practice': (context) => const PracticeScreen(),
-            '/settings': (context) => const SettingsScreen(),
+            '/settings': (context) => BlocProvider.value(
+              value: context.read<SettingsBloc>(),
+              child: const SettingsScreen(),
+            ),
             '/progress': (context) => const ProgressScreen(),
           },
         ),

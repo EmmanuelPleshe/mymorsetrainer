@@ -39,8 +39,8 @@ class KeyboardKeyerHandler {
   void handleKeyUp(int durationMs) {
     onKeyUp?.call();
 
-    // Determine dot or dash using the threshold from audio settings
-    final threshold = (dotDurationMs + dashDurationMs) ~/ 2;
+    // Threshold = 2x dot duration (midpoint between dot=dash*1 and dash=dash*3)
+    final threshold = dotDurationMs * 2;
     final symbol = durationMs >= threshold ? '-' : '.';
     _pattern += symbol;
 
@@ -52,8 +52,7 @@ class KeyboardKeyerHandler {
 
   void _scheduleAutoSubmit() {
     _autoSubmitTimer?.cancel();
-    // Wait 1500ms after each symbol - allows time for multiple dashes/dots
-    // At 20 WPM: dot=60ms, dash=180ms. User needs ~360ms for "--" (M)
+    // Wait 1500ms after each symbol - time for multi-element chars
     _autoSubmitTimer = Timer(const Duration(milliseconds: 1500), () {
       if (_pattern.isNotEmpty && _morseToChar.containsKey(_pattern)) {
         final pattern = _pattern;
@@ -82,8 +81,10 @@ class KeyboardKeyerHandler {
   String get currentPattern => _pattern;
 
   void clearPattern() {
+    print('HANDLER: clearPattern called, clearing "$_pattern"');
     _autoSubmitTimer?.cancel();
     _pattern = '';
+    print('HANDLER: Pattern after clear: "$_pattern"');
   }
 
   void dispose() {

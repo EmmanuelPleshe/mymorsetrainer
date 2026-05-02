@@ -58,6 +58,26 @@ class SettingsScreen extends StatelessWidget {
           },
         ),
         _buildSliderSetting(
+          label: 'Effective Speed (Farnsworth)',
+          value: settings.effWpm,
+          min: 5,
+          max: 40,
+          unit: 'WPM',
+          onChanged: (value) {
+            context.read<SettingsBloc>().add(UpdateEffWpm(value));
+          },
+        ),
+        _buildSliderSetting(
+          label: 'Extra Word Space',
+          value: settings.extraWordSpace,
+          min: 0,
+          max: 2,
+          unit: 's',
+          onChanged: (value) {
+            context.read<SettingsBloc>().add(UpdateExtraWordSpace(value));
+          },
+        ),
+        _buildSliderSetting(
           label: 'Volume',
           value: settings.volume,
           min: 0,
@@ -88,6 +108,28 @@ class SettingsScreen extends StatelessWidget {
             // TODO: Implement sound effects toggle
           },
         ),
+        const Divider(),
+        _buildSectionHeader('Timing Info'),
+        const Card(
+          child: Padding(
+            padding: EdgeInsets.all(12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('ARRL PARIS Standard (50 units/word):', style: TextStyle(fontWeight: FontWeight.bold)),
+                SizedBox(height: 8),
+                Text('• Dit: 1 unit'),
+                Text('• Dah: 3 units'),
+                Text('• Intra-character space: 1 unit'),
+                Text('• Inter-character space: 3 units'),
+                Text('• Inter-word space: 7 units'),
+                SizedBox(height: 8),
+                Text('Farnsworth method sends characters faster but increases spacing for slower effective speed.',
+                    style: TextStyle(fontStyle: FontStyle.italic)),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -106,6 +148,16 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
+  int _calculateDivisions(double min, double max, String unit) {
+    int divs;
+    if (unit == 'WPM' || unit == 's') {
+      divs = (max - min).round();
+    } else {
+      divs = ((max - min) * 100).round();
+    }
+    return divs.clamp(1, 1000);
+  }
+
   Widget _buildSliderSetting({
     required String label,
     required double value,
@@ -122,7 +174,7 @@ class SettingsScreen extends StatelessWidget {
           children: [
             Text(label, style: const TextStyle(fontSize: 16)),
             Text(
-              '${value.toStringAsFixed(0)} $unit',
+              unit.isEmpty ? '${value.toStringAsFixed(0)}' : '${value.toStringAsFixed(0)} $unit',
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ],
@@ -131,7 +183,7 @@ class SettingsScreen extends StatelessWidget {
           value: value,
           min: min,
           max: max,
-          divisions: ((max - min) / (unit == 'WPM' ? 1 : 100)).round(),
+          divisions: _calculateDivisions(min, max, unit),
           label: '${value.toStringAsFixed(0)} $unit',
           onChanged: onChanged,
         ),

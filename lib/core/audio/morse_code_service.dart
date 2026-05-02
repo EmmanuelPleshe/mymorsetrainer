@@ -74,16 +74,29 @@ class AudioPlaybackService {
   int get interWordSpaceMs => _calcInterWordSpace();
 
   int _calcInterCharSpace() {
-    // Farnsworth: extra delay spread across inter-character spaces
+    // ARRL Farnsworth standard formula
     if (_effWpm >= _wpm) return unitMs * 3;
-    final effUnitMs = (1200 / _effWpm).round();
-    return effUnitMs * 3;
+    final c = _wpm;
+    final s = _effWpm;
+    final t_a = (60 * c - 37.2 * s) / (s * c);
+    final t_c = (3 * t_a) / 19;
+    return (3 * unitMs) + (t_c * 1000).round();
   }
 
   int _calcInterWordSpace() {
+    // ARRL Farnsworth standard formula
+    if (_effWpm >= _wpm) {
+      final base = unitMs * 7;
+      final extra = (_extraWordSpace * 1000).round();
+      return base + extra;
+    }
+    final c = _wpm;
+    final s = _effWpm;
+    final t_a = (60 * c - 37.2 * s) / (s * c);
+    final t_w = (7 * t_a) / 19;
     final base = unitMs * 7;
     final extra = (_extraWordSpace * 1000).round();
-    return base + extra;
+    return base + (t_w * 1000).round() + extra;
   }
 
   Future<void> initialize() async {

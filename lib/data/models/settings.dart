@@ -4,6 +4,8 @@ class AppSettings {
   final String id;
   final double toneFrequency;
   final double wpm;
+  final double effWpm;           // Farnsworth effective WPM
+  final double extraWordSpace;  // Extra space between words (seconds)
   final double volume;
   final InputMethod inputMethod;
   final bool enableGamification;
@@ -11,9 +13,11 @@ class AppSettings {
 
   AppSettings({
     this.id = 'current',
-    this.toneFrequency = 600.0,
-    this.wpm = 20.0,
-    this.volume = 1.0,
+    this.toneFrequency = 800.0,  // Default 800Hz (from cw-trainer)
+    this.wpm = 15.0,
+    this.effWpm = 10.0,
+    this.extraWordSpace = 0.0,
+    this.volume = 0.5,
     this.inputMethod = InputMethod.keyboard,
     this.enableGamification = true,
     this.enableSoundEffects = true,
@@ -23,6 +27,8 @@ class AppSettings {
     String? id,
     double? toneFrequency,
     double? wpm,
+    double? effWpm,
+    double? extraWordSpace,
     double? volume,
     InputMethod? inputMethod,
     bool? enableGamification,
@@ -32,6 +38,8 @@ class AppSettings {
       id: id ?? this.id,
       toneFrequency: toneFrequency ?? this.toneFrequency,
       wpm: wpm ?? this.wpm,
+      effWpm: effWpm ?? this.effWpm,
+      extraWordSpace: extraWordSpace ?? this.extraWordSpace,
       volume: volume ?? this.volume,
       inputMethod: inputMethod ?? this.inputMethod,
       enableGamification: enableGamification ?? this.enableGamification,
@@ -44,6 +52,8 @@ class AppSettings {
       'id': id,
       'toneFrequency': toneFrequency,
       'wpm': wpm,
+      'effWpm': effWpm,
+      'extraWordSpace': extraWordSpace,
       'volume': volume,
       'inputMethod': inputMethod.index,
       'enableGamification': enableGamification ? 1 : 0,
@@ -54,9 +64,11 @@ class AppSettings {
   factory AppSettings.fromMap(Map<String, dynamic> map) {
     return AppSettings(
       id: map['id'] as String? ?? 'current',
-      toneFrequency: map['toneFrequency'] as double? ?? 600.0,
+      toneFrequency: map['toneFrequency'] as double? ?? 800.0,
       wpm: map['wpm'] as double? ?? 20.0,
-      volume: map['volume'] as double? ?? 1.0,
+      effWpm: map['effWpm'] as double? ?? 20.0,
+      extraWordSpace: map['extraWordSpace'] as double? ?? 0.0,
+      volume: map['volume'] as double? ?? 0.5,
       inputMethod: InputMethod.values[map['inputMethod'] as int? ?? 0],
       enableGamification: map['enableGamification'] == 1,
       enableSoundEffects: map['enableSoundEffects'] == 1,

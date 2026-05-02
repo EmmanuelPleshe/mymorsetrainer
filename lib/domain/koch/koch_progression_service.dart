@@ -1,10 +1,12 @@
+import 'dart:math';
 import '../../data/models/character.dart';
 import '../../data/repositories/character_repository.dart';
 
 class KochProgressionService {
+  final Random _random = Random();
   final CharacterRepository _characterRepository;
-  static const double accuracyThreshold = 0.90;
-  static const int minAttempts = 10;
+  static const double accuracyThreshold = 0.80;
+  static const int minAttempts = 5;
 
   KochProgressionService(this._characterRepository);
 
@@ -65,7 +67,7 @@ class KochProgressionService {
   }
 
   Future<List<Character>> getPracticeCharacters(int level, {int count = 10}) async {
-    final characters = await _characterRepository.getCharactersForLevel(level);
+    final characters = await _characterRepository.getCharactersForLevel(level, requireUnlocked: false);
     if (characters.isEmpty) return [];
 
     // Weight characters by lower accuracy
@@ -78,7 +80,7 @@ class KochProgressionService {
     final result = <Character>[];
     for (int i = 0; i < count; i++) {
       final totalWeight = weighted.fold<double>(0, (sum, e) => sum + e.value);
-      final random = DateTime.now().millisecondsSinceEpoch % totalWeight;
+      final random = _random.nextDouble() * totalWeight;
       double current = 0;
       for (final entry in weighted) {
         current += entry.value;

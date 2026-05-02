@@ -22,13 +22,19 @@ class CharacterRepository {
     return maps.map((map) => Character.fromMap(map)).toList();
   }
 
-  Future<List<Character>> getCharactersForLevel(int level) async {
+  Future<List<Character>> getCharactersForLevel(int level, {bool requireUnlocked = true}) async {
     final count = (level + 1) * 2;
     final db = await _dbHelper.database;
+    String where = 'kochOrder < ?';
+    List<dynamic> whereArgs = [count];
+    if (requireUnlocked) {
+      where += ' AND isUnlocked = ?';
+      whereArgs.add(1);
+    }
     final maps = await db.query(
       'characters',
-      where: 'kochOrder < ? AND isUnlocked = ?',
-      whereArgs: [count, 1],
+      where: where,
+      whereArgs: whereArgs,
       orderBy: 'kochOrder ASC',
     );
     return maps.map((map) => Character.fromMap(map)).toList();

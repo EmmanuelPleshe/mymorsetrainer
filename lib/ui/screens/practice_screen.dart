@@ -19,6 +19,9 @@ class _PracticeScreenState extends State<PracticeScreen> {
   KeyboardKeyerHandler? _keyerHandler;
   String _currentPattern = '';
   String _lastDecodedChar = '';
+  bool _feedbackHandled = false;
+  int _selectedLevel = 1;
+  bool _isAudioPlaying = false;
 
   // Event-based key tracking
   DateTime? _keyDownStarted;
@@ -68,6 +71,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
       onPatternComplete: (pattern) {
         final decoded = _decodePattern(pattern);
         print('SCREEN: Submitting "$pattern" = "$decoded"');
+        _keyerHandler?.clearPattern();  // Clear handler pattern on submit
         context.read<PracticeSessionBloc>().add(SubmitMorsePattern(pattern));
         setState(() {
           _currentPattern = '';
@@ -102,6 +106,9 @@ class _PracticeScreenState extends State<PracticeScreen> {
   bool _handleKeyEvent(KeyEvent event) {
     // Only handle space key
     if (event.physicalKey != PhysicalKeyboardKey.space) return false;
+
+    // Ignore key input while audio is playing
+    if (_isAudioPlaying) return true;
 
     // Debug: log all space key events
     debugPrint('KEY EVENT: ${event.runtimeType}');
@@ -164,7 +171,10 @@ class _PracticeScreenState extends State<PracticeScreen> {
   }
 
   Future<void> _playCharacterAudio(String character) async {
-    await _audioService.playCharacter(character);
+    setState(() => _isAudioPlaying = true);
+    _audioService.playCharacter(character).then((_) {
+      if (mounted) setState(() => _isAudioPlaying = false);
+    });
   }
 
   @override
@@ -192,8 +202,12 @@ class _PracticeScreenState extends State<PracticeScreen> {
         child: BlocConsumer<PracticeSessionBloc, PracticeSessionState>(
           listener: (context, state) {
             if (state is PracticeSessionActive && state.lastAnswerCorrect == null) {
-              // New character - clear feedback and play audio
-              setState(() => _lastDecodedChar = '');
+              // New character or retry - clear feedback and keyer pattern
+              setState(() {
+                _lastDecodedChar = '';
+                _feedbackHandled = false;
+              });
+              _keyerHandler?.clearPattern();
               final char = state.currentCharacter;
               if (char != null) {
                 _playCharacterAudio(char.symbol);
@@ -234,8 +248,34 @@ class _PracticeScreenState extends State<PracticeScreen> {
           const SizedBox(height: 16),
           const Text('Learn morse code with the Koch method', style: TextStyle(fontSize: 16, color: Colors.grey)),
           const SizedBox(height: 32),
+          const Text('Select Level', style: TextStyle(fontSize: 18)),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.remove),
+                onPressed: _selectedLevel > 1 ? () => setState(() => _selectedLevel--) : null,
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                decoration: BoxDecoration(border: Border.all(color: Colors.blue), borderRadius: BorderRadius.circular(8)),
+                child: Text('Level $_selectedLevel', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              ),
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: _selectedLevel < 20 ? () => setState(() => _selectedLevel++) : null,
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Characters: ${_selectedLevel * 2}',
+            style: const TextStyle(color: Colors.grey),
+          ),
+          const SizedBox(height: 24),
           ElevatedButton.icon(
-            onPressed: () => context.read<PracticeSessionBloc>().add(const StartSession(1)),
+            onPressed: () => context.read<PracticeSessionBloc>().add(StartSession(_selectedLevel)),
             icon: const Icon(Icons.play_arrow),
             label: const Text('Start Practice'),
             style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16)),
@@ -317,7 +357,9 @@ class _PracticeScreenState extends State<PracticeScreen> {
           children: [
             Text(
               _currentPattern.isEmpty ? (_lastDecodedChar.isEmpty ? 'Hold SPACE to key' : 'Submitted: $_lastDecodedChar') : _currentPattern,
-              style: TextStyle(fontSize: 32, fontFamily: 'monospace', color: _currentPattern.isEmpty ? Colors.grey : Colors.black),
+              style: TextStyle(fontSize: 32, fontFamily: 'monospace', color: _currentPattern.isEmpty ? Colors.grey : Colors.white),
+              maxLines: 1,
+              overflow: TextOverflow.clip,
             ),
             const SizedBox(height: 16),
             const Text('Hold for dash, tap for dot', style: TextStyle(fontSize: 14, color: Colors.grey)),
@@ -337,26 +379,38 @@ class _PracticeScreenState extends State<PracticeScreen> {
 
   Widget _buildFeedbackArea(BuildContext context, PracticeSessionActive state) {
     final isCorrect = state.lastAnswerCorrect!;
-    if (isCorrect) _audioService.playCorrectFeedback();
-    if (!isCorrect) {
-      Future.delayed(const Duration(milliseconds: 300), () {
-        _playCharacterAudio(state.currentCharacter?.symbol ?? '');
-      });
+
+    // Only play feedback sound once per state
+    if (!_feedbackHandled) {
+      _feedbackHandled = true;
+      if (isCorrect) {
+        _audioService.playCorrectFeedback();
+      } else {
+        // Play error sound - use correct feedback as fallback
+        _audioService.playCorrectFeedback();
+      }
     }
+
     return Column(
       children: [
-        Icon(isCorrect ? Icons.check_circle : Icons.cancel, color: isCorrect ? Colors.green : Colors.red, size: 64),
+        Icon(
+          isCorrect ? Icons.check_circle : Icons.error,
+          size: 64,
+          color: isCorrect ? Colors.green : Colors.red,
+        ),
         const SizedBox(height: 16),
-        Text(isCorrect ? 'Correct!' : 'Wrong!', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: isCorrect ? Colors.green : Colors.red)),
-        if (state.showUnlockNotification) ...[
-          const SizedBox(height: 16),
-          const Icon(Icons.lock_open, color: Colors.orange, size: 48),
-          const Text('New character unlocked!', style: TextStyle(fontSize: 18, color: Colors.orange)),
-        ],
-        const SizedBox(height: 24),
-        ElevatedButton(
-          onPressed: () => context.read<PracticeSessionBloc>().add(const NextCharacter()),
-          child: const Text('Next'),
+        Text(
+          isCorrect ? 'Correct!' : 'Try again',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: isCorrect ? Colors.green : Colors.red,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Answer: ${state.currentCharacter?.symbol ?? ''}',
+          style: const TextStyle(fontSize: 18, color: Colors.grey),
         ),
       ],
     );
@@ -377,10 +431,23 @@ class _PracticeScreenState extends State<PracticeScreen> {
           child: Text('Next level unlocked!', style: TextStyle(fontSize: 18, color: Colors.orange)),
         ),
         const SizedBox(height: 32),
-        ElevatedButton.icon(
-          onPressed: () => context.read<PracticeSessionBloc>().add(const StartSession(1)),
-          icon: const Icon(Icons.replay),
-          label: const Text('Practice Again'),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton.icon(
+              onPressed: () => context.read<PracticeSessionBloc>().add(StartSession(_selectedLevel)),
+              icon: const Icon(Icons.replay),
+              label: const Text('Repeat'),
+            ),
+            const SizedBox(width: 16),
+            ElevatedButton.icon(
+              onPressed: _selectedLevel < 20
+                ? () => context.read<PracticeSessionBloc>().add(StartSession(_selectedLevel + 1))
+                : null,
+              icon: const Icon(Icons.arrow_forward),
+              label: const Text('Keep Going'),
+            ),
+          ],
         ),
       ],
     ),

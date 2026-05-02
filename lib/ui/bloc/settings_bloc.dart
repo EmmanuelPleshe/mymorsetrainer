@@ -25,6 +25,16 @@ class UpdateWpm extends SettingsEvent {
   const UpdateWpm(this.wpm);
 }
 
+class UpdateEffWpm extends SettingsEvent {
+  final double effWpm;
+  const UpdateEffWpm(this.effWpm);
+}
+
+class UpdateExtraWordSpace extends SettingsEvent {
+  final double extraWordSpace;
+  const UpdateExtraWordSpace(this.extraWordSpace);
+}
+
 class UpdateVolume extends SettingsEvent {
   final double volume;
   const UpdateVolume(this.volume);
@@ -75,6 +85,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<LoadSettings>(_onLoadSettings);
     on<UpdateToneFrequency>(_onUpdateToneFrequency);
     on<UpdateWpm>(_onUpdateWpm);
+    on<UpdateEffWpm>(_onUpdateEffWpm);
+    on<UpdateExtraWordSpace>(_onUpdateExtraWordSpace);
     on<UpdateVolume>(_onUpdateVolume);
     on<UpdateInputMethod>(_onUpdateInputMethod);
     on<ToggleGamification>(_onToggleGamification);
@@ -116,6 +128,34 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       emit(SettingsLoaded(settings));
     } catch (e) {
       emit(SettingsError('Failed to update WPM: $e'));
+    }
+  }
+
+  Future<void> _onUpdateEffWpm(
+    UpdateEffWpm event,
+    Emitter<SettingsState> emit,
+  ) async {
+    try {
+      final current = await _settingsRepository.getSettings();
+      await _settingsRepository.updateSettings(current.copyWith(effWpm: event.effWpm));
+      final settings = await _settingsRepository.getSettings();
+      emit(SettingsLoaded(settings));
+    } catch (e) {
+      emit(SettingsError('Failed to update effective WPM: $e'));
+    }
+  }
+
+  Future<void> _onUpdateExtraWordSpace(
+    UpdateExtraWordSpace event,
+    Emitter<SettingsState> emit,
+  ) async {
+    try {
+      final current = await _settingsRepository.getSettings();
+      await _settingsRepository.updateSettings(current.copyWith(extraWordSpace: event.extraWordSpace));
+      final settings = await _settingsRepository.getSettings();
+      emit(SettingsLoaded(settings));
+    } catch (e) {
+      emit(SettingsError('Failed to update extra word space: $e'));
     }
   }
 
