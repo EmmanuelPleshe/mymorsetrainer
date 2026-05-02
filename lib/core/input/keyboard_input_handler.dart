@@ -1,22 +1,92 @@
+import 'dart:async';
 import 'package:flutter/services.dart';
 
-class KeyboardInputHandler {
-  final Function(String) onCharacterInput;
-  final VoidCallback? onBackspace;
+typedef KeyerCallback = void Function(String morsePattern);
 
-  KeyboardInputHandler({
-    required this.onCharacterInput,
-    this.onBackspace,
+class KeyboardKeyerHandler {
+  final KeyerCallback onPatternComplete;
+  final VoidCallback? onKeyDown;
+  final VoidCallback? onKeyUp;
+  final int dotDurationMs;
+  final int dashDurationMs;
+
+  String _pattern = '';
+  Timer? _autoSubmitTimer;
+
+  static final Map<String, String> _morseToChar = {
+    '.-': 'A', '-...': 'B', '-.-.': 'C', '-..': 'D', '.': 'E',
+    '..-.': 'F', '--.': 'G', '....': 'H', '..': 'I', '.---': 'J',
+    '-.-': 'K', '.-..': 'L', '--': 'M', '-.': 'N', '---': 'O',
+    '.--.': 'P', '--.-': 'Q', '.-.': 'R', '...': 'S', '-': 'T',
+    '..-': 'U', '...-': 'V', '.--': 'W', '-..-': 'X', '-.--': 'Y',
+    '--..': 'Z', '-----': '0', '.----': '1', '..---': '2', '...--': '3',
+    '....-': '4', '.....': '5', '-....': '6', '--...': '7', '---..': '8',
+    '----.': '9', '.-.-.-': '.', '--..--': ',', '..--..': '?', '-..-.': '/',
+  };
+
+  KeyboardKeyerHandler({
+    required this.onPatternComplete,
+    this.onKeyDown,
+    this.onKeyUp,
+    required this.dotDurationMs,
+    required this.dashDurationMs,
   });
 
-  void handleKeyEvent(KeyEvent event) {
-    if (event is KeyDownEvent) {
-      final character = event.character;
-      if (character != null && character.isNotEmpty) {
-        onCharacterInput(character.toUpperCase());
-      } else if (event.logicalKey == LogicalKeyboardKey.backspace) {
-        onBackspace?.call();
+  void handleKeyDown() {
+    onKeyDown?.call();
+  }
+
+  void handleKeyUp(int durationMs) {
+    onKeyUp?.call();
+
+    // Determine dot or dash using the threshold from audio settings
+    final threshold = (dotDurationMs + dashDurationMs) ~/ 2;
+    final symbol = durationMs >= threshold ? '-' : '.';
+    _pattern += symbol;
+
+    print('HANDLER: Pattern now: "$_pattern"');
+
+    // Try to submit - but do it via timer to allow UI to show pattern first
+    _scheduleAutoSubmit();
+  }
+
+  void _scheduleAutoSubmit() {
+    _autoSubmitTimer?.cancel();
+    // Wait 1500ms after each symbol - allows time for multiple dashes/dots
+    // At 20 WPM: dot=60ms, dash=180ms. User needs ~360ms for "--" (M)
+    _autoSubmitTimer = Timer(const Duration(milliseconds: 1500), () {
+      if (_pattern.isNotEmpty && _morseToChar.containsKey(_pattern)) {
+        final pattern = _pattern;
+        final char = _morseToChar[pattern] ?? '?';
+        print('HANDLER: Auto-submitting pattern "$pattern" -> "$char"');
+
+        // Pass pattern FIRST, then clear
+        onPatternComplete(pattern);
+        _pattern = '';
       }
+    });
+  }
+
+  // Manual submit (called when user explicitly submits)
+  void submitNow() {
+    _autoSubmitTimer?.cancel();
+    if (_pattern.isNotEmpty && _morseToChar.containsKey(_pattern)) {
+      final pattern = _pattern;
+      final char = _morseToChar[pattern] ?? '?';
+      print('HANDLER: Manual submit pattern "$pattern" -> "$char"');
+      onPatternComplete(pattern);
+      _pattern = '';
     }
+  }
+
+  String get currentPattern => _pattern;
+
+  void clearPattern() {
+    _autoSubmitTimer?.cancel();
+    _pattern = '';
+  }
+
+  void dispose() {
+    _autoSubmitTimer?.cancel();
   }
 }
