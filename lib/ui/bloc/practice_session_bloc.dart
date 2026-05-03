@@ -41,6 +41,11 @@ class PlayCurrentCharacter extends PracticeSessionEvent {
   const PlayCurrentCharacter();
 }
 
+class CompleteOnboarding extends PracticeSessionEvent {
+  final bool skipIntro;
+  const CompleteOnboarding({this.skipIntro = false});
+}
+
 // States
 abstract class PracticeSessionState extends Equatable {
   const PracticeSessionState();
@@ -153,6 +158,20 @@ class PracticeSessionBloc
     on<SubmitMorsePattern>(_onSubmitMorsePattern);
     on<NextCharacter>(_onNextCharacter);
     on<PlayCurrentCharacter>(_onPlayCurrentCharacter);
+    on<CompleteOnboarding>(_onCompleteOnboarding);
+  }
+
+  Future<void> _onCompleteOnboarding(
+    CompleteOnboarding event,
+    Emitter<PracticeSessionState> emit,
+  ) async {
+    final progress = await _userProgressRepository.getUserProgress();
+    await _userProgressRepository.updateUserProgress(
+      progress.copyWith(
+        hasCompletedOnboarding: true,
+        skipIntroOnboarding: event.skipIntro,
+      ),
+    );
   }
 
   Future<void> _onStartSession(

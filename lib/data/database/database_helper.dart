@@ -20,7 +20,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 3,
+      version: 5,
       onCreate: _createDB,
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
@@ -32,6 +32,16 @@ class DatabaseHelper {
         if (oldVersion < 3) {
           try {
             await db.execute("ALTER TABLE settings ADD COLUMN enableScreenFlash INTEGER NOT NULL DEFAULT 0");
+          } catch (_) {}
+        }
+        if (oldVersion < 4) {
+          try {
+            await db.execute("ALTER TABLE user_progress ADD COLUMN hasCompletedOnboarding INTEGER NOT NULL DEFAULT 0");
+          } catch (_) {}
+        }
+        if (oldVersion < 5) {
+          try {
+            await db.execute("ALTER TABLE user_progress ADD COLUMN skipIntroOnboarding INTEGER NOT NULL DEFAULT 0");
           } catch (_) {}
         }
       },
@@ -64,7 +74,9 @@ class DatabaseHelper {
         currentLevel INTEGER NOT NULL DEFAULT 1,
         charactersMastered INTEGER NOT NULL DEFAULT 0,
         totalSessionsCompleted INTEGER NOT NULL DEFAULT 0,
-        lastSessionDate TEXT
+        lastSessionDate TEXT,
+        hasCompletedOnboarding INTEGER NOT NULL DEFAULT 0,
+        skipIntroOnboarding INTEGER NOT NULL DEFAULT 0
       )
     ''');
 

@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:window_manager/window_manager.dart';
 import 'core/audio/morse_code_service.dart';
+import 'data/repositories/user_progress_repository.dart';
+import 'ui/screens/onboarding_screen.dart';
 import 'data/repositories/character_repository.dart';
 import 'data/repositories/settings_repository.dart';
 import 'data/repositories/user_progress_repository.dart';
@@ -79,10 +81,6 @@ class MorseTrainerApp extends StatelessWidget {
           home: const HomeScreen(),
           routes: {
             '/practice': (context) => const PracticeScreen(),
-            '/settings': (context) => BlocProvider.value(
-              value: context.read<SettingsBloc>(),
-              child: const SettingsScreen(),
-            ),
             '/progress': (context) => const ProgressScreen(),
           },
         ),
@@ -100,18 +98,40 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, WindowListener {
   int _currentIndex = 0;
+  bool _showOnboarding = true;
+  bool _checkedOnboarding = false;
+  bool _forceReplayOnboarding = false;
 
-  final List<Widget> _screens = const [
-    PracticeScreen(),
-    ProgressScreen(),
-    SettingsScreen(),
-  ];
+  late final List<Widget> _screens;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     windowManager.addListener(this);
+    _screens = [
+      const PracticeScreen(),
+      const ProgressScreen(),
+      SettingsScreen(onReplayIntro: _replayOnboarding),
+    ];
+    _checkOnboarding();
+  }
+
+  Future<void> _checkOnboarding() async {
+    final repo = UserProgressRepository();
+    final progress = await repo.getUserProgress();
+    setState(() {
+      // Show onboarding if not completed AND not skipping (or force replay)
+      _showOnboarding = _forceReplayOnboarding || (!progress.hasCompletedOnboarding && !progress.skipIntroOnboarding);
+      _checkedOnboarding = true;
+    });
+  }
+
+  void _replayOnboarding() {
+    setState(() {
+      _forceReplayOnboarding = true;
+      _showOnboarding = true;
+    });
   }
 
   @override
@@ -138,6 +158,20 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Wi
 
   @override
   Widget build(BuildContext context) {
+    // Show loading while checking onboarding status
+    if (!_checkedOnboarding) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    // Show onboarding for first-time users
+    if (_showOnboarding) {
+      return OnboardingScreen(
+        onComplete: () => setState(() => _showOnboarding = false),
+      );
+    }
+
     return Scaffold(
       body: _screens[_currentIndex],
       bottomNavigationBar: NavigationBar(
