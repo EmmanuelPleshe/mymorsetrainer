@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.morsetrainer.morse_trainer"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 35
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
