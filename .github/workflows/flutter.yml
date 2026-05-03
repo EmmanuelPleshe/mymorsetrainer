@@ -16,7 +16,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'ubuntu'
+          distribution: 'temurin'
 
       - uses: subosito/flutter-action@v2
         with:
@@ -40,7 +40,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'ubuntu'
+          distribution: 'temurin'
 
       - uses: subosito/flutter-action@v2
         with:
@@ -67,7 +67,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'ubuntu'
+          distribution: 'temurin'
 
       - uses: subosito/flutter-action@v2
         with:
@@ -94,7 +94,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'ubuntu'
+          distribution: 'temurin'
 
       - uses: subosito/flutter-action@v2
         with:
@@ -122,7 +122,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'ubuntu'
+          distribution: 'temurin'
 
       - uses: subosito/flutter-action@v2
         with:
