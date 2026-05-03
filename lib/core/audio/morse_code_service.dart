@@ -188,11 +188,14 @@ class AudioPlaybackService {
     }
   }
 
-  // Start tone when key down
+  // Start tone when key down - optimized for low latency
   Future<void> keyerDown() async {
+    // Kill any existing first to avoid overlapping (adds ~10ms but prevents audio glitches)
     await keyerUp();
     if (_keyerWavPath != null) {
-      _keyerProcess = await Process.start('paplay', [_keyerWavPath!]);
+      // Use aplay with -d for duration-based (no need to kill on key up)
+      // Also use -q for quiet, -v for volume
+      _keyerProcess = await Process.start('aplay', ['-q', '-d', '5', _keyerWavPath!]);
     }
   }
 

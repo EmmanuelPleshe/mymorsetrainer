@@ -7,6 +7,8 @@ class UserProgress {
   final int charactersMastered;
   final int totalSessionsCompleted;
   final DateTime? lastSessionDate;
+  final bool hasCompletedOnboarding;
+  final bool skipIntroOnboarding;
 
   UserProgress({
     this.id = 'current',
@@ -17,6 +19,8 @@ class UserProgress {
     this.charactersMastered = 0,
     this.totalSessionsCompleted = 0,
     this.lastSessionDate,
+    this.hasCompletedOnboarding = false,
+    this.skipIntroOnboarding = false,
   });
 
   UserProgress copyWith({
@@ -28,6 +32,8 @@ class UserProgress {
     int? charactersMastered,
     int? totalSessionsCompleted,
     DateTime? lastSessionDate,
+    bool? hasCompletedOnboarding,
+    bool? skipIntroOnboarding,
   }) {
     return UserProgress(
       id: id ?? this.id,
@@ -38,6 +44,8 @@ class UserProgress {
       charactersMastered: charactersMastered ?? this.charactersMastered,
       totalSessionsCompleted: totalSessionsCompleted ?? this.totalSessionsCompleted,
       lastSessionDate: lastSessionDate ?? this.lastSessionDate,
+      hasCompletedOnboarding: hasCompletedOnboarding ?? this.hasCompletedOnboarding,
+      skipIntroOnboarding: skipIntroOnboarding ?? this.skipIntroOnboarding,
     );
   }
 
@@ -51,6 +59,8 @@ class UserProgress {
       'charactersMastered': charactersMastered,
       'totalSessionsCompleted': totalSessionsCompleted,
       'lastSessionDate': lastSessionDate?.toIso8601String(),
+      'hasCompletedOnboarding': hasCompletedOnboarding ? 1 : 0,
+      'skipIntroOnboarding': skipIntroOnboarding ? 1 : 0,
     };
   }
 
@@ -59,6 +69,7 @@ class UserProgress {
       id: map['id'] as String? ?? 'current',
       totalPoints: map['totalPoints'] as int? ?? 0,
       currentStreak: map['currentStreak'] as int? ?? 0,
+      skipIntroOnboarding: map['skipIntroOnboarding'] == 1,
       longestStreak: map['longestStreak'] as int? ?? 0,
       currentLevel: map['currentLevel'] as int? ?? 1,
       charactersMastered: map['charactersMastered'] as int? ?? 0,
@@ -66,6 +77,7 @@ class UserProgress {
       lastSessionDate: map['lastSessionDate'] != null
           ? DateTime.parse(map['lastSessionDate'] as String)
           : null,
+      hasCompletedOnboarding: map['hasCompletedOnboarding'] == 1,
     );
   }
 }

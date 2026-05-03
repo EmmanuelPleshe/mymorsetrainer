@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/models/settings.dart';
+import '../../data/repositories/backup_repository.dart';
 import '../bloc/settings_bloc.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
+  final VoidCallback? onReplayIntro;
+
+  const SettingsScreen({super.key, this.onReplayIntro});
 
   @override
   Widget build(BuildContext context) {
@@ -117,6 +120,19 @@ class SettingsScreen extends StatelessWidget {
           },
         ),
         const Divider(),
+        _buildSectionHeader('Data'),
+        ListTile(
+          leading: const Icon(Icons.backup),
+          title: const Text('Export Backup'),
+          subtitle: const Text('Save progress, settings, and character data to file'),
+          onTap: () => _exportBackup(context),
+        ),
+        ListTile(
+          leading: const Icon(Icons.replay),
+          title: const Text('Replay Intro'),
+          subtitle: const Text('Watch the welcome screens again'),
+          onTap: onReplayIntro,
+        ),
         _buildSectionHeader('Timing Info'),
         const Card(
           child: Padding(
@@ -131,9 +147,20 @@ class SettingsScreen extends StatelessWidget {
                 Text('• Intra-character space: 1 unit'),
                 Text('• Inter-character space: 3 units'),
                 Text('• Inter-word space: 7 units'),
-                SizedBox(height: 8),
-                Text('Farnsworth method sends characters faster but increases spacing for slower effective speed.',
-                    style: TextStyle(fontStyle: FontStyle.italic)),
+                SizedBox(height: 12),
+                const Text('Farnsworth Method:', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                const Text(
+                  'Listen at a fast speed (18-20 WPM) while the pauses between letters are longer. '
+                  'This lets you practice at full speed without pressure to reply at that same speed.',
+                  style: TextStyle(fontSize: 13),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Tip: Set Character Speed (WPM) high and Effective Speed low to enable Farnsworth. '
+                  'Example: Character=20, Effective=10.',
+                  style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Colors.grey),
+                ),
               ],
             ),
           ),
@@ -248,6 +275,24 @@ class SettingsScreen extends StatelessWidget {
         return 'Game Controller';
       case InputMethod.audioInput:
         return 'Audio Input (Mic)';
+    }
+  }
+
+  Future<void> _exportBackup(BuildContext context) async {
+    try {
+      final backup = BackupRepository();
+      final file = await backup.exportToFile();
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Backup saved to ${file.path}')),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Export failed: $e')),
+        );
+      }
     }
   }
 }
