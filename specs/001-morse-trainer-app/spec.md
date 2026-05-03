@@ -33,7 +33,7 @@ User selects their preferred input method (keyboard, touchscreen, game controlle
 
 **Acceptance Scenarios**:
 
-1. **Given** keyboard is selected as input, **When** user presses spacebar for dots/dashes, **Then** input is captured and decoded
+1. **Given** keyboard is selected as input, **When** user presses/releases spacebar to key dots/dashes, **Then** input is captured as morse code and decoded to characters
 2. **Given** touchscreen tap is selected, **When** user taps screen for dots/dashes, **Then** touch duration is measured and decoded
 3. **Given** game controller button is selected, **When** user presses configured button, **Then** press duration is measured and decoded
 4. **Given** audio input is selected, **When** user keys a real morse key into microphone/line-in, **Then** audio is decoded into dots/dashes
@@ -42,7 +42,7 @@ User selects their preferred input method (keyboard, touchscreen, game controlle
 
 ### User Story 3 - Adjust Tone and Speed (Priority: P2)
 
-User can adjust the morse code audio tone (frequency) and speed (WPM) to their preference. Default settings are 600Hz tone and 20 WPM.
+User can adjust the morse code audio tone (frequency) and speed (WPM) to their preference. Default settings are 800Hz tone and 15 WPM.
 
 **Why this priority**: Comfortable learning - different users have different hearing abilities and preferred practice speeds.
 
@@ -116,12 +116,12 @@ User earns points for correct responses, maintains streaks for consecutive corre
 
 ### Functional Requirements
 
-- **FR-001**: System MUST play morse code audio for characters using Koch method sequence (K, M, R, U, A, P, L, T, W, I, N, J, E, Y, O, S, Q, Z, H, V, F, B, D, X, C)
+- **FR-001**: System MUST play morse code audio for characters using Koch method sequence (K, M, R, U, A, P, L, T, W, I, N, J, E, Y, O, S, Q, Z, H, V, F, B, D, X, C). Audio MUST play automatically when character is displayed. User does NOT type the character - user keys it back using spacebar.
 - **FR-002**: System MUST accept input from keyboard, touchscreen tap, game controller button, and audio input (microphone/line-in)
 - **FR-003**: System MUST verify user keying against expected morse code pattern and provide immediate feedback (correct/incorrect)
 - **FR-004**: System MUST require 90% accuracy before unlocking next character in Koch sequence
 - **FR-005**: System MUST implement spaced repetition algorithm with intervals: 2 days → 7 days → 30 days → 90 days based on mastery level
-- **FR-006**: System MUST allow adjustment of audio tone frequency (default 600Hz, range 300Hz-2000Hz)
+- **FR-006**: System MUST allow adjustment of audio tone frequency (default 800Hz, range 300Hz-2000Hz)
 - **FR-007**: System MUST allow adjustment of morse code speed in WPM (default 20 WPM, range 5-40 WPM)
 - **FR-008**: System MUST track user performance per character and schedule reviews based on spaced repetition
 - **FR-009**: System MUST provide word practice mode after alphabet completion

@@ -105,7 +105,15 @@ class SettingsScreen extends StatelessWidget {
           subtitle: const Text('Feedback sounds for correct/incorrect answers'),
           value: settings.enableSoundEffects,
           onChanged: (value) {
-            // TODO: Implement sound effects toggle
+            context.read<SettingsBloc>().add(UpdateSoundEffects(value));
+          },
+        ),
+        SwitchListTile(
+          title: const Text('Screen Flash'),
+          subtitle: const Text('Flash screen with Morse for visual learners'),
+          value: settings.enableScreenFlash,
+          onChanged: (value) {
+            context.read<SettingsBloc>().add(UpdateScreenFlash(value));
           },
         ),
         const Divider(),

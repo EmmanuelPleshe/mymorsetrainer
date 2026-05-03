@@ -22,6 +22,9 @@ class _PracticeScreenState extends State<PracticeScreen> {
   bool _feedbackHandled = false;
   int _selectedLevel = 1;
   bool _isAudioPlaying = false;
+  bool _countdownActive = false;
+  int _countdownSeconds = 0;
+  bool _screenFlash = false;
 
   // Event-based key tracking
   DateTime? _keyDownStarted;
@@ -81,10 +84,17 @@ class _PracticeScreenState extends State<PracticeScreen> {
       onKeyDown: () async {
         print('AUDIO: keyerDown');
         await _audioService.keyerDown();
+        // Screen flash on key down
+        final settingsState = context.read<SettingsBloc>().state;
+        if (settingsState is SettingsLoaded && settingsState.settings.enableScreenFlash) {
+          setState(() => _screenFlash = true);
+        }
       },
       onKeyUp: () async {
         print('AUDIO: keyerUp');
         await _audioService.keyerUp();
+        // Screen flash off on key up
+        setState(() => _screenFlash = false);
       },
     );
   }
@@ -172,9 +182,31 @@ class _PracticeScreenState extends State<PracticeScreen> {
 
   Future<void> _playCharacterAudio(String character) async {
     setState(() => _isAudioPlaying = true);
-    _audioService.playCharacter(character).then((_) {
-      if (mounted) setState(() => _isAudioPlaying = false);
+
+    // Get settings for screen flash
+    final settingsState = context.read<SettingsBloc>().state;
+    bool enableFlash = false;
+    if (settingsState is SettingsLoaded) {
+      enableFlash = settingsState.settings.enableScreenFlash;
+    }
+
+    _audioService.playCharacter(character, screenFlash: enableFlash, onFlash: (on) {
+      if (mounted) setState(() => _screenFlash = on);
+    }).then((_) {
+      if (mounted) {
+        setState(() {
+          _isAudioPlaying = false;
+          _countdownActive = false;
+        });
+      }
     });
+
+    // Start countdown immediately - user can key during playback
+    if (mounted) {
+      setState(() {
+        _countdownActive = false; // No delay - key immediately
+      });
+    }
   }
 
   @override
@@ -246,7 +278,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
           const SizedBox(height: 24),
           const Text('Morse Code Trainer', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
-          const Text('Learn morse code with the Koch method', style: TextStyle(fontSize: 16, color: Colors.grey)),
+          const Text('Learn morse code fast with Koch method', style: TextStyle(fontSize: 16, color: Colors.grey)),
           const SizedBox(height: 32),
           const Text('Select Level', style: TextStyle(fontSize: 18)),
           const SizedBox(height: 8),
@@ -289,47 +321,78 @@ class _PracticeScreenState extends State<PracticeScreen> {
     final character = state.currentCharacter;
     if (character == null) return const Center(child: Text('No more characters'));
 
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          LinearProgressIndicator(value: state.currentIndex / state.characters.length),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildStat('Correct', '${state.correctCount}'),
-              _buildStat('Accuracy', '${(state.accuracy * 100).toStringAsFixed(1)}%'),
-              _buildStat('Streak', '${state.currentStreak}'),
-            ],
-          ),
-          const SizedBox(height: 32),
-          Container(
-            width: 200, height: 200,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: _getFeedbackColor(state.lastAnswerCorrect),
-              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, spreadRadius: 2)],
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 50),
+      color: _screenFlash ? Colors.white : null,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            LinearProgressIndicator(value: state.currentIndex / state.characters.length),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildStat('Correct', '${state.correctCount}'),
+                _buildStat('Accuracy', '${(state.accuracy * 100).toStringAsFixed(1)}%'),
+                _buildStat('Streak', '${state.currentStreak}'),
+              ],
             ),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(character.symbol, style: const TextStyle(fontSize: 72, fontWeight: FontWeight.bold, color: Colors.white)),
-                  if (state.lastAnswerCorrect != null) ...[
-                    const SizedBox(height: 8),
-                    Text(character.morsePattern, style: const TextStyle(fontSize: 24, color: Colors.white70)),
+            const SizedBox(height: 32),
+            Container(
+              width: 200, height: 200,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: _getFeedbackColor(state.lastAnswerCorrect),
+                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 10, spreadRadius: 2)],
+              ),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(character.symbol, style: const TextStyle(fontSize: 72, fontWeight: FontWeight.bold, color: Colors.white)),
+                    if (state.lastAnswerCorrect != null) ...[
+                      const SizedBox(height: 8),
+                      Text(character.morsePattern, style: const TextStyle(fontSize: 24, color: Colors.white70)),
+                    ],
                   ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Status indicator
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: _isAudioPlaying ? Colors.orange.shade100 : Colors.green.shade100,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    _isAudioPlaying ? Icons.volume_up : Icons.keyboard,
+                    size: 18,
+                    color: _isAudioPlaying ? Colors.orange : Colors.green,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    _isAudioPlaying ? 'Listen...' : 'Ready to key!',
+                    style: TextStyle(
+                      color: _isAudioPlaying ? Colors.orange.shade700 : Colors.green.shade700,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ],
               ),
             ),
-          ),
-          const SizedBox(height: 32),
-          if (state.lastAnswerCorrect == null)
-            _buildKeyerInputArea(context)
-          else
-            _buildFeedbackArea(context, state),
-        ],
+            const SizedBox(height: 16),
+            if (state.lastAnswerCorrect == null)
+              _buildKeyerInputArea(context)
+            else
+              _buildFeedbackArea(context, state),
+          ],
+        ),
       ),
     );
   }
@@ -380,13 +443,11 @@ class _PracticeScreenState extends State<PracticeScreen> {
   Widget _buildFeedbackArea(BuildContext context, PracticeSessionActive state) {
     final isCorrect = state.lastAnswerCorrect!;
 
-    // Only play feedback sound once per state
+    // Only play feedback sound once per state (if sound effects enabled)
     if (!_feedbackHandled) {
       _feedbackHandled = true;
-      if (isCorrect) {
-        _audioService.playCorrectFeedback();
-      } else {
-        // Play error sound - use correct feedback as fallback
+      final settingsState = context.read<SettingsBloc>().state;
+      if (settingsState is SettingsLoaded && settingsState.settings.enableSoundEffects) {
         _audioService.playCorrectFeedback();
       }
     }

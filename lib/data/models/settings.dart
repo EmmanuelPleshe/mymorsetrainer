@@ -10,6 +10,7 @@ class AppSettings {
   final InputMethod inputMethod;
   final bool enableGamification;
   final bool enableSoundEffects;
+  final bool enableScreenFlash;
 
   AppSettings({
     this.id = 'current',
@@ -20,7 +21,8 @@ class AppSettings {
     this.volume = 0.5,
     this.inputMethod = InputMethod.keyboard,
     this.enableGamification = true,
-    this.enableSoundEffects = true,
+    this.enableSoundEffects = false,
+    this.enableScreenFlash = false,
   });
 
   AppSettings copyWith({
@@ -33,6 +35,7 @@ class AppSettings {
     InputMethod? inputMethod,
     bool? enableGamification,
     bool? enableSoundEffects,
+    bool? enableScreenFlash,
   }) {
     return AppSettings(
       id: id ?? this.id,
@@ -44,6 +47,7 @@ class AppSettings {
       inputMethod: inputMethod ?? this.inputMethod,
       enableGamification: enableGamification ?? this.enableGamification,
       enableSoundEffects: enableSoundEffects ?? this.enableSoundEffects,
+      enableScreenFlash: enableScreenFlash ?? this.enableScreenFlash,
     );
   }
 
@@ -58,6 +62,7 @@ class AppSettings {
       'inputMethod': inputMethod.index,
       'enableGamification': enableGamification ? 1 : 0,
       'enableSoundEffects': enableSoundEffects ? 1 : 0,
+      'enableScreenFlash': enableScreenFlash ? 1 : 0,
     };
   }
 
@@ -72,6 +77,7 @@ class AppSettings {
       inputMethod: InputMethod.values[map['inputMethod'] as int? ?? 0],
       enableGamification: map['enableGamification'] == 1,
       enableSoundEffects: map['enableSoundEffects'] == 1,
+      enableScreenFlash: map['enableScreenFlash'] == 1,
     );
   }
 }

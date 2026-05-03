@@ -13,6 +13,11 @@ class KeyboardKeyerHandler {
   String _pattern = '';
   Timer? _autoSubmitTimer;
 
+  // Adaptive threshold: learns from user's keying speed
+  final List<int> _recentDurations = [];
+  static const int _historySize = 20;  // Keep last 20 key presses
+  int _adaptiveThreshold = 0;  // 0 = use default, otherwise learned
+
   static final Map<String, String> _morseToChar = {
     '.-': 'A', '-...': 'B', '-.-.': 'C', '-..': 'D', '.': 'E',
     '..-.': 'F', '--.': 'G', '....': 'H', '..': 'I', '.---': 'J',
@@ -39,15 +44,37 @@ class KeyboardKeyerHandler {
   void handleKeyUp(int durationMs) {
     onKeyUp?.call();
 
-    // Threshold = 2x dot duration (midpoint between dot=dash*1 and dash=dash*3)
-    final threshold = dotDurationMs * 2;
+    // Update adaptive threshold from user's keying
+    _updateAdaptiveThreshold(durationMs);
+
+    // Use adaptive threshold if learned, otherwise default
+    final threshold = _adaptiveThreshold > 0 ? _adaptiveThreshold : dotDurationMs * 2;
     final symbol = durationMs >= threshold ? '-' : '.';
     _pattern += symbol;
 
-    print('HANDLER: Pattern now: "$_pattern"');
+    print('HANDLER: Key up after $durationMs ms, threshold=$threshold, symbol=$symbol');
 
     // Try to submit - but do it via timer to allow UI to show pattern first
     _scheduleAutoSubmit();
+  }
+
+  void _updateAdaptiveThreshold(int durationMs) {
+    // Add to history
+    _recentDurations.add(durationMs);
+    if (_recentDurations.length > _historySize) {
+      _recentDurations.removeAt(0);
+    }
+
+    // Estimate dot duration from short presses (bottom 30% of durations)
+    if (_recentDurations.length >= 5) {
+      final sorted = List<int>.from(_recentDurations)..sort();
+      final shortPresses = sorted.take((sorted.length * 0.3).ceil()).toList();
+      final avgShort = shortPresses.reduce((a, b) => a + b) ~/ shortPresses.length;
+
+      // Threshold = 2x estimated dot duration
+      _adaptiveThreshold = avgShort * 2;
+      print('HANDLER: Adaptive threshold updated to $_adaptiveThreshold ms (from $shortPresses)');
+    }
   }
 
   void _scheduleAutoSubmit() {

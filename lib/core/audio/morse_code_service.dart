@@ -44,6 +44,10 @@ class MorseCodeService {
 
 /// Audio playback with proper ARRL timing
 class AudioPlaybackService {
+  static final AudioPlaybackService _instance = AudioPlaybackService._internal();
+  factory AudioPlaybackService() => _instance;
+  AudioPlaybackService._internal();
+
   // Timing parameters
   double _toneFrequency = 800.0;  // Default 800Hz (from cw-trainer)
   double _wpm = 20.0;            // Character speed
@@ -138,7 +142,7 @@ class AudioPlaybackService {
     _volume = volume.clamp(0.0, 1.0);
   }
 
-  Future<void> playCharacter(String character) async {
+  Future<void> playCharacter(String character, {bool screenFlash = false, Function(bool)? onFlash}) async {
     final pattern = MorseCodeService().getMorsePattern(character);
     if (pattern == null) return;
 
@@ -148,10 +152,14 @@ class AudioPlaybackService {
       final symbol = pattern[i];
       if (symbol == '.') {
         await _playDot();
+        if (screenFlash) onFlash?.call(true);
         await Future.delayed(Duration(milliseconds: intraCharacterSpaceMs));
+        if (screenFlash) onFlash?.call(false);
       } else {
         await _playDash();
+        if (screenFlash) onFlash?.call(true);
         await Future.delayed(Duration(milliseconds: intraCharacterSpaceMs));
+        if (screenFlash) onFlash?.call(false);
       }
     }
 
@@ -204,6 +212,14 @@ class AudioPlaybackService {
   }
 
   Future<void> dispose() async {
+    // Kill running audio process FIRST - critical for avoiding segfault
+    if (_keyerProcess != null) {
+      _keyerProcess!.kill(ProcessSignal.sigkill);
+      _keyerProcess = null;
+    }
+    // Also stop any playing sound
+    await keyerUp();
+
     try {
       if (_dotWavPath != null) await File(_dotWavPath!).delete();
       if (_dashWavPath != null) await File(_dashWavPath!).delete();

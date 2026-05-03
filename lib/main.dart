@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:window_manager/window_manager.dart';
+import 'core/audio/morse_code_service.dart';
 import 'data/repositories/character_repository.dart';
 import 'data/repositories/settings_repository.dart';
 import 'data/repositories/user_progress_repository.dart';
@@ -15,6 +17,7 @@ import 'ui/screens/settings_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfi;
 
@@ -95,7 +98,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, WindowListener {
   int _currentIndex = 0;
 
   final List<Widget> _screens = const [
@@ -103,6 +106,35 @@ class _HomeScreenState extends State<HomeScreen> {
     ProgressScreen(),
     SettingsScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    windowManager.addListener(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    windowManager.removeListener(this);
+    AudioPlaybackService().dispose();
+    super.dispose();
+  }
+
+  @override
+  void onWindowClose() async {
+    // Dispose audio BEFORE window closes - critical for avoiding segfault
+    await AudioPlaybackService().dispose();
+    await windowManager.destroy();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.detached) {
+      AudioPlaybackService().dispose();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

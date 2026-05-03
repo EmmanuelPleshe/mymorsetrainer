@@ -20,13 +20,18 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: _createDB,
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
           try {
             await db.execute("ALTER TABLE settings ADD COLUMN effWpm REAL NOT NULL DEFAULT 10.0");
             await db.execute("ALTER TABLE settings ADD COLUMN extraWordSpace REAL NOT NULL DEFAULT 0.0");
+          } catch (_) {}
+        }
+        if (oldVersion < 3) {
+          try {
+            await db.execute("ALTER TABLE settings ADD COLUMN enableScreenFlash INTEGER NOT NULL DEFAULT 0");
           } catch (_) {}
         }
       },
@@ -84,7 +89,8 @@ class DatabaseHelper {
         volume REAL NOT NULL DEFAULT 1.0,
         inputMethod INTEGER NOT NULL DEFAULT 0,
         enableGamification INTEGER NOT NULL DEFAULT 1,
-        enableSoundEffects INTEGER NOT NULL DEFAULT 1
+        enableSoundEffects INTEGER NOT NULL DEFAULT 0,
+        enableScreenFlash INTEGER NOT NULL DEFAULT 0
       )
     ''');
 
@@ -98,7 +104,8 @@ class DatabaseHelper {
       'volume': 1.0,
       'inputMethod': 0,
       'enableGamification': 1,
-      'enableSoundEffects': 1,
+      'enableSoundEffects': 0,
+      'enableScreenFlash': 0,
     });
 
     // Insert default user progress

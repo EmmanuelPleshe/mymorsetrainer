@@ -49,6 +49,16 @@ class ToggleGamification extends SettingsEvent {
   const ToggleGamification();
 }
 
+class UpdateSoundEffects extends SettingsEvent {
+  final bool enabled;
+  const UpdateSoundEffects(this.enabled);
+}
+
+class UpdateScreenFlash extends SettingsEvent {
+  final bool enabled;
+  const UpdateScreenFlash(this.enabled);
+}
+
 // States
 abstract class SettingsState extends Equatable {
   const SettingsState();
@@ -90,6 +100,8 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<UpdateVolume>(_onUpdateVolume);
     on<UpdateInputMethod>(_onUpdateInputMethod);
     on<ToggleGamification>(_onToggleGamification);
+    on<UpdateSoundEffects>(_onUpdateSoundEffects);
+    on<UpdateScreenFlash>(_onUpdateScreenFlash);
   }
 
   Future<void> _onLoadSettings(
@@ -198,6 +210,38 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
       emit(SettingsLoaded(settings));
     } catch (e) {
       emit(SettingsError('Failed to toggle gamification: $e'));
+    }
+  }
+
+  Future<void> _onUpdateSoundEffects(
+    UpdateSoundEffects event,
+    Emitter<SettingsState> emit,
+  ) async {
+    try {
+      final currentSettings = await _settingsRepository.getSettings();
+      await _settingsRepository.updateSettings(
+        currentSettings.copyWith(enableSoundEffects: event.enabled),
+      );
+      final settings = await _settingsRepository.getSettings();
+      emit(SettingsLoaded(settings));
+    } catch (e) {
+      emit(SettingsError('Failed to update sound effects: $e'));
+    }
+  }
+
+  Future<void> _onUpdateScreenFlash(
+    UpdateScreenFlash event,
+    Emitter<SettingsState> emit,
+  ) async {
+    try {
+      final currentSettings = await _settingsRepository.getSettings();
+      await _settingsRepository.updateSettings(
+        currentSettings.copyWith(enableScreenFlash: event.enabled),
+      );
+      final settings = await _settingsRepository.getSettings();
+      emit(SettingsLoaded(settings));
+    } catch (e) {
+      emit(SettingsError('Failed to update screen flash: $e'));
     }
   }
 }
