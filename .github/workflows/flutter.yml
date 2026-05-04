@@ -197,7 +197,17 @@ jobs:
           git config --global user.email "ci@morsetrainer.app"
           git config --global user.name "CI Bot"
           git tag -a v1.0.0 -m "Release v1.0.0"
-          git push origin v1.0.0
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            linux-build/bundle/**
+            windows-build/**
+            android-build/app-release.apk
+          generate_release_notes: true
+          tag_name: v1.0.0
+          draft: true
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
