@@ -38,17 +38,17 @@ class KeyboardKeyerHandler {
   });
 
   void handleKeyDown() {
+    // Cancel any pending auto-submit - user is continuing to key
+    _autoSubmitTimer?.cancel();
     onKeyDown?.call();
   }
 
   void handleKeyUp(int durationMs) {
     onKeyUp?.call();
 
-    // Update adaptive threshold from user's keying
-    _updateAdaptiveThreshold(durationMs);
-
-    // Use adaptive threshold if learned, otherwise default
-    final threshold = _adaptiveThreshold > 0 ? _adaptiveThreshold : dotDurationMs * 2;
+    // Use fixed WPM-based threshold: 2× dot duration
+    // At 20 WPM: 2×60ms = 120ms threshold
+    final threshold = dotDurationMs * 2;
     final symbol = durationMs >= threshold ? '-' : '.';
     _pattern += symbol;
 
@@ -79,15 +79,17 @@ class KeyboardKeyerHandler {
 
   void _scheduleAutoSubmit() {
     _autoSubmitTimer?.cancel();
-    // Wait 1500ms after each symbol - time for multi-element chars
-    _autoSubmitTimer = Timer(const Duration(milliseconds: 1500), () {
-      if (_pattern.isNotEmpty && _morseToChar.containsKey(_pattern)) {
-        final pattern = _pattern;
-        final char = _morseToChar[pattern] ?? '?';
-        print('HANDLER: Auto-submitting pattern "$pattern" -> "$char"');
 
-        // Pass pattern FIRST, then clear
-        onPatternComplete(pattern);
+    // Fixed timeout: user controls pace via pause between elements.
+    // If they pause longer than this, pattern submits as-is.
+    // 400ms gives enough time for 2-3 element characters at 20WPM.
+    const timeoutMs = 400;
+
+    _autoSubmitTimer = Timer(const Duration(milliseconds: timeoutMs), () {
+      if (_pattern.isNotEmpty) {
+        final char = _morseToChar[_pattern] ?? '?';
+        print('HANDLER: Auto-submitting pattern "$_pattern" -> "$char" after ${timeoutMs}ms');
+        onPatternComplete(_pattern);
         _pattern = '';
       }
     });
