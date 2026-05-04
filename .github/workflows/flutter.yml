@@ -192,6 +192,11 @@ jobs:
           name: android-build
           path: android-build
 
+      - name: Tag commit
+        run: |
+          git tag -a v1.0.0 -m "Release v1.0.0"
+          git push origin v1.0.0
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
