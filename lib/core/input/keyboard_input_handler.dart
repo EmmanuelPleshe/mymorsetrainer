@@ -80,15 +80,19 @@ class KeyboardKeyerHandler {
   void _scheduleAutoSubmit() {
     _autoSubmitTimer?.cancel();
 
-    // Fixed timeout: user controls pace via pause between elements.
-    // If they pause longer than this, pattern submits as-is.
-    // 400ms gives enough time for 2-3 element characters at 20WPM.
-    const timeoutMs = 400;
-
-    _autoSubmitTimer = Timer(const Duration(milliseconds: timeoutMs), () {
-      if (_pattern.isNotEmpty) {
-        final char = _morseToChar[_pattern] ?? '?';
-        print('HANDLER: Auto-submitting pattern "$_pattern" -> "$char" after ${timeoutMs}ms');
+    // Use inter-character spacing (3× dot duration) as timeout threshold
+    // This matches actual Morse timing: after 3 units of silence, character is complete
+    final timeoutMs = dotDurationMs * 3;
+    _autoSubmitTimer = Timer(Duration(milliseconds: timeoutMs), () {
+      if (_pattern.isNotEmpty && _morseToChar.containsKey(_pattern)) {
+        final pattern = _pattern;
+        final char = _morseToChar[pattern] ?? '?';
+        print('HANDLER: Auto-submitting pattern "$pattern" -> "$char" after ${timeoutMs}ms');
+        onPatternComplete(pattern);
+        _pattern = '';
+      } else if (_pattern.isNotEmpty) {
+        // Pattern incomplete (not in lookup) - treat as wrong char, submit anyway
+        print('HANDLER: Incomplete pattern "$_pattern" - submitting anyway');
         onPatternComplete(_pattern);
         _pattern = '';
       }
