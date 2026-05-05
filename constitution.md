@@ -54,6 +54,44 @@ When Specify generates code, it must:
 
 ---
 
+## Documentation Covenant
+
+### Core Principle
+Every feature, bug fix, and behavior change must ship with user-facing documentation. Silent features are broken features. No exceptions.
+
+### The Docs TDD Ritual
+For every task:
+
+1. **Red**: Add a FAILING scenario to `test/docs/user_scenarios.md` describing what the user must be able to understand or accomplish.
+2. **Green**: Write the minimal docs/help/tooltips to make the scenario PASSING.
+3. **Refactor**: Improve clarity and completeness while keeping the scenario PASSING.
+4. **Verify**: Update `user_scenarios.md` status to PASSING with a note.
+
+### Mandatory Help Surfaces
+At least one of these must be updated for every user-visible change:
+- `README.md` for setup and high-level concepts
+- `lib/ui/screens/help_screen.dart` for in-app reference
+- `lib/ui/screens/practice_screen.dart` bottom sheet for inline contextual help
+- `lib/ui/screens/settings_screen.dart` tooltips for configuration options
+- `test/docs/user_scenarios.md` scenario coverage
+
+### Scenario Baseline
+The 7 scenarios in `test/docs/user_scenarios.md` are the permanent baseline. All must remain PASSING. New features must add new scenarios or extend existing ones.
+
+### Regression Docs
+Every known bug must have a Troubleshooting/FAQ entry before the fix is declared complete. If users hit it once, future users will too.
+
+### "Done" Criteria (Docs)
+- [ ] Failing scenario was written first (red phase)
+- [ ] Docs make the scenario PASSING (green phase)
+- [ ] `user_scenarios.md` status updated with note
+- [ ] Help surfaces reviewed for consistency
+
+### CI Gate
+`flutter test` must pass, and `test/docs/user_scenarios.md` must have zero FAILING scenarios before merge to `main`.
+
+---
+
 ## Definition of Done
 
 A task is complete when:
@@ -61,6 +99,8 @@ A task is complete when:
 - `flutter test` passes with 100% of relevant tests
 - Code follows the architecture rules in CLAUDE.md
 - Tests cover the new logic per the Testing Doctrine above
+- User-facing docs cover the change per the Documentation Covenant above
+- `test/docs/user_scenarios.md` has zero FAILING scenarios
 - Commit message follows conventional commits format
 
 ---
