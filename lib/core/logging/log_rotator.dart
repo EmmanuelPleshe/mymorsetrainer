@@ -63,6 +63,7 @@ class LogRotator {
     // Delete archives older than retention period
     final cutoff = DateTime.now().subtract(Duration(days: config.retentionDays));
     for (final archive in archives) {
+      if (!await archive.exists()) continue;
       final stat = await archive.stat();
       if (stat.modified.isBefore(cutoff)) {
         await archive.delete();
