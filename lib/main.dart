@@ -15,6 +15,7 @@ import 'domain/koch/koch_progression_service.dart';
 import 'domain/spaced_repetition/spaced_repetition_service.dart';
 import 'ui/bloc/practice_session_bloc.dart';
 import 'ui/bloc/settings_bloc.dart';
+import 'ui/screens/help_screen.dart';
 import 'ui/screens/practice_screen.dart';
 import 'ui/screens/progress_screen.dart';
 import 'ui/screens/settings_screen.dart';
@@ -119,6 +120,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Wi
       const PracticeScreen(),
       const ProgressScreen(),
       SettingsScreen(onReplayIntro: _replayOnboarding),
+      const HelpScreen(),
     ];
     _checkOnboarding();
   }
@@ -199,6 +201,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Wi
           NavigationDestination(
             icon: Icon(Icons.settings),
             label: 'Settings',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.help_outline),
+            label: 'Help',
           ),
         ],
       ),
