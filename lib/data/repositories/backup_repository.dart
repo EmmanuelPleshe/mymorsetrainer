@@ -9,9 +9,17 @@ import 'settings_repository.dart';
 import 'user_progress_repository.dart';
 
 class BackupRepository {
-  final CharacterRepository _characterRepo = CharacterRepository();
-  final SettingsRepository _settingsRepo = SettingsRepository();
-  final UserProgressRepository _progressRepo = UserProgressRepository();
+  final CharacterRepository _characterRepo;
+  final SettingsRepository _settingsRepo;
+  final UserProgressRepository _progressRepo;
+
+  BackupRepository({
+    CharacterRepository? characterRepo,
+    SettingsRepository? settingsRepo,
+    UserProgressRepository? progressRepo,
+  })  : _characterRepo = characterRepo ?? CharacterRepository(),
+        _settingsRepo = settingsRepo ?? SettingsRepository(),
+        _progressRepo = progressRepo ?? UserProgressRepository();
 
   Future<String> exportToJson() async {
     final characters = await _characterRepo.getAllCharacters();
