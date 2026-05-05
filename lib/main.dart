@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:window_manager/window_manager.dart';
 import 'core/audio/morse_code_service.dart';
+import 'core/logging/logger.dart';
+import 'core/logging/log_constants.dart';
 import 'data/repositories/user_progress_repository.dart';
 import 'ui/screens/onboarding_screen.dart';
 import 'data/repositories/character_repository.dart';
@@ -22,6 +24,10 @@ Future<void> main() async {
   await windowManager.ensureInitialized();
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfi;
+
+  // Initialize logger
+  await Logger.instance.initialize();
+  await Logger.instance.info(LogCategory.general, 'Application starting');
 
   // Initialize database with default characters
   final characterRepo = CharacterRepository();

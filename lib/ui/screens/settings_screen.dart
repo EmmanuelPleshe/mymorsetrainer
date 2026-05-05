@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../core/logging/logger.dart';
 import '../../data/models/settings.dart';
 import '../../data/repositories/backup_repository.dart';
 import '../bloc/settings_bloc.dart';
@@ -132,6 +133,12 @@ class SettingsScreen extends StatelessWidget {
           title: const Text('Replay Intro'),
           subtitle: const Text('Watch the welcome screens again'),
           onTap: onReplayIntro,
+        ),
+        ListTile(
+          leading: const Icon(Icons.bug_report),
+          title: const Text('Send Logs'),
+          subtitle: const Text('Open email with log file for debugging'),
+          onTap: () => _sendLogs(context),
         ),
         _buildSectionHeader('Timing Info'),
         const Card(
@@ -291,6 +298,21 @@ class SettingsScreen extends StatelessWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Export failed: $e')),
+        );
+      }
+    }
+  }
+
+  Future<void> _sendLogs(BuildContext context) async {
+    final success = await Logger.instance.sendLogs();
+    if (context.mounted) {
+      if (success) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Email client opened')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not open email. Log file: ${Logger.instance.currentLogPath}')),
         );
       }
     }
