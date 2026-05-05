@@ -14,6 +14,7 @@ class KeyboardKeyerHandler {
 
   String _pattern = '';
   Timer? _autoSubmitTimer;
+  bool _acceptInput = true;
 
   // Adaptive threshold: learns from user's keying speed
   final List<int> _recentDurations = [];
@@ -40,6 +41,7 @@ class KeyboardKeyerHandler {
   });
 
   void handleKeyDown() {
+    if (!_acceptInput) return;
     // Cancel any pending auto-submit - user is continuing to key
     _autoSubmitTimer?.cancel();
     onKeyDown?.call();
@@ -124,5 +126,12 @@ class KeyboardKeyerHandler {
 
   void dispose() {
     _autoSubmitTimer?.cancel();
+  }
+
+  void setAcceptInput(bool accept) {
+    _acceptInput = accept;
+    if (!accept) {
+      _autoSubmitTimer?.cancel();
+    }
   }
 }

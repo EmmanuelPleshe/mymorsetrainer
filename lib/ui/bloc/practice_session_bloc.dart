@@ -65,6 +65,7 @@ class PracticeSessionActive extends PracticeSessionState {
   final int totalAnswered;
   final int currentStreak;
   final bool? lastAnswerCorrect;
+  final bool isRetrying;
   final bool showUnlockNotification;
 
   const PracticeSessionActive({
@@ -74,6 +75,7 @@ class PracticeSessionActive extends PracticeSessionState {
     required this.totalAnswered,
     required this.currentStreak,
     this.lastAnswerCorrect,
+    this.isRetrying = false,
     this.showUnlockNotification = false,
   });
 
@@ -92,6 +94,7 @@ class PracticeSessionActive extends PracticeSessionState {
     int? totalAnswered,
     int? currentStreak,
     bool? lastAnswerCorrect,
+    bool? isRetrying,
     bool? showUnlockNotification,
   }) {
     return PracticeSessionActive(
@@ -101,6 +104,7 @@ class PracticeSessionActive extends PracticeSessionState {
       totalAnswered: totalAnswered ?? this.totalAnswered,
       currentStreak: currentStreak ?? this.currentStreak,
       lastAnswerCorrect: lastAnswerCorrect ?? this.lastAnswerCorrect,
+      isRetrying: isRetrying ?? this.isRetrying,
       showUnlockNotification: showUnlockNotification ?? this.showUnlockNotification,
     );
   }
@@ -113,6 +117,7 @@ class PracticeSessionActive extends PracticeSessionState {
         totalAnswered,
         currentStreak,
         lastAnswerCorrect,
+        isRetrying,
         showUnlockNotification,
       ];
 }
@@ -283,6 +288,7 @@ class PracticeSessionBloc
       totalAnswered: currentState.totalAnswered + 1,
       currentStreak: newStreak,
       lastAnswerCorrect: isCorrect,
+      isRetrying: false,
       showUnlockNotification: unlockedNextLevel,
     ));
 
@@ -310,15 +316,28 @@ class PracticeSessionBloc
         totalAnswered: currentState.totalAnswered + 1,
         currentStreak: newStreak,
         lastAnswerCorrect: null,
+        isRetrying: false,
         showUnlockNotification: false,
       ));
     } else {
-      // Wrong answer: reset for immediate retry, stay on same character
+      // Wrong answer: set retry state, stay on same character
+      emit(currentState.copyWith(
+        correctCount: newCorrectCount,
+        totalAnswered: currentState.totalAnswered + 1,
+        currentStreak: newStreak,
+        lastAnswerCorrect: false,
+        isRetrying: true,
+        showUnlockNotification: false,
+      ));
+
+      // Wait for retry window, then reset for retry input
+      await Future.delayed(const Duration(milliseconds: 600));
       emit(currentState.copyWith(
         correctCount: newCorrectCount,
         totalAnswered: currentState.totalAnswered + 1,
         currentStreak: newStreak,
         lastAnswerCorrect: null,
+        isRetrying: false,
         showUnlockNotification: false,
       ));
     }
