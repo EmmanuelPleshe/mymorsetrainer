@@ -36,7 +36,7 @@ class QSOService {
   List<String> get categories => _qsoPhrases.map((p) => p.category).toSet().toList();
 
   QSOPhrase getRandomPhrase({String? category}) {
-    var phrases = _qsoPhrases;
+    var phrases = List<QSOPhrase>.from(_qsoPhrases);
     if (category != null) {
       phrases = phrases.where((p) => p.category == category).toList();
     }

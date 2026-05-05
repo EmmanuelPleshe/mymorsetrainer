@@ -45,7 +45,7 @@ class WordPracticeService {
   List<String> get categories => _commonWords.map((w) => w.category).toSet().toList();
 
   Word getRandomWord({int? maxDifficulty}) {
-    var words = _commonWords;
+    var words = List<Word>.from(_commonWords);
     if (maxDifficulty != null) {
       words = words.where((w) => w.difficulty <= maxDifficulty).toList();
     }
