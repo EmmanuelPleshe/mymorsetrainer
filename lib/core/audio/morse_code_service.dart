@@ -176,15 +176,33 @@ class AudioPlaybackService {
     }
   }
 
+  Future<void> _ensureFileExists(String? path) async {
+    if (path == null || !File(path).existsSync()) {
+      await initialize();
+    }
+  }
+
   Future<void> _playDot() async {
     if (_dotWavPath != null) {
-      await Process.run('aplay', ['-q', _dotWavPath!]);
+      await _ensureFileExists(_dotWavPath);
+      final result = await Process.run('aplay', ['-q', _dotWavPath!]);
+      if (result.exitCode != 0) {
+        throw StateError(
+          'Audio playback failed for dot ($_dotWavPath): ${result.stderr}',
+        );
+      }
     }
   }
 
   Future<void> _playDash() async {
     if (_dashWavPath != null) {
-      await Process.run('aplay', ['-q', _dashWavPath!]);
+      await _ensureFileExists(_dashWavPath);
+      final result = await Process.run('aplay', ['-q', _dashWavPath!]);
+      if (result.exitCode != 0) {
+        throw StateError(
+          'Audio playback failed for dash ($_dashWavPath): ${result.stderr}',
+        );
+      }
     }
   }
 
@@ -193,6 +211,7 @@ class AudioPlaybackService {
     // Kill any existing first to avoid overlapping (adds ~10ms but prevents audio glitches)
     await keyerUp();
     if (_keyerWavPath != null) {
+      await _ensureFileExists(_keyerWavPath);
       // Use aplay with -d for duration-based (no need to kill on key up)
       // Also use -q for quiet, -v for volume
       _keyerProcess = await Process.start('aplay', ['-q', '-d', '5', _keyerWavPath!]);
@@ -211,7 +230,12 @@ class AudioPlaybackService {
     final wav = _generateSineWave(150, 880, _volume);
     final path = '/tmp/morse_correct.wav';
     await File(path).writeAsBytes(wav);
-    await Process.run('aplay', ['-q', path]);
+    final result = await Process.run('aplay', ['-q', path]);
+    if (result.exitCode != 0) {
+      throw StateError(
+        'Audio playback failed for correct feedback ($path): ${result.stderr}',
+      );
+    }
   }
 
   Future<void> dispose() async {

@@ -3,30 +3,40 @@ import 'package:mocktail/mocktail.dart';
 
 class MockHardwareKeyboard extends Mock implements HardwareKeyboard {}
 
-class FakeKeyEvent extends Fake implements KeyEvent {}
-
-/// Test utilities for simulating keyboard events
+/// Test utilities for simulating keyboard events.
+/// Note: Flutter requires both logicalKey and physicalKey as separate
+/// arguments; they are no longer linked on PhysicalKeyboardKey.
 class KeyboardTestUtils {
-  static KeyDownEvent keyDown({PhysicalKeyboardKey? key}) {
+  static KeyDownEvent keyDown({
+    LogicalKeyboardKey logicalKey = LogicalKeyboardKey.space,
+    PhysicalKeyboardKey physicalKey = PhysicalKeyboardKey.space,
+  }) {
     return KeyDownEvent(
-      logicalKey: key?.logicalKey ?? LogicalKeyboardKey.space,
-      physicalKey: key ?? PhysicalKeyboardKey.space,
+      logicalKey: logicalKey,
+      physicalKey: physicalKey,
       timeStamp: Duration.zero,
     );
   }
 
-  static KeyUpEvent keyUp({PhysicalKeyboardKey? key, Duration downDuration = const Duration(milliseconds: 100)}) {
+  static KeyUpEvent keyUp({
+    LogicalKeyboardKey logicalKey = LogicalKeyboardKey.space,
+    PhysicalKeyboardKey physicalKey = PhysicalKeyboardKey.space,
+    Duration downDuration = const Duration(milliseconds: 100),
+  }) {
     return KeyUpEvent(
-      logicalKey: key?.logicalKey ?? LogicalKeyboardKey.space,
-      physicalKey: key ?? PhysicalKeyboardKey.space,
+      logicalKey: logicalKey,
+      physicalKey: physicalKey,
       timeStamp: downDuration,
     );
   }
 
-  static KeyRepeatEvent keyRepeat({PhysicalKeyboardKey? key}) {
+  static KeyRepeatEvent keyRepeat({
+    LogicalKeyboardKey logicalKey = LogicalKeyboardKey.space,
+    PhysicalKeyboardKey physicalKey = PhysicalKeyboardKey.space,
+  }) {
     return KeyRepeatEvent(
-      logicalKey: key?.logicalKey ?? LogicalKeyboardKey.space,
-      physicalKey: key ?? PhysicalKeyboardKey.space,
+      logicalKey: logicalKey,
+      physicalKey: physicalKey,
       timeStamp: Duration.zero,
     );
   }

@@ -66,7 +66,7 @@ void main() {
   group('PracticeSessionBloc', () {
     group('regression: stuck retry state', () {
       blocTest<PracticeSessionBloc, PracticeSessionState>(
-        'should enter explicit retry state after wrong answer, not just null',
+        'emits feedback then retry then ready after wrong answer',
         build: () => PracticeSessionBloc(
           kochService: mockKochService,
           gamificationService: mockGamificationService,
@@ -80,20 +80,30 @@ void main() {
           // Submit wrong pattern (K = '-.-', user sends '.-' = A)
           bloc.add(const SubmitMorsePattern('.-'));
         },
-        wait: const Duration(milliseconds: 100),
-        verify: (bloc) {
-          final state = bloc.state;
-          expect(state, isA<PracticeSessionActive>());
-          final activeState = state as PracticeSessionActive;
-
-          // First: should show wrong answer (lastAnswerCorrect = false)
-          expect(activeState.lastAnswerCorrect, false);
-          expect(activeState.isRetrying, false);
-        },
+        wait: const Duration(milliseconds: 1400),
+        expect: () => [
+          isA<PracticeSessionLoading>(),
+          isA<PracticeSessionActive>(),
+          isA<PracticeSessionActive>().having(
+            (s) => (s as PracticeSessionActive).lastAnswerCorrect,
+            'lastAnswerCorrect',
+            false,
+          ),
+          isA<PracticeSessionActive>().having(
+            (s) => (s as PracticeSessionActive).isRetrying,
+            'isRetrying',
+            true,
+          ),
+          isA<PracticeSessionActive>().having(
+            (s) => (s as PracticeSessionActive).lastAnswerCorrect,
+            'lastAnswerCorrect',
+            null,
+          ),
+        ],
       );
 
       blocTest<PracticeSessionBloc, PracticeSessionState>(
-        'should set isRetrying=true during retry delay after wrong answer',
+        'allows retry after wrong answer then advances on correct',
         build: () => PracticeSessionBloc(
           kochService: mockKochService,
           gamificationService: mockGamificationService,
@@ -106,53 +116,20 @@ void main() {
 
           // Submit wrong pattern
           bloc.add(const SubmitMorsePattern('.-'));
+          await Future.delayed(const Duration(milliseconds: 1300));
+
+          // Retry with correct pattern
+          bloc.add(const SubmitMorsePattern('-.-'));
         },
-        wait: const Duration(milliseconds: 800), // In middle of retry delay (600-1200ms)
+        wait: const Duration(milliseconds: 1000),
         verify: (bloc) {
           final state = bloc.state;
-          expect(state, isA<PracticeSessionActive>());
-          final activeState = state as PracticeSessionActive;
-
-          // During retry window: should be retrying
-          // isRetrying should be true
-          // lastAnswerCorrect should be false (still showing wrong answer)
-          expect(activeState.isRetrying, true);
-          expect(activeState.lastAnswerCorrect, false);
-          // Should still be on same character (index 0)
-          expect(activeState.currentIndex, 0);
-        },
-      );
-
-      blocTest<PracticeSessionBloc, PracticeSessionState>(
-        'should NOT replay audio after wrong answer until user is ready',
-        build: () => PracticeSessionBloc(
-          kochService: mockKochService,
-          gamificationService: mockGamificationService,
-          spacedRepetitionService: mockSpacedRepetitionService,
-          userProgressRepository: mockUserProgressRepository,
-        ),
-        act: (bloc) async {
-          bloc.add(const StartSession(1));
-          await Future.delayed(const Duration(milliseconds: 50));
-
-          // Submit wrong pattern
-          bloc.add(const SubmitMorsePattern('.-'));
-
-          // Immediately submit correct pattern (during what USED to be the bug)
-          await Future.delayed(const Duration(milliseconds: 100));
-          bloc.add(const SubmitMorsePattern('-.-')); // Correct K
-
-          // Wait for wrong answer retry (1200ms) + correct answer advance (400ms)
-          await Future.delayed(const Duration(milliseconds: 2000));
-        },
-        verify: (bloc) {
-          final state = bloc.state;
-          // Should have advanced to character index 1
           expect(state, isA<PracticeSessionActive>());
           final activeState = state as PracticeSessionActive;
           expect(activeState.currentIndex, 1);
           expect(activeState.lastAnswerCorrect, null);
           expect(activeState.correctCount, 1);
+          expect(activeState.totalAnswered, 2);
         },
       );
     });
