@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -5,8 +6,21 @@ import 'package:path_provider/path_provider.dart';
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
   static Database? _database;
+  static String? _testDbPath;
 
   DatabaseHelper._init();
+
+  @visibleForTesting
+  static void setTestDbPath(String path) {
+    _testDbPath = path;
+    _database = null;
+  }
+
+  @visibleForTesting
+  static void reset() {
+    _database = null;
+    _testDbPath = null;
+  }
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -15,8 +29,13 @@ class DatabaseHelper {
   }
 
   Future<Database> _initDB(String filePath) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final path = join(directory.path, filePath);
+    final String path;
+    if (_testDbPath != null) {
+      path = _testDbPath!;
+    } else {
+      final directory = await getApplicationDocumentsDirectory();
+      path = join(directory.path, filePath);
+    }
 
     return await openDatabase(
       path,
