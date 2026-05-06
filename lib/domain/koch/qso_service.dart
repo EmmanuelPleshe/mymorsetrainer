@@ -20,7 +20,7 @@ class QSOService {
   ];
 
   List<QSOPhrase> getPhrases({String? category, int? limit}) {
-    var phrases = _qsoPhrases;
+    var phrases = List<QSOPhrase>.from(_qsoPhrases);
 
     if (category != null) {
       phrases = phrases.where((p) => p.category == category).toList();

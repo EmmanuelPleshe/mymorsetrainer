@@ -25,7 +25,7 @@ class WordPracticeService {
   ];
 
   List<Word> getWords({int? maxDifficulty, int? limit}) {
-    var words = _commonWords;
+    var words = List<Word>.from(_commonWords);
 
     if (maxDifficulty != null) {
       words = words.where((w) => w.difficulty <= maxDifficulty).toList();
