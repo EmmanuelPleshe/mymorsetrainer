@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:morse_trainer/data/database/database_helper.dart';
@@ -126,72 +128,16 @@ void main() {
   });
 
   group('migration v1->v5', () {
-    test('upgrades from v1 adding effWpm, extraWordSpace, enableScreenFlash, onboarding columns', () async {
-      // Create a v1 database manually
-      final db = await openDatabase(
-        ':memory:',
-        version: 1,
-        onCreate: (db, version) async {
-          // V1 schema (minimal versions of tables)
-          await db.execute('''
-            CREATE TABLE settings (
-              id TEXT PRIMARY KEY,
-              toneFrequency REAL NOT NULL DEFAULT 600.0,
-              wpm REAL NOT NULL DEFAULT 20.0,
-              volume REAL NOT NULL DEFAULT 1.0,
-              inputMethod INTEGER NOT NULL DEFAULT 0,
-              enableGamification INTEGER NOT NULL DEFAULT 1,
-              enableSoundEffects INTEGER NOT NULL DEFAULT 0
-            )
-          ''');
-          await db.execute('''
-            CREATE TABLE user_progress (
-              id TEXT PRIMARY KEY,
-              totalPoints INTEGER NOT NULL DEFAULT 0,
-              currentStreak INTEGER NOT NULL DEFAULT 0,
-              longestStreak INTEGER NOT NULL DEFAULT 0,
-              currentLevel INTEGER NOT NULL DEFAULT 1,
-              charactersMastered INTEGER NOT NULL DEFAULT 0,
-              totalSessionsCompleted INTEGER NOT NULL DEFAULT 0
-            )
-          ''');
-          await db.execute('''
-            CREATE TABLE characters (
-              id TEXT PRIMARY KEY,
-              symbol TEXT NOT NULL UNIQUE,
-              morsePattern TEXT NOT NULL,
-              masteryLevel INTEGER NOT NULL DEFAULT 0,
-              accuracyPercentage REAL NOT NULL DEFAULT 0.0,
-              totalAttempts INTEGER NOT NULL DEFAULT 0,
-              correctAttempts INTEGER NOT NULL DEFAULT 0,
-              lastPracticed TEXT,
-              nextReviewDate TEXT,
-              isUnlocked INTEGER NOT NULL DEFAULT 0,
-              kochOrder INTEGER NOT NULL
-            )
-          ''');
-          await db.execute('''
-            CREATE TABLE sessions (
-              id TEXT PRIMARY KEY,
-              charactersPracticed TEXT NOT NULL,
-              accuracy REAL NOT NULL,
-              duration INTEGER NOT NULL,
-              inputMethod INTEGER NOT NULL,
-              timestamp TEXT NOT NULL
-            )
-          ''');
-        },
+    test('in-place migration adds all missing columns', () async {
+      final tempFile = File(
+        '${Directory.systemTemp.path}/morse_migration_test_${DateTime.now().millisecondsSinceEpoch}.db',
       );
-      await db.close();
+      addTearDown(() {
+        if (tempFile.existsSync()) tempFile.deleteSync();
+      });
 
-      // Now let DatabaseHelper open it at version 5
-      DatabaseHelper.setTestDbPath(':memory:');
-      // Actually we can't reopen the same :memory: db after closing it.
-      // Instead, let's test the migration directly by creating a fresh db at v1
-      // and manually running the upgrade.
-      // We'll create a separate memory db for migration test.
       final migrationDb = await openDatabase(
-        ':memory:',
+        tempFile.path,
         version: 1,
         onCreate: (db, version) async {
           await db.execute('''
@@ -235,6 +181,67 @@ void main() {
       expect(progressColNames, containsAll(['hasCompletedOnboarding', 'skipIntroOnboarding']));
 
       await migrationDb.close();
+    });
+
+    test('close-then-reopen migration via DatabaseHelper with temp file', () async {
+      final tempFile = File(
+        '${Directory.systemTemp.path}/morse_test_${DateTime.now().millisecondsSinceEpoch}.db',
+      );
+      addTearDown(() {
+        if (tempFile.existsSync()) tempFile.deleteSync();
+      });
+
+      // Create v1 database on disk
+      final v1Db = await openDatabase(
+        tempFile.path,
+        version: 1,
+        onCreate: (db, version) async {
+          await db.execute('''
+            CREATE TABLE settings (
+              id TEXT PRIMARY KEY,
+              toneFrequency REAL NOT NULL DEFAULT 600.0,
+              wpm REAL NOT NULL DEFAULT 20.0,
+              volume REAL NOT NULL DEFAULT 1.0,
+              inputMethod INTEGER NOT NULL DEFAULT 0,
+              enableGamification INTEGER NOT NULL DEFAULT 1,
+              enableSoundEffects INTEGER NOT NULL DEFAULT 0
+            )
+          ''');
+          await db.execute('''
+            CREATE TABLE user_progress (
+              id TEXT PRIMARY KEY,
+              totalPoints INTEGER NOT NULL DEFAULT 0,
+              currentStreak INTEGER NOT NULL DEFAULT 0,
+              longestStreak INTEGER NOT NULL DEFAULT 0,
+              currentLevel INTEGER NOT NULL DEFAULT 1,
+              charactersMastered INTEGER NOT NULL DEFAULT 0,
+              totalSessionsCompleted INTEGER NOT NULL DEFAULT 0
+            )
+          ''');
+        },
+      );
+      await v1Db.close();
+
+      // Reopen via DatabaseHelper at version 5 — triggers onUpgrade
+      DatabaseHelper.reset();
+      DatabaseHelper.setTestDbPath(tempFile.path);
+      final db = await DatabaseHelper.instance.database;
+
+      // Verify all v5 columns exist after upgrade
+      final settingsCols = await db.rawQuery('PRAGMA table_info(settings)');
+      final settingsColNames = settingsCols.map((c) => c['name']).toList();
+      expect(settingsColNames, containsAll(['effWpm', 'extraWordSpace', 'enableScreenFlash']));
+
+      final progressCols = await db.rawQuery('PRAGMA table_info(user_progress)');
+      final progressColNames = progressCols.map((c) => c['name']).toList();
+      expect(progressColNames, containsAll(['hasCompletedOnboarding', 'skipIntroOnboarding']));
+
+      // Verify default data was NOT inserted (onUpgrade doesn't call onCreate)
+      final settingsRows = await db.query('settings');
+      expect(settingsRows, isEmpty);
+
+      final progressRows = await db.query('user_progress');
+      expect(progressRows, isEmpty);
     });
   });
 
