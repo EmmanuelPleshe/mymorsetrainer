@@ -97,7 +97,9 @@ class MorseTrainerApp extends StatelessWidget {
 }
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, this.userProgressRepository});
+
+  final UserProgressRepository? userProgressRepository;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -126,8 +128,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Wi
   }
 
   Future<void> _checkOnboarding() async {
-    final repo = UserProgressRepository();
+    final repo = widget.userProgressRepository ?? UserProgressRepository();
     final progress = await repo.getUserProgress();
+    if (!mounted) return;
     setState(() {
       // Show onboarding if not completed AND not skipping (or force replay)
       _showOnboarding = _forceReplayOnboarding || (!progress.hasCompletedOnboarding && !progress.skipIntroOnboarding);

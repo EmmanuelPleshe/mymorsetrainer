@@ -1,9 +1,12 @@
 import 'dart:io';
+
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morse_trainer/core/logging/log_config.dart';
 import 'package:morse_trainer/core/logging/log_constants.dart';
 import 'package:morse_trainer/core/logging/log_entry.dart';
 import 'package:morse_trainer/core/logging/log_rotator.dart';
+import 'package:morse_trainer/core/logging/logger.dart';
 
 void main() {
   group('LogEntry', () {
@@ -145,6 +148,85 @@ void main() {
       // since we just created it. Let's verify at least the old one is gone.
       final oldStillExists = archives.any((e) => e.path.contains('2024-01-01'));
       expect(oldStillExists, false);
+    });
+  });
+
+  group('Logger', () {
+    const channel = MethodChannel('plugins.flutter.io/path_provider');
+    late Directory tempDir;
+
+    setUpAll(() async {
+      TestWidgetsFlutterBinding.ensureInitialized();
+      tempDir = await Directory.systemTemp.createTemp('logger_test_');
+      channel.setMockMethodCallHandler((call) async {
+        if (call.method == 'getApplicationSupportDirectory') {
+          return tempDir.path;
+        }
+        return null;
+      });
+      await Logger.instance.initialize(config: const LogConfig(maxFileSizeBytes: 1024 * 1024));
+    });
+
+    tearDownAll(() async {
+      channel.setMockMethodCallHandler(null);
+      if (await tempDir.exists()) {
+        await tempDir.delete(recursive: true);
+      }
+    });
+
+    tearDown(() async {
+      final logFile = File('${tempDir.path}/morse_trainer/app.log');
+      if (await logFile.exists()) {
+        await logFile.delete();
+      }
+    });
+
+    test('currentLogPath points to app.log', () {
+      expect(Logger.instance.currentLogPath, isNotEmpty);
+      expect(Logger.instance.currentLogPath, endsWith('app.log'));
+    });
+
+    test('log appends entry to file', () async {
+      await Logger.instance.log(LogEntry(
+        timestamp: DateTime(2024, 6, 1, 12, 0, 0),
+        level: LogLevel.info,
+        category: LogCategory.general,
+        message: 'unit test message',
+      ));
+
+      final content = await File('${tempDir.path}/morse_trainer/app.log').readAsString();
+      expect(content, contains('[INFO] [general] unit test message'));
+    });
+
+    test('debug writes DEBUG level', () async {
+      await Logger.instance.debug(LogCategory.audio, 'audio debug');
+      final content = await File('${tempDir.path}/morse_trainer/app.log').readAsString();
+      expect(content, contains('[DEBUG] [audio] audio debug'));
+    });
+
+    test('info writes INFO level', () async {
+      await Logger.instance.info(LogCategory.session, 'session info');
+      final content = await File('${tempDir.path}/morse_trainer/app.log').readAsString();
+      expect(content, contains('[INFO] [session] session info'));
+    });
+
+    test('warning writes WARNING level', () async {
+      await Logger.instance.warning(LogCategory.session, 'session warning');
+      final content = await File('${tempDir.path}/morse_trainer/app.log').readAsString();
+      expect(content, contains('[WARNING] [session] session warning'));
+    });
+
+    test('error writes ERROR level with stack trace', () async {
+      await Logger.instance.error(LogCategory.general, 'error msg', stackTrace: 'line1\nline2');
+      final content = await File('${tempDir.path}/morse_trainer/app.log').readAsString();
+      expect(content, contains('[ERROR] [general] error msg'));
+      expect(content, contains('line1'));
+      expect(content, contains('line2'));
+    });
+
+    test('sendLogs returns false when url launcher unavailable', () async {
+      final result = await Logger.instance.sendLogs();
+      expect(result, false);
     });
   });
 }
