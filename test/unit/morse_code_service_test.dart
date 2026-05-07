@@ -37,6 +37,30 @@ void main() {
       final characters = service.getCharactersForLevel(1);
       expect(characters.length, 4);
     });
+
+    test('getCharactersForLevel caps at max sequence length', () {
+      final characters = service.getCharactersForLevel(100);
+      expect(characters.length, MorseCodeService.kochSequence.length);
+    });
+
+    test('getTotalLevels returns ceil of half sequence length', () {
+      expect(service.getTotalLevels(), (MorseCodeService.kochSequence.length / 2).ceil());
+    });
+
+    test('getAllCharacters returns all keys', () {
+      final all = service.getAllCharacters();
+      expect(all.length, 39);
+      expect(all.contains('A'), true);
+      expect(all.contains('Z'), true);
+      expect(all.contains('0'), true);
+      expect(all.contains('/'), true);
+    });
+
+    test('getMorsePattern is case insensitive', () {
+      expect(service.getMorsePattern('a'), '.-');
+      expect(service.getMorsePattern('k'), '-.-');
+      expect(service.getMorsePattern('M'), '--');
+    });
   });
 
   group('WpmCalculator', () {

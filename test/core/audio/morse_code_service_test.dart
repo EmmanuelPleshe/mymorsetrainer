@@ -96,6 +96,104 @@ void main() {
         expect(service.dotDurationMs, 120);
         expect(service.dashDurationMs, 360);
       });
+
+      test('Farnsworth interCharSpace increases when effWpm < wpm', () {
+        service.setWpm(20);
+        service.setEffWpm(10);
+        // Standard inter-char at 20 WPM = 180 ms
+        // Farnsworth at 10/20 adds ~1443 ms extra
+        expect(service.interCharacterSpaceMs, greaterThan(180));
+      });
+
+      test('Farnsworth interWordSpace increases when effWpm < wpm', () {
+        service.setWpm(20);
+        service.setEffWpm(10);
+        // Standard inter-word at 20 WPM = 420 ms
+        // Farnsworth at 10/20 adds ~3367 ms extra
+        expect(service.interWordSpaceMs, greaterThan(420));
+      });
+
+      test('standard spacing when effWpm >= wpm', () {
+        service.setWpm(15);
+        service.setEffWpm(15);
+        expect(service.interCharacterSpaceMs, 60 * 3);
+        expect(service.interWordSpaceMs, 60 * 7);
+      });
+
+      test('extraWordSpace adds to interWordSpace when effWpm >= wpm', () {
+        service.setWpm(20);
+        service.setEffWpm(20);
+        service.setExtraWordSpace(0.5);
+        expect(service.interWordSpaceMs, (60 * 7) + 500);
+      });
+
+      test('extraWordSpace adds to Farnsworth interWordSpace', () {
+        service.setWpm(20);
+        service.setEffWpm(10);
+        service.setExtraWordSpace(0.3);
+        final base = service.interWordSpaceMs - 300;
+        expect(service.interWordSpaceMs, base + 300);
+      });
+    });
+
+    group('setters clamp values', () {
+      test('setToneFrequency clamps to 300-2000', () {
+        service.setToneFrequency(100);
+        expect(service.toneFrequency, 300);
+        service.setToneFrequency(2500);
+        expect(service.toneFrequency, 2000);
+        service.setToneFrequency(600);
+        expect(service.toneFrequency, 600);
+      });
+
+      test('setWpm clamps to 5-40', () {
+        service.setWpm(1);
+        expect(service.wpm, 5);
+        service.setWpm(50);
+        expect(service.wpm, 40);
+        service.setWpm(20);
+        expect(service.wpm, 20);
+      });
+
+      test('setEffWpm clamps to 5-40', () {
+        service.setEffWpm(1);
+        expect(service.effWpm, 5);
+        service.setEffWpm(50);
+        expect(service.effWpm, 40);
+        service.setEffWpm(10);
+        expect(service.effWpm, 10);
+      });
+
+      test('setExtraWordSpace clamps to 0-5', () {
+        service.setExtraWordSpace(-1);
+        expect(service.extraWordSpace, 0);
+        service.setExtraWordSpace(10);
+        expect(service.extraWordSpace, 5);
+        service.setExtraWordSpace(0.5);
+        expect(service.extraWordSpace, 0.5);
+      });
+
+      test('setVolume clamps to 0-1', () {
+        service.setVolume(-0.5);
+        expect(service.volume, 0);
+        service.setVolume(1.5);
+        expect(service.volume, 1);
+        service.setVolume(0.75);
+        expect(service.volume, 0.75);
+      });
+    });
+
+    group('dispose', () {
+      test('dispose deletes generated files', () async {
+        await service.initialize();
+        expect(File('/tmp/morse_dot.wav').existsSync(), true);
+
+        await service.dispose();
+
+        expect(File('/tmp/morse_dot.wav').existsSync(), false);
+        expect(File('/tmp/morse_dash.wav').existsSync(), false);
+        expect(File('/tmp/morse_keyer.wav').existsSync(), false);
+      });
     });
   });
 }
