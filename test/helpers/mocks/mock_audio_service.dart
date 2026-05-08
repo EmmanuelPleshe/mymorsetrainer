@@ -1,7 +1,7 @@
 import 'package:mocktail/mocktail.dart';
-import 'package:morse_trainer/core/audio/morse_code_service.dart';
+import 'package:morse_trainer/core/audio/audio_service.dart';
 
-class MockAudioPlaybackService extends Mock implements AudioPlaybackService {
+class MockAudioService extends Mock implements AudioService {
   @override
   int get dotDurationMs => 60;
 
@@ -10,6 +10,9 @@ class MockAudioPlaybackService extends Mock implements AudioPlaybackService {
 
   @override
   int get unitMs => 60;
+
+  @override
+  int get intraCharacterSpaceMs => 60;
 
   @override
   int get interCharacterSpaceMs => 180;
@@ -28,4 +31,7 @@ class MockAudioPlaybackService extends Mock implements AudioPlaybackService {
 
   @override
   double get volume => 0.5;
+
+  @override
+  double get extraWordSpace => 0;
 }

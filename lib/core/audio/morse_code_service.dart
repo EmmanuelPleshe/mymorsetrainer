@@ -2,6 +2,8 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'audio_service.dart';
+
 /// Morse code timing based on ARRL PARIS standard (50 units per word)
 /// Reference: https://github.com/spasutto/cw-trainer
 class MorseCodeService {
@@ -43,7 +45,7 @@ class MorseCodeService {
 }
 
 /// Audio playback with proper ARRL timing
-class AudioPlaybackService {
+class AudioPlaybackService implements AudioService {
   static final AudioPlaybackService _instance = AudioPlaybackService._internal();
   factory AudioPlaybackService() => _instance;
   AudioPlaybackService._internal();
