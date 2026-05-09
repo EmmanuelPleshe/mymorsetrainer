@@ -99,7 +99,21 @@ All timing values are calculated from `wpm` and `effectiveWpm`. No hardcoded dur
 
 ## Audio Service Interface
 
+Audio layer knows tones and silences only. Character-to-pattern mapping lives in domain layer (`lib/domain/morse/`).
+
 ```dart
+sealed class MorseElement {}
+
+final class Tone extends MorseElement {
+  final int durationMs;
+  Tone(this.durationMs);
+}
+
+final class Silence extends MorseElement {
+  final int durationMs;
+  Silence(this.durationMs);
+}
+
 abstract class AudioService {
   /// Play a single tone of [frequency] Hz for [durationMs] milliseconds.
   Future<void> playTone({required int frequency, required int durationMs});
@@ -107,9 +121,9 @@ abstract class AudioService {
   /// Play a silence (gap) for [durationMs] milliseconds.
   Future<void> playSilence({required int durationMs});
 
-  /// Play a complete character (dots, dashes, intra-char spaces) using
-  /// the provided [timing]. The service must handle tone + silence sequencing.
-  Future<void> playCharacter(String character, MorseTiming timing);
+  /// Play a complete pattern of tones and silences.
+  /// The service must handle tone + silence sequencing.
+  Future<void> playPattern(List<MorseElement> elements, MorseTiming timing);
 
   /// Set master volume (0.0 – 1.0). Affects all subsequent playback.
   void setVolume(double volume);
@@ -118,6 +132,18 @@ abstract class AudioService {
   Future<void> stop();
 }
 ```
+
+### Morse Pattern Resolver
+
+Domain layer maps characters to patterns:
+
+```dart
+abstract class MorsePatternResolver {
+  List<MorseElement> resolve(String character);
+}
+```
+
+Example: `"R"` → `[Tone(60), Silence(60), Tone(180)]` at 20 WPM.
 
 ### Side-Effect Rule
 BLoC must NOT call audio services. `BlocListener` in the UI layer handles audio side effects.
