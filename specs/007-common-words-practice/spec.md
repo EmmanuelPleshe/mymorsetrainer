@@ -86,7 +86,7 @@ New or struggling words (low Familiarity Score) receive visual scaffolding to ai
 - **FR-001**: The system MUST play complete word Morse patterns as a single continuous audio unit with inter-letter gaps of exactly 3 dits.
 - **FR-002**: The system MUST NOT display letters, per-letter highlighting, or letter-by-letter decoding on screen during audio playback.
 - **FR-003**: The system MUST display a "Listen..." pulse indicator during playback.
-- **FR-004**: The system MUST accept Morse keyboard input with forgiving timing: pauses up to 3 dits between symbols within a word, and up to 3 dashes (9 dits) as a word boundary.
+- **FR-004**: The system MUST tolerate pauses up to 3 dits between letters within a word during user Morse keyboard keying, and MUST accept pauses up to 3 dashes (9 dits) as a word boundary. Audio playback continues to use precise 3-dit inter-letter spacing.
 - **FR-005**: The system MUST compare submitted tap sequences holistically against the target word's Morse pattern based on dit/dah sequence correctness, not timing exactitude.
 - **FR-006**: The system MUST provide an explicit Submit button as an alternative to auto-submitting on long pauses.
 - **FR-007**: The system MUST display only a raw tap accumulation indicator (e.g., "● ●●● ●") while the user is keying, with no live letter decoding.
