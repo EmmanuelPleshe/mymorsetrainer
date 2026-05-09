@@ -67,7 +67,7 @@ User has been practicing and the app tracks their performance on each character.
 **Acceptance Scenarios**:
 
 1. **Given** user has learned characters K, M, R, and has low accuracy on K, **When** practice session starts, **Then** K appears more frequently than R
-2. **Given** user has 90%+ accuracy on a character for multiple sessions, **When** next practice occurs, **Then** that character's review interval has increased (2 days → 7 days → 30 days → 90 days)
+2. **Given** user has 90%+ accuracy on a character for multiple sessions, **When** next practice occurs, **Then** that character's review interval grows per SM-2 algorithm (ease-factor-driven, not fixed schedule)
 3. **Given** user hasn't practiced for 7 days, **When** they start a session, **Then** characters due for review are prioritized
 
 ---
@@ -120,7 +120,7 @@ User earns points for correct responses, maintains streaks for consecutive corre
 - **FR-002**: System MUST accept input from keyboard, touchscreen tap, game controller button, and audio input (microphone/line-in)
 - **FR-003**: System MUST verify user keying against expected morse code pattern and provide immediate feedback (correct/incorrect)
 - **FR-004**: System MUST require 90% accuracy before unlocking next character in Koch sequence
-- **FR-005**: System MUST implement spaced repetition algorithm with intervals: 2 days → 7 days → 30 days → 90 days based on mastery level
+- **FR-005**: System MUST implement SM-2 spaced repetition algorithm per CLAUDE.md (dynamic intervals based on ease factor and review quality, not fixed intervals)
 - **FR-006**: System MUST allow adjustment of audio tone frequency (default 600Hz, range 300Hz-2000Hz)
 - **FR-007**: System MUST allow adjustment of character speed in WPM (default 20 WPM, range 5-40 WPM) and effective speed in WPM (default 10 WPM, range 5-40 WPM, must be ≤ character speed)
 - **FR-008**: System MUST track user performance per character and schedule reviews based on spaced repetition
