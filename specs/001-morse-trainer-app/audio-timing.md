@@ -101,6 +101,8 @@ All timing values are calculated from `wpm` and `effectiveWpm`. No hardcoded dur
 
 Audio layer knows tones and silences only. Character-to-pattern mapping lives in domain layer (`lib/domain/morse/`).
 
+**Latency**: See `spec.md` SC-005 — <50 ms from trigger to sound output.
+
 ```dart
 sealed class MorseElement {}
 
@@ -144,6 +146,16 @@ abstract class MorsePatternResolver {
 ```
 
 Example: `"R"` → `[Tone(60), Silence(60), Tone(180)]` at 20 WPM.
+
+### Playback Timeline (Character "R" at 20 WPM, 600 Hz)
+
+```
+time(ms): 0      60      120     180     240     300
+          | tone  |gap| tone  |gap| tone  |
+          |███████|   |███████|   |████████████████████|
+          └───────┘   └───────┘   └────────────────────┘
+          60ms tone   60ms gap    180ms dash
+```
 
 ### Side-Effect Rule
 BLoC must NOT call audio services. `BlocListener` in the UI layer handles audio side effects.
