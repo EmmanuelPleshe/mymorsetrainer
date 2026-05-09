@@ -58,9 +58,9 @@ interWordSpaceMs = (7 * unitMs) + (t_w * 1000);
 ```
 
 **Example** (10/20 Farnsworth):
-- Character sounds: 60 ms unit, 180 ms dah
-- Extra inter-char delay: ~1443 ms per space
-- Extra inter-word delay: ~3367 ms per space
+- Character sounds: 60 ms unit, 180 ms dash
+- Total inter-char space: ~834 ms
+- Total inter-word space: ~1945 ms
 - Result: characters sound fast (20 WPM), gaps are long (10 WPM overall)
 
 ---
@@ -126,6 +126,6 @@ Changing settings mid-session must apply to the **next character played**, never
 ## Acceptance Criteria
 
 1. Given character speed = 20 WPM and effective = 20 WPM, when timing is calculated, then unitMs = 60, dotMs = 60, dashMs = 180, interCharSpaceMs = 180, interWordSpaceMs = 420.
-2. Given character speed = 20 WPM and effective = 10 WPM, when timing is calculated, then Farnsworth extra delay is applied and interCharSpaceMs ≈ 1623, interWordSpaceMs ≈ 3787.
+2. Given character speed = 20 WPM and effective = 10 WPM, when timing is calculated, then Farnsworth extra delay is applied and interCharSpaceMs ≈ 834, interWordSpaceMs ≈ 1945.
 3. Given user changes WPM slider during a session, when next character plays, then new timing values are used without interrupting current audio.
 4. Given app restarts, when settings load, then previously saved WPM, effective WPM, tone, and volume are restored.
