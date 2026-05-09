@@ -131,6 +131,63 @@ void main() {
       });
     });
 
+    group('submitNow', () {
+      test('submits valid pattern immediately', () {
+        handler.handleKeyDown();
+        handler.handleKeyUp(50); // dot
+        handler.handleKeyDown();
+        handler.handleKeyUp(50); // dot
+        handler.handleKeyDown();
+        handler.handleKeyUp(200); // dash
+
+        expect(handler.currentPattern, '..-');
+
+        handler.submitNow();
+
+        expect(capturedPattern, '..-');
+        expect(handler.currentPattern, '');
+      });
+
+      test('does nothing when pattern is empty', () {
+        handler.submitNow();
+        expect(capturedPattern, isNull);
+        expect(handler.currentPattern, '');
+      });
+
+      test('cancels pending auto-submit timer', () async {
+        handler.handleKeyDown();
+        handler.handleKeyUp(50); // dot
+
+        handler.submitNow();
+
+        expect(capturedPattern, '.');
+        await Future.delayed(const Duration(milliseconds: 200));
+        // Should not fire again
+        expect(capturedPattern, '.');
+      });
+    });
+
+    group('incomplete pattern auto-submit', () {
+      test('submits unknown pattern after timeout', () async {
+        // Key a pattern that is not in the morse lookup
+        handler.handleKeyDown();
+        handler.handleKeyUp(50); // dot
+        handler.handleKeyDown();
+        handler.handleKeyUp(50); // dot
+        handler.handleKeyDown();
+        handler.handleKeyUp(50); // dot
+        handler.handleKeyDown();
+        handler.handleKeyUp(50); // dot
+        handler.handleKeyDown();
+        handler.handleKeyUp(50); // dot - pattern '.....' not in lookup
+
+        // Wait for auto-submit timer (3 * 60ms = 180ms)
+        await Future.delayed(const Duration(milliseconds: 200));
+
+        expect(capturedPattern, '.....');
+      });
+    });
+
     group('input blocking', () {
       test('blocks input when setAcceptInput(false)', () {
         handler.setAcceptInput(false);

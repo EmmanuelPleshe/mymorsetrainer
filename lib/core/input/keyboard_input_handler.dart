@@ -16,11 +16,6 @@ class KeyboardKeyerHandler {
   Timer? _autoSubmitTimer;
   bool _acceptInput = true;
 
-  // Adaptive threshold: learns from user's keying speed
-  final List<int> _recentDurations = [];
-  static const int _historySize = 20;  // Keep last 20 key presses
-  int _adaptiveThreshold = 0;  // 0 = use default, otherwise learned
-
   static final Map<String, String> _morseToChar = {
     '.-': 'A', '-...': 'B', '-.-.': 'C', '-..': 'D', '.': 'E',
     '..-.': 'F', '--.': 'G', '....': 'H', '..': 'I', '.---': 'J',
@@ -60,25 +55,6 @@ class KeyboardKeyerHandler {
 
     // Try to submit - but do it via timer to allow UI to show pattern first
     _scheduleAutoSubmit();
-  }
-
-  void _updateAdaptiveThreshold(int durationMs) {
-    // Add to history
-    _recentDurations.add(durationMs);
-    if (_recentDurations.length > _historySize) {
-      _recentDurations.removeAt(0);
-    }
-
-    // Estimate dot duration from short presses (bottom 30% of durations)
-    if (_recentDurations.length >= 5) {
-      final sorted = List<int>.from(_recentDurations)..sort();
-      final shortPresses = sorted.take((sorted.length * 0.3).ceil()).toList();
-      final avgShort = shortPresses.reduce((a, b) => a + b) ~/ shortPresses.length;
-
-      // Threshold = 2x estimated dot duration
-      _adaptiveThreshold = avgShort * 2;
-      Logger().debug(LogCategory.ui, 'Adaptive threshold updated to $_adaptiveThreshold ms (from $shortPresses)');
-    }
   }
 
   void _scheduleAutoSubmit() {
