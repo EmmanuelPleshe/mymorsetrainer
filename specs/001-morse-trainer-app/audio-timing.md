@@ -170,3 +170,8 @@ Changing settings mid-session must apply to the **next character played**, never
 2. Given character speed = 20 WPM and effective = 10 WPM, when timing is calculated, then Farnsworth extra delay is applied and interCharSpaceMs ≈ 834, interWordSpaceMs ≈ 1945.
 3. Given user changes WPM slider during a session, when next character plays, then new timing values are used without interrupting current audio.
 4. Given app restarts, when settings load, then previously saved WPM, effective WPM, tone, and volume are restored.
+5. Given character speed = 20 WPM and effective = 20 WPM, when timing is calculated, then interCharSpaceMs = 180, interWordSpaceMs = 420 (standard timing, zero Farnsworth).
+6. Given effective speed > character speed, when timing is calculated, then effective speed is clamped to character speed before calculation (no negative extra delay).
+7. Given character speed = 5 WPM (minimum), when timing is calculated, then unitMs = 240, dashMs = 720.
+8. Given character speed = 40 WPM (maximum), when timing is calculated, then unitMs = 30, dashMs = 90.
+9. Given tone frequency = 300 Hz and tone frequency = 2000 Hz, when tone plays, then tones output at boundary frequencies without distortion.
