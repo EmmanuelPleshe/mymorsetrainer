@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/services.dart';
+import '../logging/logger.dart';
+import '../logging/log_constants.dart';
 
 typedef KeyerCallback = void Function(String morsePattern);
 
@@ -52,7 +54,7 @@ class KeyboardKeyerHandler {
     final symbol = durationMs >= threshold ? '-' : '.';
     _pattern += symbol;
 
-    print('HANDLER: Key up after $durationMs ms, threshold=$threshold, symbol=$symbol');
+    Logger().debug(LogCategory.ui, 'Key up after $durationMs ms, threshold=$threshold, symbol=$symbol');
 
     // Try to submit - but do it via timer to allow UI to show pattern first
     _scheduleAutoSubmit();
@@ -73,22 +75,26 @@ class KeyboardKeyerHandler {
 
       // Threshold = 2x estimated dot duration
       _adaptiveThreshold = avgShort * 2;
-      print('HANDLER: Adaptive threshold updated to $_adaptiveThreshold ms (from $shortPresses)');
+      Logger().debug(LogCategory.ui, 'Adaptive threshold updated to $_adaptiveThreshold ms (from $shortPresses)');
     }
   }
 
   void _scheduleAutoSubmit() {
     _autoSubmitTimer?.cancel();
 
-    // Fixed timeout: user controls pace via pause between elements.
-    // If they pause longer than this, pattern submits as-is.
-    // 400ms gives enough time for 2-3 element characters at 20WPM.
-    const timeoutMs = 400;
-
-    _autoSubmitTimer = Timer(const Duration(milliseconds: timeoutMs), () {
-      if (_pattern.isNotEmpty) {
-        final char = _morseToChar[_pattern] ?? '?';
-        print('HANDLER: Auto-submitting pattern "$_pattern" -> "$char" after ${timeoutMs}ms');
+    // Use inter-character spacing (3× dot duration) as timeout threshold
+    // This matches actual Morse timing: after 3 units of silence, character is complete
+    final timeoutMs = dotDurationMs * 3;
+    _autoSubmitTimer = Timer(Duration(milliseconds: timeoutMs), () {
+      if (_pattern.isNotEmpty && _morseToChar.containsKey(_pattern)) {
+        final pattern = _pattern;
+        final char = _morseToChar[pattern] ?? '?';
+        Logger().debug(LogCategory.ui, 'Auto-submitting pattern "$pattern" -> "$char" after ${timeoutMs}ms');
+        onPatternComplete(pattern);
+        _pattern = '';
+      } else if (_pattern.isNotEmpty) {
+        // Pattern incomplete (not in lookup) - treat as wrong char, submit anyway
+        Logger().debug(LogCategory.ui, 'Incomplete pattern "$_pattern" - submitting anyway');
         onPatternComplete(_pattern);
         _pattern = '';
       }
@@ -101,7 +107,7 @@ class KeyboardKeyerHandler {
     if (_pattern.isNotEmpty && _morseToChar.containsKey(_pattern)) {
       final pattern = _pattern;
       final char = _morseToChar[pattern] ?? '?';
-      print('HANDLER: Manual submit pattern "$pattern" -> "$char"');
+      Logger().debug(LogCategory.ui, 'Manual submit pattern "$pattern" -> "$char"');
       onPatternComplete(pattern);
       _pattern = '';
     }
@@ -110,10 +116,10 @@ class KeyboardKeyerHandler {
   String get currentPattern => _pattern;
 
   void clearPattern() {
-    print('HANDLER: clearPattern called, clearing "$_pattern"');
+    Logger().debug(LogCategory.ui, 'clearPattern called, clearing "$_pattern"');
     _autoSubmitTimer?.cancel();
     _pattern = '';
-    print('HANDLER: Pattern after clear: "$_pattern"');
+    Logger().debug(LogCategory.ui, 'Pattern after clear: "$_pattern"');
   }
 
   void dispose() {

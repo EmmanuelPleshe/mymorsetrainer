@@ -208,9 +208,13 @@ jobs:
           git tag -a "$TAG" -m "Release $TAG"
           git push origin "$TAG"
 
+          # Zip each platform bundle
+          (cd linux-build && zip -r ../linux-release.zip .)
+          (cd windows-build && zip -r ../windows-release.zip .)
+
           gh release create "$TAG" \
-            linux-build/bundle/* \
-            windows-build/* \
+            linux-release.zip \
+            windows-release.zip \
             android-build/app-release.apk \
             --generate-notes \
             --title "Release $TAG"

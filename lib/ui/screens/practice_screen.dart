@@ -6,6 +6,8 @@ import '../bloc/practice_session_bloc.dart';
 import '../bloc/settings_bloc.dart';
 import '../../core/audio/morse_code_service.dart';
 import '../../core/input/keyboard_input_handler.dart';
+import '../../core/logging/logger.dart';
+import '../../core/logging/log_constants.dart';
 
 class PracticeScreen extends StatefulWidget {
   const PracticeScreen({super.key});
@@ -73,7 +75,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
       dashDurationMs: _audioService.dashDurationMs,
       onPatternComplete: (pattern) {
         final decoded = _decodePattern(pattern);
-        print('SCREEN: Submitting "$pattern" = "$decoded"');
+        Logger().debug(LogCategory.ui, 'Submitting "$pattern" = "$decoded"');
         _keyerHandler?.clearPattern();  // Clear handler pattern on submit
         context.read<PracticeSessionBloc>().add(SubmitMorsePattern(pattern));
         setState(() {
@@ -82,7 +84,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
         });
       },
       onKeyDown: () async {
-        print('AUDIO: keyerDown');
+        Logger().debug(LogCategory.audio, 'keyerDown');
         await _audioService.keyerDown();
         // Screen flash on key down
         final settingsState = context.read<SettingsBloc>().state;
@@ -91,7 +93,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
         }
       },
       onKeyUp: () async {
-        print('AUDIO: keyerUp');
+        Logger().debug(LogCategory.audio, 'keyerUp');
         await _audioService.keyerUp();
         // Screen flash off on key up
         setState(() => _screenFlash = false);

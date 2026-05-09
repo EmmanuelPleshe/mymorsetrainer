@@ -40,6 +40,9 @@ dependencies:
   # Window management for Linux desktop
   window_manager: ^0.3.0
 
+  # URL launcher for email/Send Logs
+  url_launcher: ^6.2.0
+
   # Local storage
   sqflite: ^2.3.3+1
   sqflite_common_ffi: ^2.3.3
