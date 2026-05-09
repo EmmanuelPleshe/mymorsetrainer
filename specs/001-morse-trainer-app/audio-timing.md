@@ -77,8 +77,19 @@ class MorseTiming {
   int get dotMs => unitMs;
   int get dashMs => unitMs * 3;
   int get intraCharSpaceMs => unitMs;
-  int get interCharSpaceMs => /* standard or Farnsworth */;
-  int get interWordSpaceMs => /* standard or Farnsworth */;
+  int get interCharSpaceMs {
+    if (effectiveWpm >= wpm) return 3 * unitMs;
+    final tA = (60 * wpm - 37.2 * effectiveWpm) / (effectiveWpm * wpm);
+    final extraMs = ((3 * tA) / 19 * 1000).round();
+    return (3 * unitMs) + extraMs;
+  }
+
+  int get interWordSpaceMs {
+    if (effectiveWpm >= wpm) return 7 * unitMs;
+    final tA = (60 * wpm - 37.2 * effectiveWpm) / (effectiveWpm * wpm);
+    final extraMs = ((7 * tA) / 19 * 1000).round();
+    return (7 * unitMs) + extraMs;
+  }
 }
 ```
 
