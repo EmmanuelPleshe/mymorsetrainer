@@ -116,7 +116,7 @@ User earns points for correct responses, maintains streaks for consecutive corre
 
 ### Functional Requirements
 
-- **FR-001**: System MUST play morse code audio for characters using Koch method sequence (K, M, R, U, A, P, L, T, W, I, N, J, E, Y, O, S, Q, Z, H, V, F, B, D, X, C). Audio MUST play automatically when character is displayed. User does NOT type the character - user keys it back using spacebar.
+- **FR-001**: System MUST play morse code audio for characters using Koch method sequence (K, M, R, S, U, A, P, T, L, O, W, I, ., N, J, E, F, 0, Y, ,, V, G, 5, /, Q, 9, Z, H, 3, 8, B, ?, 4, 2, 7, C, 1, D, 6, X). Audio MUST play automatically when character is displayed. User does NOT type the character - user keys it back using spacebar.
 - **FR-002**: System MUST accept input from keyboard, touchscreen tap, game controller button, and audio input (microphone/line-in)
 - **FR-003**: System MUST verify user keying against expected morse code pattern and provide immediate feedback (correct/incorrect)
 - **FR-004**: System MUST require 90% accuracy before unlocking next character in Koch sequence
