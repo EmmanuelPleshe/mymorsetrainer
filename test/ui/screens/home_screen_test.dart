@@ -103,6 +103,10 @@ void main() {
     });
 
     testWidgets('shows onboarding when not completed', (tester) async {
+      tester.view.physicalSize = const Size(1080, 1920);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
       when(() => mockProgressRepo.getUserProgress()).thenAnswer(
         (_) async => UserProgress(
           hasCompletedOnboarding: false,

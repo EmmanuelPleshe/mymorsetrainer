@@ -152,15 +152,22 @@ void main() {
   });
 
   group('Logger', () {
-    const channel = MethodChannel('plugins.flutter.io/path_provider');
+    const pathProviderChannel = MethodChannel('plugins.flutter.io/path_provider');
+    const urlLauncherChannel = MethodChannel('plugins.flutter.io/url_launcher');
     late Directory tempDir;
 
     setUpAll(() async {
       TestWidgetsFlutterBinding.ensureInitialized();
       tempDir = await Directory.systemTemp.createTemp('logger_test_');
-      channel.setMockMethodCallHandler((call) async {
+      pathProviderChannel.setMockMethodCallHandler((call) async {
         if (call.method == 'getApplicationSupportDirectory') {
           return tempDir.path;
+        }
+        return null;
+      });
+      urlLauncherChannel.setMockMethodCallHandler((call) async {
+        if (call.method == 'canLaunch') {
+          return false;
         }
         return null;
       });
@@ -168,7 +175,8 @@ void main() {
     });
 
     tearDownAll(() async {
-      channel.setMockMethodCallHandler(null);
+      pathProviderChannel.setMockMethodCallHandler(null);
+      urlLauncherChannel.setMockMethodCallHandler(null);
       if (await tempDir.exists()) {
         await tempDir.delete(recursive: true);
       }
@@ -205,15 +213,15 @@ void main() {
     });
 
     test('info writes INFO level', () async {
-      await Logger.instance.info(LogCategory.session, 'session info');
+      await Logger.instance.info(LogCategory.ui, 'ui info');
       final content = await File('${tempDir.path}/morse_trainer/app.log').readAsString();
-      expect(content, contains('[INFO] [session] session info'));
+      expect(content, contains('[INFO] [ui] ui info'));
     });
 
     test('warning writes WARNING level', () async {
-      await Logger.instance.warning(LogCategory.session, 'session warning');
+      await Logger.instance.warning(LogCategory.navigation, 'nav warning');
       final content = await File('${tempDir.path}/morse_trainer/app.log').readAsString();
-      expect(content, contains('[WARNING] [session] session warning'));
+      expect(content, contains('[WARNING] [navigation] nav warning'));
     });
 
     test('error writes ERROR level with stack trace', () async {

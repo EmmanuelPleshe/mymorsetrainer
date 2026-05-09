@@ -116,8 +116,8 @@ void main() {
       test('standard spacing when effWpm >= wpm', () {
         service.setWpm(15);
         service.setEffWpm(15);
-        expect(service.interCharacterSpaceMs, 60 * 3);
-        expect(service.interWordSpaceMs, 60 * 7);
+        expect(service.interCharacterSpaceMs, 80 * 3);
+        expect(service.interWordSpaceMs, 80 * 7);
       });
 
       test('extraWordSpace adds to interWordSpace when effWpm >= wpm', () {

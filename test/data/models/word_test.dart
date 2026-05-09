@@ -37,5 +37,29 @@ void main() {
     test('textToMorse returns empty string for empty input', () {
       expect(Word.textToMorse(''), '');
     });
+
+    test('Word constructor stores fields', () {
+      const word = Word(
+        text: 'HELLO',
+        morseCode: '.... . .-.. .-.. ---',
+        category: 'basic',
+        difficulty: 2,
+      );
+      expect(word.text, 'HELLO');
+      expect(word.morseCode, '.... . .-.. .-.. ---');
+      expect(word.category, 'basic');
+      expect(word.difficulty, 2);
+    });
+
+    test('QSOPhrase constructor stores fields', () {
+      const phrase = QSOPhrase(
+        text: 'CQ CQ DE',
+        meaning: 'Calling anyone',
+        category: 'calling',
+      );
+      expect(phrase.text, 'CQ CQ DE');
+      expect(phrase.meaning, 'Calling anyone');
+      expect(phrase.category, 'calling');
+    });
   });
 }

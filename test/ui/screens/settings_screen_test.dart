@@ -208,5 +208,90 @@ void main() {
 
       expect(replayIntroCalled, isTrue);
     });
+
+    testWidgets('dragging tone frequency slider dispatches UpdateToneFrequency', (tester) async {
+      tester.view.physicalSize = const Size(1080, 1920);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      when(() => mockSettingsBloc.state).thenReturn(SettingsLoaded(loadedSettings));
+      when(() => mockSettingsBloc.stream).thenAnswer((_) => Stream.value(SettingsLoaded(loadedSettings)));
+
+      await tester.pumpWidget(buildTestWidget());
+
+      final slider = find.byType(Slider).first;
+      await tester.drag(slider, const Offset(50, 0));
+      await tester.pump();
+
+      verify(() => mockSettingsBloc.add(any(that: isA<UpdateToneFrequency>()))).called(2);
+    });
+
+    testWidgets('dragging wpm slider dispatches UpdateWpm', (tester) async {
+      tester.view.physicalSize = const Size(1080, 1920);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      when(() => mockSettingsBloc.state).thenReturn(SettingsLoaded(loadedSettings));
+      when(() => mockSettingsBloc.stream).thenAnswer((_) => Stream.value(SettingsLoaded(loadedSettings)));
+
+      await tester.pumpWidget(buildTestWidget());
+
+      final sliders = find.byType(Slider);
+      await tester.drag(sliders.at(1), const Offset(50, 0));
+      await tester.pump();
+
+      verify(() => mockSettingsBloc.add(any(that: isA<UpdateWpm>()))).called(2);
+    });
+
+    testWidgets('dragging effWpm slider dispatches UpdateEffWpm', (tester) async {
+      tester.view.physicalSize = const Size(1080, 1920);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      when(() => mockSettingsBloc.state).thenReturn(SettingsLoaded(loadedSettings));
+      when(() => mockSettingsBloc.stream).thenAnswer((_) => Stream.value(SettingsLoaded(loadedSettings)));
+
+      await tester.pumpWidget(buildTestWidget());
+
+      final sliders = find.byType(Slider);
+      await tester.drag(sliders.at(2), const Offset(50, 0));
+      await tester.pump();
+
+      verify(() => mockSettingsBloc.add(any(that: isA<UpdateEffWpm>()))).called(2);
+    });
+
+    testWidgets('dragging extra word space slider dispatches UpdateExtraWordSpace', (tester) async {
+      tester.view.physicalSize = const Size(1080, 1920);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      when(() => mockSettingsBloc.state).thenReturn(SettingsLoaded(loadedSettings));
+      when(() => mockSettingsBloc.stream).thenAnswer((_) => Stream.value(SettingsLoaded(loadedSettings)));
+
+      await tester.pumpWidget(buildTestWidget());
+
+      final sliders = find.byType(Slider);
+      await tester.drag(sliders.at(3), const Offset(50, 0));
+      await tester.pump();
+
+      verify(() => mockSettingsBloc.add(any(that: isA<UpdateExtraWordSpace>()))).called(1);
+    });
+
+    testWidgets('dragging volume slider dispatches UpdateVolume', (tester) async {
+      tester.view.physicalSize = const Size(1080, 1920);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      when(() => mockSettingsBloc.state).thenReturn(SettingsLoaded(loadedSettings));
+      when(() => mockSettingsBloc.stream).thenAnswer((_) => Stream.value(SettingsLoaded(loadedSettings)));
+
+      await tester.pumpWidget(buildTestWidget());
+
+      final sliders = find.byType(Slider);
+      await tester.drag(sliders.at(4), const Offset(50, 0));
+      await tester.pump();
+
+      verify(() => mockSettingsBloc.add(any(that: isA<UpdateVolume>()))).called(2);
+    });
   });
 }

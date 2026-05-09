@@ -49,7 +49,7 @@ void main() {
 
     test('getAllCharacters returns all keys', () {
       final all = service.getAllCharacters();
-      expect(all.length, 39);
+      expect(all.length, 40);
       expect(all.contains('A'), true);
       expect(all.contains('Z'), true);
       expect(all.contains('0'), true);
