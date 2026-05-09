@@ -25,7 +25,7 @@ A beginner starts the app, selects Koch mode, and begins learning with just K an
 
 ### User Story 2 - Practice with Multiple Input Methods (Priority: P1)
 
-User selects their preferred input method (keyboard, touchscreen, game controller, or audio input from microphone/keyed interface). The app correctly interprets their input as morse code dots and dashes.
+User selects their preferred input method (keyboard, touchscreen, or game controller). The app correctly interprets their input as morse code dots and dashes.
 
 **Why this priority**: Accessibility and personal preference - users must be able to use whatever input device they have available.
 
@@ -36,7 +36,7 @@ User selects their preferred input method (keyboard, touchscreen, game controlle
 1. **Given** keyboard is selected as input, **When** user presses/releases spacebar to key dots/dashes, **Then** input is captured as morse code and decoded to characters
 2. **Given** touchscreen tap is selected, **When** user taps screen for dots/dashes, **Then** touch duration is measured and decoded
 3. **Given** game controller button is selected, **When** user presses configured button, **Then** press duration is measured and decoded
-4. **Given** audio input is selected, **When** user keys a real morse key into microphone/line-in, **Then** audio is decoded into dots/dashes
+4. ~~**Given** audio input is selected, **When** user keys a real morse key into microphone/line-in, **Then** audio is decoded into dots/dashes~~ *(deferred to post-MVP — FR-002-A)*
 
 ---
 
@@ -106,7 +106,7 @@ User earns points for correct responses, maintains streaks for consecutive corre
 
 ### Edge Cases
 
-- What happens when audio input has excessive background noise?
+- ~~What happens when audio input has excessive background noise?~~ *(deferred with FR-002-A)*
 - How does the app handle a user who keys a character while audio is still playing?
 - What occurs when input timing is ambiguous (too short to be a dot, too long to be a dash)?
 - How does the app handle very long silence between key presses (abandoned attempt)?
@@ -117,7 +117,7 @@ User earns points for correct responses, maintains streaks for consecutive corre
 ### Functional Requirements
 
 - **FR-001**: System MUST play morse code audio for characters using Koch method sequence (K, M, R, S, U, A, P, T, L, O, W, I, ., N, J, E, F, 0, Y, ,, V, G, 5, /, Q, 9, Z, H, 3, 8, B, ?, 4, 2, 7, C, 1, D, 6, X). Audio MUST play automatically when character is displayed. User does NOT type the character - user keys it back using spacebar.
-- **FR-002**: System MUST accept input from keyboard, touchscreen tap, game controller button, and audio input (microphone/line-in)
+- **FR-002**: System MUST accept input from keyboard, touchscreen tap, and game controller button. Audio input (microphone/line-in) is deferred to post-MVP (see FR-002-A)
 - **FR-003**: System MUST verify user keying against expected morse code pattern and provide immediate feedback (correct/incorrect)
 - **FR-004**: System MUST require 90% accuracy before unlocking next character in Koch sequence
 - **FR-005**: System MUST implement SM-2 spaced repetition algorithm per CLAUDE.md (dynamic intervals based on ease factor and review quality, not fixed intervals)
@@ -148,12 +148,12 @@ User earns points for correct responses, maintains streaks for consecutive corre
 - **SC-004**: App builds successfully on Linux and Android without platform-specific errors
 - **SC-005**: Audio latency between key press and sound output is under 50ms
 - **SC-006**: Input recognition accuracy is 95%+ for keyboard/touchscreen/controller inputs
-- **SC-007**: Audio input decoding accuracy is 90%+ with proper key/interface
+- ~~**SC-007**: Audio input decoding accuracy is 90%+ with proper key/interface~~ *(deferred with FR-002-A)*
 
 ## Assumptions
 
 - Users have basic familiarity with keyboard or touchscreen devices
-- Audio input will use standard system audio APIs (PulseAudio on Linux, Oboe on Android)
+- ~~Audio input will use standard system audio APIs (PulseAudio on Linux, Oboe on Android)~~ *(deferred with FR-002-A)*
 - Default 20 WPM character speed / 10 WPM effective speed prevents counting dits while building real-world skills
 - Gamification elements can be disabled for users who prefer pure learning without points
 - Settings persist between sessions on the same device
