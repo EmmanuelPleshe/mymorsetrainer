@@ -15,11 +15,6 @@ class KeyboardKeyerHandler {
   String _pattern = '';
   Timer? _autoSubmitTimer;
 
-  // Adaptive threshold: learns from user's keying speed
-  final List<int> _recentDurations = [];
-  static const int _historySize = 20;  // Keep last 20 key presses
-  int _adaptiveThreshold = 0;  // 0 = use default, otherwise learned
-
   static final Map<String, String> _morseToChar = {
     '.-': 'A', '-...': 'B', '-.-.': 'C', '-..': 'D', '.': 'E',
     '..-.': 'F', '--.': 'G', '....': 'H', '..': 'I', '.---': 'J',
@@ -48,9 +43,9 @@ class KeyboardKeyerHandler {
   void handleKeyUp(int durationMs) {
     onKeyUp?.call();
 
-    // Use fixed WPM-based threshold: 2× dot duration
-    // At 20 WPM: 2×60ms = 120ms threshold
-    final threshold = dotDurationMs * 2;
+    // Use fixed WPM-based threshold: 3× dot duration
+    // At 20 WPM: 3×60ms = 180ms threshold
+    final threshold = dotDurationMs * 3;
     final symbol = durationMs >= threshold ? '-' : '.';
     _pattern += symbol;
 
@@ -60,32 +55,12 @@ class KeyboardKeyerHandler {
     _scheduleAutoSubmit();
   }
 
-  void _updateAdaptiveThreshold(int durationMs) {
-    // Add to history
-    _recentDurations.add(durationMs);
-    if (_recentDurations.length > _historySize) {
-      _recentDurations.removeAt(0);
-    }
-
-    // Estimate dot duration from short presses (bottom 30% of durations)
-    if (_recentDurations.length >= 5) {
-      final sorted = List<int>.from(_recentDurations)..sort();
-      final shortPresses = sorted.take((sorted.length * 0.3).ceil()).toList();
-      final avgShort = shortPresses.reduce((a, b) => a + b) ~/ shortPresses.length;
-
-      // Threshold = 2x estimated dot duration
-      _adaptiveThreshold = avgShort * 2;
-      Logger().debug(LogCategory.ui, 'Adaptive threshold updated to $_adaptiveThreshold ms (from $shortPresses)');
-    }
-  }
-
   void _scheduleAutoSubmit() {
     _autoSubmitTimer?.cancel();
 
-    // Use inter-character spacing (3× dot duration) as timeout threshold
-    // This matches actual Morse timing: after 3 units of silence, character is complete
-    final timeoutMs = dotDurationMs * 3;
-    _autoSubmitTimer = Timer(Duration(milliseconds: timeoutMs), () {
+    // Fixed 400ms timeout — enough time for any character pattern at any WPM
+    const timeoutMs = 400;
+    _autoSubmitTimer = Timer(const Duration(milliseconds: timeoutMs), () {
       if (_pattern.isNotEmpty && _morseToChar.containsKey(_pattern)) {
         final pattern = _pattern;
         final char = _morseToChar[pattern] ?? '?';

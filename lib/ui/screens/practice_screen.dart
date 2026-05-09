@@ -448,9 +448,11 @@ class _PracticeScreenState extends State<PracticeScreen> {
     // Only play feedback sound once per state (if sound effects enabled)
     if (!_feedbackHandled) {
       _feedbackHandled = true;
-      final settingsState = context.read<SettingsBloc>().state;
-      if (settingsState is SettingsLoaded && settingsState.settings.enableSoundEffects) {
-        _audioService.playCorrectFeedback();
+      if (isCorrect) {
+        final settingsState = context.read<SettingsBloc>().state;
+        if (settingsState is SettingsLoaded && settingsState.settings.enableSoundEffects) {
+          _audioService.playCorrectFeedback();
+        }
       }
     }
 
