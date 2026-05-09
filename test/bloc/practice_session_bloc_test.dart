@@ -195,6 +195,45 @@ void main() {
       );
 
       blocTest<PracticeSessionBloc, PracticeSessionState>(
+        'ignores SubmitAnswer when no active session',
+        build: () => PracticeSessionBloc(
+          kochService: mockKochService,
+          gamificationService: mockGamificationService,
+          spacedRepetitionService: mockSpacedRepetitionService,
+          userProgressRepository: mockUserProgressRepository,
+        ),
+        act: (bloc) => bloc.add(const SubmitAnswer('K')),
+        expect: () => [],
+      );
+
+      blocTest<PracticeSessionBloc, PracticeSessionState>(
+        'ignores SubmitAnswer when character is null',
+        build: () => PracticeSessionBloc(
+          kochService: mockKochService,
+          gamificationService: mockGamificationService,
+          spacedRepetitionService: mockSpacedRepetitionService,
+          userProgressRepository: mockUserProgressRepository,
+        ),
+        act: (bloc) async {
+          bloc.add(const StartSession(1));
+          await Future.delayed(const Duration(milliseconds: 50));
+          // Advance past all characters so currentCharacter is null
+          bloc.add(const NextCharacter());
+          await Future.delayed(const Duration(milliseconds: 50));
+          bloc.add(const NextCharacter());
+          await Future.delayed(const Duration(milliseconds: 50));
+          bloc.add(const SubmitAnswer('K'));
+        },
+        wait: const Duration(milliseconds: 200),
+        expect: () => [
+          isA<PracticeSessionLoading>(),
+          isA<PracticeSessionActive>(),
+          isA<PracticeSessionActive>(),
+          isA<PracticeSessionActive>(),
+        ],
+      );
+
+      blocTest<PracticeSessionBloc, PracticeSessionState>(
         'emits PracticeSessionComplete when session ends',
         build: () => PracticeSessionBloc(
           kochService: mockKochService,
@@ -214,6 +253,76 @@ void main() {
         wait: const Duration(milliseconds: 1000),
         verify: (bloc) {
           expect(bloc.state, isA<PracticeSessionComplete>());
+        },
+      );
+    });
+
+    group('SubmitAnswer', () {
+      blocTest<PracticeSessionBloc, PracticeSessionState>(
+        'correct answer advances via NextCharacter',
+        build: () => PracticeSessionBloc(
+          kochService: mockKochService,
+          gamificationService: mockGamificationService,
+          spacedRepetitionService: mockSpacedRepetitionService,
+          userProgressRepository: mockUserProgressRepository,
+        ),
+        act: (bloc) async {
+          bloc.add(const StartSession(1));
+          await Future.delayed(const Duration(milliseconds: 50));
+          bloc.add(const SubmitAnswer('K'));
+        },
+        wait: const Duration(milliseconds: 600),
+        verify: (bloc) {
+          final state = bloc.state;
+          expect(state, isA<PracticeSessionActive>());
+          final active = state as PracticeSessionActive;
+          expect(active.currentIndex, 1);
+          expect(active.correctCount, 1);
+          expect(active.currentStreak, 1);
+          expect(active.lastAnswerCorrect, null);
+        },
+      );
+
+      blocTest<PracticeSessionBloc, PracticeSessionState>(
+        'wrong answer resets streak and emits feedback',
+        build: () => PracticeSessionBloc(
+          kochService: mockKochService,
+          gamificationService: mockGamificationService,
+          spacedRepetitionService: mockSpacedRepetitionService,
+          userProgressRepository: mockUserProgressRepository,
+        ),
+        act: (bloc) async {
+          bloc.add(const StartSession(1));
+          await Future.delayed(const Duration(milliseconds: 50));
+          bloc.add(const SubmitAnswer('X'));
+        },
+        wait: const Duration(milliseconds: 200),
+        verify: (bloc) {
+          final state = bloc.state;
+          expect(state, isA<PracticeSessionActive>());
+          final active = state as PracticeSessionActive;
+          expect(active.correctCount, 0);
+          expect(active.currentStreak, 0);
+          expect(active.totalAnswered, 1);
+          expect(active.lastAnswerCorrect, false);
+        },
+      );
+    });
+
+    group('CompleteOnboarding', () {
+      blocTest<PracticeSessionBloc, PracticeSessionState>(
+        'updates user progress with skipIntro flag',
+        build: () => PracticeSessionBloc(
+          kochService: mockKochService,
+          gamificationService: mockGamificationService,
+          spacedRepetitionService: mockSpacedRepetitionService,
+          userProgressRepository: mockUserProgressRepository,
+        ),
+        act: (bloc) => bloc.add(const CompleteOnboarding(skipIntro: true)),
+        verify: (_) {
+          final captured = verify(() => mockUserProgressRepository.updateUserProgress(captureAny())).captured.single as UserProgress;
+          expect(captured.hasCompletedOnboarding, true);
+          expect(captured.skipIntroOnboarding, true);
         },
       );
     });
