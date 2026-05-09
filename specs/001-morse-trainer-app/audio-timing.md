@@ -102,11 +102,15 @@ abstract class AudioService {
 
   /// Set master volume (0.0 – 1.0). Affects all subsequent playback.
   void setVolume(double volume);
+
+  /// Halt any active playback immediately.
+  Future<void> stop();
 }
 ```
 
 ### Side-Effect Rule
 BLoC must NOT call audio services. `BlocListener` in the UI layer handles audio side effects.
+`BlocListener` calls `stop()` on `PracticeSessionExited` or `SettingsChangedMidPlayback` to abort playback immediately.
 
 ---
 
