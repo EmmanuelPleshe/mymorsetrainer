@@ -47,14 +47,14 @@ cmake_ninja_workdir = /home/eman/github/mymorsetrainer/build/linux/x64/debug/
 #############################################
 # Order-only phony target for morse_trainer
 
-build cmake_object_order_depends_target_morse_trainer: phony || cmake_object_order_depends_target_audioplayers_linux_plugin flutter/flutter_assemble
+build cmake_object_order_depends_target_morse_trainer: phony || cmake_object_order_depends_target_audioplayers_linux_plugin cmake_object_order_depends_target_screen_retriever_plugin cmake_object_order_depends_target_window_manager_plugin flutter/flutter_assemble
 
 build CMakeFiles/morse_trainer.dir/main.cc.o: CXX_COMPILER__morse_trainer_unscanned_Debug /home/eman/github/mymorsetrainer/linux/main.cc || cmake_object_order_depends_target_morse_trainer
   CONFIG = Debug
   DEFINES = -DAPPLICATION_ID=\"com.morsetrainer.morse_trainer\"
   DEP_FILE = CMakeFiles/morse_trainer.dir/main.cc.o.d
   FLAGS = -g -Wall -Werror -pthread
-  INCLUDES = -I/home/eman/github/mymorsetrainer/linux/flutter/ephemeral -I/home/eman/github/mymorsetrainer/linux/flutter/ephemeral/.plugin_symlinks/audioplayers_linux/linux/include -isystem /usr/include/gtk-3.0 -isystem /usr/include/pango-1.0 -isystem /usr/include/cloudproviders -isystem /usr/include/cairo -isystem /usr/include/gdk-pixbuf-2.0 -isystem /usr/include/glycin-2 -isystem /usr/include/at-spi2-atk/2.0 -isystem /usr/include/at-spi-2.0 -isystem /usr/include/atk-1.0 -isystem /usr/include/dbus-1.0 -isystem /usr/lib/dbus-1.0/include -isystem /usr/include/fribidi -isystem /usr/include/pixman-1 -isystem /usr/include/harfbuzz -isystem /usr/include/freetype2 -isystem /usr/include/libpng16 -isystem /usr/include/gio-unix-2.0 -isystem /usr/include/glib-2.0 -isystem /usr/lib/glib-2.0/include -isystem /usr/include/libmount -isystem /usr/include/blkid -isystem /usr/include/sysprof-6
+  INCLUDES = -I/home/eman/github/mymorsetrainer/linux/flutter/ephemeral -I/home/eman/github/mymorsetrainer/linux/flutter/ephemeral/.plugin_symlinks/audioplayers_linux/linux/include -I/home/eman/github/mymorsetrainer/linux/flutter/ephemeral/.plugin_symlinks/screen_retriever/linux/include -I/home/eman/github/mymorsetrainer/linux/flutter/ephemeral/.plugin_symlinks/window_manager/linux/include -isystem /usr/include/gtk-3.0 -isystem /usr/include/pango-1.0 -isystem /usr/include/cloudproviders -isystem /usr/include/cairo -isystem /usr/include/gdk-pixbuf-2.0 -isystem /usr/include/glycin-2 -isystem /usr/include/at-spi2-atk/2.0 -isystem /usr/include/at-spi-2.0 -isystem /usr/include/atk-1.0 -isystem /usr/include/dbus-1.0 -isystem /usr/lib/dbus-1.0/include -isystem /usr/include/fribidi -isystem /usr/include/pixman-1 -isystem /usr/include/harfbuzz -isystem /usr/include/freetype2 -isystem /usr/include/libpng16 -isystem /usr/include/gio-unix-2.0 -isystem /usr/include/glib-2.0 -isystem /usr/lib/glib-2.0/include -isystem /usr/include/libmount -isystem /usr/include/blkid -isystem /usr/include/sysprof-6
   OBJECT_DIR = CMakeFiles/morse_trainer.dir
   OBJECT_FILE_DIR = CMakeFiles/morse_trainer.dir
   TARGET_SUPPORT_DIR = CMakeFiles/morse_trainer.dir
@@ -64,7 +64,7 @@ build CMakeFiles/morse_trainer.dir/my_application.cc.o: CXX_COMPILER__morse_trai
   DEFINES = -DAPPLICATION_ID=\"com.morsetrainer.morse_trainer\"
   DEP_FILE = CMakeFiles/morse_trainer.dir/my_application.cc.o.d
   FLAGS = -g -Wall -Werror -pthread
-  INCLUDES = -I/home/eman/github/mymorsetrainer/linux/flutter/ephemeral -I/home/eman/github/mymorsetrainer/linux/flutter/ephemeral/.plugin_symlinks/audioplayers_linux/linux/include -isystem /usr/include/gtk-3.0 -isystem /usr/include/pango-1.0 -isystem /usr/include/cloudproviders -isystem /usr/include/cairo -isystem /usr/include/gdk-pixbuf-2.0 -isystem /usr/include/glycin-2 -isystem /usr/include/at-spi2-atk/2.0 -isystem /usr/include/at-spi-2.0 -isystem /usr/include/atk-1.0 -isystem /usr/include/dbus-1.0 -isystem /usr/lib/dbus-1.0/include -isystem /usr/include/fribidi -isystem /usr/include/pixman-1 -isystem /usr/include/harfbuzz -isystem /usr/include/freetype2 -isystem /usr/include/libpng16 -isystem /usr/include/gio-unix-2.0 -isystem /usr/include/glib-2.0 -isystem /usr/lib/glib-2.0/include -isystem /usr/include/libmount -isystem /usr/include/blkid -isystem /usr/include/sysprof-6
+  INCLUDES = -I/home/eman/github/mymorsetrainer/linux/flutter/ephemeral -I/home/eman/github/mymorsetrainer/linux/flutter/ephemeral/.plugin_symlinks/audioplayers_linux/linux/include -I/home/eman/github/mymorsetrainer/linux/flutter/ephemeral/.plugin_symlinks/screen_retriever/linux/include -I/home/eman/github/mymorsetrainer/linux/flutter/ephemeral/.plugin_symlinks/window_manager/linux/include -isystem /usr/include/gtk-3.0 -isystem /usr/include/pango-1.0 -isystem /usr/include/cloudproviders -isystem /usr/include/cairo -isystem /usr/include/gdk-pixbuf-2.0 -isystem /usr/include/glycin-2 -isystem /usr/include/at-spi2-atk/2.0 -isystem /usr/include/at-spi-2.0 -isystem /usr/include/atk-1.0 -isystem /usr/include/dbus-1.0 -isystem /usr/lib/dbus-1.0/include -isystem /usr/include/fribidi -isystem /usr/include/pixman-1 -isystem /usr/include/harfbuzz -isystem /usr/include/freetype2 -isystem /usr/include/libpng16 -isystem /usr/include/gio-unix-2.0 -isystem /usr/include/glib-2.0 -isystem /usr/lib/glib-2.0/include -isystem /usr/include/libmount -isystem /usr/include/blkid -isystem /usr/include/sysprof-6
   OBJECT_DIR = CMakeFiles/morse_trainer.dir
   OBJECT_FILE_DIR = CMakeFiles/morse_trainer.dir
   TARGET_SUPPORT_DIR = CMakeFiles/morse_trainer.dir
@@ -74,7 +74,7 @@ build CMakeFiles/morse_trainer.dir/flutter/generated_plugin_registrant.cc.o: CXX
   DEFINES = -DAPPLICATION_ID=\"com.morsetrainer.morse_trainer\"
   DEP_FILE = CMakeFiles/morse_trainer.dir/flutter/generated_plugin_registrant.cc.o.d
   FLAGS = -g -Wall -Werror -pthread
-  INCLUDES = -I/home/eman/github/mymorsetrainer/linux/flutter/ephemeral -I/home/eman/github/mymorsetrainer/linux/flutter/ephemeral/.plugin_symlinks/audioplayers_linux/linux/include -isystem /usr/include/gtk-3.0 -isystem /usr/include/pango-1.0 -isystem /usr/include/cloudproviders -isystem /usr/include/cairo -isystem /usr/include/gdk-pixbuf-2.0 -isystem /usr/include/glycin-2 -isystem /usr/include/at-spi2-atk/2.0 -isystem /usr/include/at-spi-2.0 -isystem /usr/include/atk-1.0 -isystem /usr/include/dbus-1.0 -isystem /usr/lib/dbus-1.0/include -isystem /usr/include/fribidi -isystem /usr/include/pixman-1 -isystem /usr/include/harfbuzz -isystem /usr/include/freetype2 -isystem /usr/include/libpng16 -isystem /usr/include/gio-unix-2.0 -isystem /usr/include/glib-2.0 -isystem /usr/lib/glib-2.0/include -isystem /usr/include/libmount -isystem /usr/include/blkid -isystem /usr/include/sysprof-6
+  INCLUDES = -I/home/eman/github/mymorsetrainer/linux/flutter/ephemeral -I/home/eman/github/mymorsetrainer/linux/flutter/ephemeral/.plugin_symlinks/audioplayers_linux/linux/include -I/home/eman/github/mymorsetrainer/linux/flutter/ephemeral/.plugin_symlinks/screen_retriever/linux/include -I/home/eman/github/mymorsetrainer/linux/flutter/ephemeral/.plugin_symlinks/window_manager/linux/include -isystem /usr/include/gtk-3.0 -isystem /usr/include/pango-1.0 -isystem /usr/include/cloudproviders -isystem /usr/include/cairo -isystem /usr/include/gdk-pixbuf-2.0 -isystem /usr/include/glycin-2 -isystem /usr/include/at-spi2-atk/2.0 -isystem /usr/include/at-spi-2.0 -isystem /usr/include/atk-1.0 -isystem /usr/include/dbus-1.0 -isystem /usr/lib/dbus-1.0/include -isystem /usr/include/fribidi -isystem /usr/include/pixman-1 -isystem /usr/include/harfbuzz -isystem /usr/include/freetype2 -isystem /usr/include/libpng16 -isystem /usr/include/gio-unix-2.0 -isystem /usr/include/glib-2.0 -isystem /usr/lib/glib-2.0/include -isystem /usr/include/libmount -isystem /usr/include/blkid -isystem /usr/include/sysprof-6
   OBJECT_DIR = CMakeFiles/morse_trainer.dir
   OBJECT_FILE_DIR = CMakeFiles/morse_trainer.dir/flutter
   TARGET_SUPPORT_DIR = CMakeFiles/morse_trainer.dir
@@ -87,12 +87,12 @@ build CMakeFiles/morse_trainer.dir/flutter/generated_plugin_registrant.cc.o: CXX
 #############################################
 # Link the executable intermediates_do_not_run/morse_trainer
 
-build intermediates_do_not_run/morse_trainer: CXX_EXECUTABLE_LINKER__morse_trainer_Debug CMakeFiles/morse_trainer.dir/main.cc.o CMakeFiles/morse_trainer.dir/my_application.cc.o CMakeFiles/morse_trainer.dir/flutter/generated_plugin_registrant.cc.o | plugins/audioplayers_linux/libaudioplayers_linux_plugin.so /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/libflutter_linux_gtk.so /usr/lib/libgtk-3.so /usr/lib/libgdk-3.so /usr/lib/libpangocairo-1.0.so /usr/lib/libcairo-gobject.so /usr/lib/libgdk_pixbuf-2.0.so /usr/lib/libatk-1.0.so /usr/lib/libpango-1.0.so /usr/lib/libcairo.so /usr/lib/libharfbuzz.so /usr/lib/libgio-2.0.so /usr/lib/libgobject-2.0.so /usr/lib/libglib-2.0.so /usr/lib/libz.so || flutter/flutter_assemble plugins/audioplayers_linux/libaudioplayers_linux_plugin.so
+build intermediates_do_not_run/morse_trainer: CXX_EXECUTABLE_LINKER__morse_trainer_Debug CMakeFiles/morse_trainer.dir/main.cc.o CMakeFiles/morse_trainer.dir/my_application.cc.o CMakeFiles/morse_trainer.dir/flutter/generated_plugin_registrant.cc.o | plugins/audioplayers_linux/libaudioplayers_linux_plugin.so plugins/screen_retriever/libscreen_retriever_plugin.so plugins/window_manager/libwindow_manager_plugin.so /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/libflutter_linux_gtk.so /usr/lib/libgtk-3.so /usr/lib/libgdk-3.so /usr/lib/libpangocairo-1.0.so /usr/lib/libcairo-gobject.so /usr/lib/libgdk_pixbuf-2.0.so /usr/lib/libatk-1.0.so /usr/lib/libpango-1.0.so /usr/lib/libcairo.so /usr/lib/libharfbuzz.so /usr/lib/libgio-2.0.so /usr/lib/libgobject-2.0.so /usr/lib/libglib-2.0.so /usr/lib/libz.so || flutter/flutter_assemble plugins/audioplayers_linux/libaudioplayers_linux_plugin.so plugins/screen_retriever/libscreen_retriever_plugin.so plugins/window_manager/libwindow_manager_plugin.so
   CONFIG = Debug
   DEP_FILE = CMakeFiles/morse_trainer.dir/link.d
   FLAGS = -g
   LINK_FLAGS = -Xlinker --dependency-file=CMakeFiles/morse_trainer.dir/link.d
-  LINK_LIBRARIES = -Wl,-rpath,/home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/audioplayers_linux:/home/eman/github/mymorsetrainer/linux/flutter/ephemeral:  plugins/audioplayers_linux/libaudioplayers_linux_plugin.so  /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/libflutter_linux_gtk.so  /usr/lib/libgtk-3.so  /usr/lib/libgdk-3.so  /usr/lib/libpangocairo-1.0.so  /usr/lib/libcairo-gobject.so  /usr/lib/libgdk_pixbuf-2.0.so  /usr/lib/libatk-1.0.so  /usr/lib/libpango-1.0.so  /usr/lib/libcairo.so  /usr/lib/libharfbuzz.so  /usr/lib/libgio-2.0.so  /usr/lib/libgobject-2.0.so  /usr/lib/libglib-2.0.so  /usr/lib/libz.so
+  LINK_LIBRARIES = -Wl,-rpath,/home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/audioplayers_linux:/home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/screen_retriever:/home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/window_manager:/home/eman/github/mymorsetrainer/linux/flutter/ephemeral:  plugins/audioplayers_linux/libaudioplayers_linux_plugin.so  plugins/screen_retriever/libscreen_retriever_plugin.so  plugins/window_manager/libwindow_manager_plugin.so  /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/libflutter_linux_gtk.so  /usr/lib/libgtk-3.so  /usr/lib/libgdk-3.so  /usr/lib/libpangocairo-1.0.so  /usr/lib/libcairo-gobject.so  /usr/lib/libgdk_pixbuf-2.0.so  /usr/lib/libatk-1.0.so  /usr/lib/libpango-1.0.so  /usr/lib/libcairo.so  /usr/lib/libharfbuzz.so  /usr/lib/libgio-2.0.so  /usr/lib/libgobject-2.0.so  /usr/lib/libglib-2.0.so  /usr/lib/libz.so
   OBJECT_DIR = CMakeFiles/morse_trainer.dir
   POST_BUILD = :
   PRE_LINK = :
@@ -254,7 +254,7 @@ build flutter/CMakeFiles/flutter_assemble | ${cmake_ninja_workdir}flutter/CMakeF
 # Custom command for /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/libflutter_linux_gtk.so
 
 build /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/libflutter_linux_gtk.so /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_basic_message_channel.h /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_binary_codec.h /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_binary_messenger.h /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_dart_project.h /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_engine.h /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_json_message_codec.h /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_json_method_codec.h /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_message_codec.h /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_method_call.h /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_method_channel.h /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_method_codec.h /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_method_response.h /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_plugin_registrar.h /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_plugin_registry.h /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_standard_message_codec.h /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_standard_method_codec.h /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_string_codec.h /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_value.h /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_view.h /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/flutter_linux.h flutter/_phony_ | ${cmake_ninja_workdir}flutter/_phony_: CUSTOM_COMMAND
-  COMMAND = cd /home/eman/github/mymorsetrainer/build/linux/x64/debug/flutter && /usr/bin/cmake -E env FLUTTER_ROOT=/tmp/flutter PROJECT_DIR=/home/eman/github/mymorsetrainer DART_OBFUSCATION=false TRACK_WIDGET_CREATION=true TREE_SHAKE_ICONS=false PACKAGE_CONFIG=/home/eman/github/mymorsetrainer/.dart_tool/package_config.json FLUTTER_TARGET=lib/main.dart /tmp/flutter/packages/flutter_tools/bin/tool_backend.sh linux-x64 Debug
+  COMMAND = cd /home/eman/github/mymorsetrainer/build/linux/x64/debug/flutter && /usr/bin/cmake -E env FLUTTER_ROOT=/home/eman/flutter PROJECT_DIR=/home/eman/github/mymorsetrainer DART_DEFINES=RkxVVFRFUl9WRVJTSU9OPTMuNDEuOQ==,RkxVVFRFUl9DSEFOTkVMPXN0YWJsZQ==,RkxVVFRFUl9HSVRfVVJMPWh0dHBzOi8vZ2l0aHViLmNvbS9mbHV0dGVyL2ZsdXR0ZXIuZ2l0,RkxVVFRFUl9GUkFNRVdPUktfUkVWSVNJT049MDBiMGM5MWYwNg==,RkxVVFRFUl9FTkdJTkVfUkVWSVNJT049NDJkM2Q3NWE1Ng==,RkxVVFRFUl9EQVJUX1ZFUlNJT049My4xMS41 DART_OBFUSCATION=false TRACK_WIDGET_CREATION=true TREE_SHAKE_ICONS=false PACKAGE_CONFIG=/home/eman/github/mymorsetrainer/.dart_tool/package_config.json FLUTTER_TARGET=lib/main.dart /home/eman/flutter/packages/flutter_tools/bin/tool_backend.sh linux-x64 Debug
   DESC = Generating /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/libflutter_linux_gtk.so, /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_basic_message_channel.h, /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_binary_codec.h, /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_binary_messenger.h, /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_dart_project.h, /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_engine.h, /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_json_message_codec.h, /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_json_method_codec.h, /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_message_codec.h, /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_method_call.h, /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_method_channel.h, /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_method_codec.h, /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_method_response.h, /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_plugin_registrar.h, /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_plugin_registry.h, /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_standard_message_codec.h, /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_standard_method_codec.h, /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_string_codec.h, /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_value.h, /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/fl_view.h, /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/flutter_linux/flutter_linux.h, _phony_
   restat = 1
 
@@ -382,6 +382,232 @@ build plugins/audioplayers_linux/CMakeFiles/install/strip.util: CUSTOM_COMMAND p
 build plugins/audioplayers_linux/install/strip: phony plugins/audioplayers_linux/CMakeFiles/install/strip.util
 
 # =============================================================================
+# Write statements declared in CMakeLists.txt:
+# /home/eman/github/mymorsetrainer/linux/flutter/generated_plugins.cmake
+# =============================================================================
+
+# =============================================================================
+# Object build statements for SHARED_LIBRARY target screen_retriever_plugin
+
+
+#############################################
+# Order-only phony target for screen_retriever_plugin
+
+build cmake_object_order_depends_target_screen_retriever_plugin: phony || flutter/flutter_assemble
+
+build plugins/screen_retriever/CMakeFiles/screen_retriever_plugin.dir/screen_retriever_plugin.cc.o: CXX_COMPILER__screen_retriever_plugin_unscanned_Debug /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/.plugin_symlinks/screen_retriever/linux/screen_retriever_plugin.cc || cmake_object_order_depends_target_screen_retriever_plugin
+  CONFIG = Debug
+  DEFINES = -DAPPLICATION_ID=\"com.morsetrainer.morse_trainer\" -DFLUTTER_PLUGIN_IMPL -Dscreen_retriever_plugin_EXPORTS
+  DEP_FILE = plugins/screen_retriever/CMakeFiles/screen_retriever_plugin.dir/screen_retriever_plugin.cc.o.d
+  FLAGS = -g -fPIC -fvisibility=hidden -Wall -Werror -pthread
+  INCLUDES = -I/home/eman/github/mymorsetrainer/linux/flutter/ephemeral -isystem /usr/include/gtk-3.0 -isystem /usr/include/pango-1.0 -isystem /usr/include/cloudproviders -isystem /usr/include/cairo -isystem /usr/include/gdk-pixbuf-2.0 -isystem /usr/include/glycin-2 -isystem /usr/include/at-spi2-atk/2.0 -isystem /usr/include/at-spi-2.0 -isystem /usr/include/atk-1.0 -isystem /usr/include/dbus-1.0 -isystem /usr/lib/dbus-1.0/include -isystem /usr/include/fribidi -isystem /usr/include/pixman-1 -isystem /usr/include/harfbuzz -isystem /usr/include/freetype2 -isystem /usr/include/libpng16 -isystem /usr/include/gio-unix-2.0 -isystem /usr/include/glib-2.0 -isystem /usr/lib/glib-2.0/include -isystem /usr/include/libmount -isystem /usr/include/blkid -isystem /usr/include/sysprof-6
+  OBJECT_DIR = plugins/screen_retriever/CMakeFiles/screen_retriever_plugin.dir
+  OBJECT_FILE_DIR = plugins/screen_retriever/CMakeFiles/screen_retriever_plugin.dir
+  TARGET_SUPPORT_DIR = plugins/screen_retriever/CMakeFiles/screen_retriever_plugin.dir
+
+
+# =============================================================================
+# Link build statements for SHARED_LIBRARY target screen_retriever_plugin
+
+
+#############################################
+# Link the shared library plugins/screen_retriever/libscreen_retriever_plugin.so
+
+build plugins/screen_retriever/libscreen_retriever_plugin.so: CXX_SHARED_LIBRARY_LINKER__screen_retriever_plugin_Debug plugins/screen_retriever/CMakeFiles/screen_retriever_plugin.dir/screen_retriever_plugin.cc.o | /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/libflutter_linux_gtk.so /usr/lib/libgtk-3.so /usr/lib/libgdk-3.so /usr/lib/libpangocairo-1.0.so /usr/lib/libcairo-gobject.so /usr/lib/libgdk_pixbuf-2.0.so /usr/lib/libatk-1.0.so /usr/lib/libpango-1.0.so /usr/lib/libcairo.so /usr/lib/libharfbuzz.so /usr/lib/libgio-2.0.so /usr/lib/libgobject-2.0.so /usr/lib/libglib-2.0.so /usr/lib/libz.so || flutter/flutter_assemble
+  CONFIG = Debug
+  DEP_FILE = plugins/screen_retriever/CMakeFiles/screen_retriever_plugin.dir/link.d
+  LANGUAGE_COMPILE_FLAGS = -g
+  LINK_FLAGS = -shared -Xlinker --dependency-file=plugins/screen_retriever/CMakeFiles/screen_retriever_plugin.dir/link.d
+  LINK_LIBRARIES = -Wl,-rpath,/home/eman/github/mymorsetrainer/linux/flutter/ephemeral  /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/libflutter_linux_gtk.so  /usr/lib/libgtk-3.so  /usr/lib/libgdk-3.so  /usr/lib/libpangocairo-1.0.so  /usr/lib/libcairo-gobject.so  /usr/lib/libgdk_pixbuf-2.0.so  /usr/lib/libatk-1.0.so  /usr/lib/libpango-1.0.so  /usr/lib/libcairo.so  /usr/lib/libharfbuzz.so  /usr/lib/libgio-2.0.so  /usr/lib/libgobject-2.0.so  /usr/lib/libglib-2.0.so  /usr/lib/libz.so
+  OBJECT_DIR = plugins/screen_retriever/CMakeFiles/screen_retriever_plugin.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  SONAME = libscreen_retriever_plugin.so
+  SONAME_FLAG = -Wl,-soname,
+  TARGET_FILE = plugins/screen_retriever/libscreen_retriever_plugin.so
+  TARGET_PDB = screen_retriever_plugin.so.dbg
+  TARGET_SUPPORT_DIR = plugins/screen_retriever/CMakeFiles/screen_retriever_plugin.dir
+
+
+#############################################
+# Utility command for edit_cache
+
+build plugins/screen_retriever/CMakeFiles/edit_cache.util: CUSTOM_COMMAND
+  COMMAND = cd /home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/screen_retriever && /usr/bin/ccmake -S/home/eman/github/mymorsetrainer/linux -B/home/eman/github/mymorsetrainer/build/linux/x64/debug
+  DESC = Running CMake cache editor...
+  pool = console
+  restat = 1
+
+build plugins/screen_retriever/edit_cache: phony plugins/screen_retriever/CMakeFiles/edit_cache.util
+
+
+#############################################
+# Utility command for rebuild_cache
+
+build plugins/screen_retriever/CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
+  COMMAND = cd /home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/screen_retriever && /usr/bin/cmake --regenerate-during-build -S/home/eman/github/mymorsetrainer/linux -B/home/eman/github/mymorsetrainer/build/linux/x64/debug
+  DESC = Running CMake to regenerate build system...
+  pool = console
+  restat = 1
+
+build plugins/screen_retriever/rebuild_cache: phony plugins/screen_retriever/CMakeFiles/rebuild_cache.util
+
+
+#############################################
+# Utility command for list_install_components
+
+build plugins/screen_retriever/list_install_components: phony
+
+
+#############################################
+# Utility command for install
+
+build plugins/screen_retriever/CMakeFiles/install.util: CUSTOM_COMMAND plugins/screen_retriever/all
+  COMMAND = cd /home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/screen_retriever && /usr/bin/cmake -P cmake_install.cmake
+  DESC = Install the project...
+  pool = console
+  restat = 1
+
+build plugins/screen_retriever/install: phony plugins/screen_retriever/CMakeFiles/install.util
+
+
+#############################################
+# Utility command for install/local
+
+build plugins/screen_retriever/CMakeFiles/install/local.util: CUSTOM_COMMAND plugins/screen_retriever/all
+  COMMAND = cd /home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/screen_retriever && /usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+  DESC = Installing only the local directory...
+  pool = console
+  restat = 1
+
+build plugins/screen_retriever/install/local: phony plugins/screen_retriever/CMakeFiles/install/local.util
+
+
+#############################################
+# Utility command for install/strip
+
+build plugins/screen_retriever/CMakeFiles/install/strip.util: CUSTOM_COMMAND plugins/screen_retriever/all
+  COMMAND = cd /home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/screen_retriever && /usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+  DESC = Installing the project stripped...
+  pool = console
+  restat = 1
+
+build plugins/screen_retriever/install/strip: phony plugins/screen_retriever/CMakeFiles/install/strip.util
+
+# =============================================================================
+# Write statements declared in CMakeLists.txt:
+# /home/eman/github/mymorsetrainer/linux/flutter/generated_plugins.cmake
+# =============================================================================
+
+# =============================================================================
+# Object build statements for SHARED_LIBRARY target window_manager_plugin
+
+
+#############################################
+# Order-only phony target for window_manager_plugin
+
+build cmake_object_order_depends_target_window_manager_plugin: phony || flutter/flutter_assemble
+
+build plugins/window_manager/CMakeFiles/window_manager_plugin.dir/window_manager_plugin.cc.o: CXX_COMPILER__window_manager_plugin_unscanned_Debug /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/.plugin_symlinks/window_manager/linux/window_manager_plugin.cc || cmake_object_order_depends_target_window_manager_plugin
+  CONFIG = Debug
+  DEFINES = -DAPPLICATION_ID=\"com.morsetrainer.morse_trainer\" -DFLUTTER_PLUGIN_IMPL -Dwindow_manager_plugin_EXPORTS
+  DEP_FILE = plugins/window_manager/CMakeFiles/window_manager_plugin.dir/window_manager_plugin.cc.o.d
+  FLAGS = -g -fPIC -fvisibility=hidden -Wall -Werror -pthread
+  INCLUDES = -I/home/eman/github/mymorsetrainer/linux/flutter/ephemeral -isystem /usr/include/gtk-3.0 -isystem /usr/include/pango-1.0 -isystem /usr/include/cloudproviders -isystem /usr/include/cairo -isystem /usr/include/gdk-pixbuf-2.0 -isystem /usr/include/glycin-2 -isystem /usr/include/at-spi2-atk/2.0 -isystem /usr/include/at-spi-2.0 -isystem /usr/include/atk-1.0 -isystem /usr/include/dbus-1.0 -isystem /usr/lib/dbus-1.0/include -isystem /usr/include/fribidi -isystem /usr/include/pixman-1 -isystem /usr/include/harfbuzz -isystem /usr/include/freetype2 -isystem /usr/include/libpng16 -isystem /usr/include/gio-unix-2.0 -isystem /usr/include/glib-2.0 -isystem /usr/lib/glib-2.0/include -isystem /usr/include/libmount -isystem /usr/include/blkid -isystem /usr/include/sysprof-6
+  OBJECT_DIR = plugins/window_manager/CMakeFiles/window_manager_plugin.dir
+  OBJECT_FILE_DIR = plugins/window_manager/CMakeFiles/window_manager_plugin.dir
+  TARGET_SUPPORT_DIR = plugins/window_manager/CMakeFiles/window_manager_plugin.dir
+
+
+# =============================================================================
+# Link build statements for SHARED_LIBRARY target window_manager_plugin
+
+
+#############################################
+# Link the shared library plugins/window_manager/libwindow_manager_plugin.so
+
+build plugins/window_manager/libwindow_manager_plugin.so: CXX_SHARED_LIBRARY_LINKER__window_manager_plugin_Debug plugins/window_manager/CMakeFiles/window_manager_plugin.dir/window_manager_plugin.cc.o | /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/libflutter_linux_gtk.so /usr/lib/libgtk-3.so /usr/lib/libgdk-3.so /usr/lib/libpangocairo-1.0.so /usr/lib/libcairo-gobject.so /usr/lib/libgdk_pixbuf-2.0.so /usr/lib/libatk-1.0.so /usr/lib/libpango-1.0.so /usr/lib/libcairo.so /usr/lib/libharfbuzz.so /usr/lib/libgio-2.0.so /usr/lib/libgobject-2.0.so /usr/lib/libglib-2.0.so /usr/lib/libz.so || flutter/flutter_assemble
+  CONFIG = Debug
+  DEP_FILE = plugins/window_manager/CMakeFiles/window_manager_plugin.dir/link.d
+  LANGUAGE_COMPILE_FLAGS = -g
+  LINK_FLAGS = -shared -Xlinker --dependency-file=plugins/window_manager/CMakeFiles/window_manager_plugin.dir/link.d
+  LINK_LIBRARIES = -Wl,-rpath,/home/eman/github/mymorsetrainer/linux/flutter/ephemeral  /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/libflutter_linux_gtk.so  /usr/lib/libgtk-3.so  /usr/lib/libgdk-3.so  /usr/lib/libpangocairo-1.0.so  /usr/lib/libcairo-gobject.so  /usr/lib/libgdk_pixbuf-2.0.so  /usr/lib/libatk-1.0.so  /usr/lib/libpango-1.0.so  /usr/lib/libcairo.so  /usr/lib/libharfbuzz.so  /usr/lib/libgio-2.0.so  /usr/lib/libgobject-2.0.so  /usr/lib/libglib-2.0.so  /usr/lib/libz.so
+  OBJECT_DIR = plugins/window_manager/CMakeFiles/window_manager_plugin.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  SONAME = libwindow_manager_plugin.so
+  SONAME_FLAG = -Wl,-soname,
+  TARGET_FILE = plugins/window_manager/libwindow_manager_plugin.so
+  TARGET_PDB = window_manager_plugin.so.dbg
+  TARGET_SUPPORT_DIR = plugins/window_manager/CMakeFiles/window_manager_plugin.dir
+
+
+#############################################
+# Utility command for edit_cache
+
+build plugins/window_manager/CMakeFiles/edit_cache.util: CUSTOM_COMMAND
+  COMMAND = cd /home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/window_manager && /usr/bin/ccmake -S/home/eman/github/mymorsetrainer/linux -B/home/eman/github/mymorsetrainer/build/linux/x64/debug
+  DESC = Running CMake cache editor...
+  pool = console
+  restat = 1
+
+build plugins/window_manager/edit_cache: phony plugins/window_manager/CMakeFiles/edit_cache.util
+
+
+#############################################
+# Utility command for rebuild_cache
+
+build plugins/window_manager/CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
+  COMMAND = cd /home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/window_manager && /usr/bin/cmake --regenerate-during-build -S/home/eman/github/mymorsetrainer/linux -B/home/eman/github/mymorsetrainer/build/linux/x64/debug
+  DESC = Running CMake to regenerate build system...
+  pool = console
+  restat = 1
+
+build plugins/window_manager/rebuild_cache: phony plugins/window_manager/CMakeFiles/rebuild_cache.util
+
+
+#############################################
+# Utility command for list_install_components
+
+build plugins/window_manager/list_install_components: phony
+
+
+#############################################
+# Utility command for install
+
+build plugins/window_manager/CMakeFiles/install.util: CUSTOM_COMMAND plugins/window_manager/all
+  COMMAND = cd /home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/window_manager && /usr/bin/cmake -P cmake_install.cmake
+  DESC = Install the project...
+  pool = console
+  restat = 1
+
+build plugins/window_manager/install: phony plugins/window_manager/CMakeFiles/install.util
+
+
+#############################################
+# Utility command for install/local
+
+build plugins/window_manager/CMakeFiles/install/local.util: CUSTOM_COMMAND plugins/window_manager/all
+  COMMAND = cd /home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/window_manager && /usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+  DESC = Installing only the local directory...
+  pool = console
+  restat = 1
+
+build plugins/window_manager/install/local: phony plugins/window_manager/CMakeFiles/install/local.util
+
+
+#############################################
+# Utility command for install/strip
+
+build plugins/window_manager/CMakeFiles/install/strip.util: CUSTOM_COMMAND plugins/window_manager/all
+  COMMAND = cd /home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/window_manager && /usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+  DESC = Installing the project stripped...
+  pool = console
+  restat = 1
+
+build plugins/window_manager/install/strip: phony plugins/window_manager/CMakeFiles/install/strip.util
+
+# =============================================================================
 # Target aliases.
 
 build audioplayers_linux_plugin: phony plugins/audioplayers_linux/libaudioplayers_linux_plugin.so
@@ -390,7 +616,15 @@ build flutter_assemble: phony flutter/flutter_assemble
 
 build libaudioplayers_linux_plugin.so: phony plugins/audioplayers_linux/libaudioplayers_linux_plugin.so
 
+build libscreen_retriever_plugin.so: phony plugins/screen_retriever/libscreen_retriever_plugin.so
+
+build libwindow_manager_plugin.so: phony plugins/window_manager/libwindow_manager_plugin.so
+
 build morse_trainer: phony intermediates_do_not_run/morse_trainer
+
+build screen_retriever_plugin: phony plugins/screen_retriever/libscreen_retriever_plugin.so
+
+build window_manager_plugin: phony plugins/window_manager/libwindow_manager_plugin.so
 
 # =============================================================================
 # Folder targets.
@@ -400,7 +634,7 @@ build morse_trainer: phony intermediates_do_not_run/morse_trainer
 #############################################
 # Folder: /home/eman/github/mymorsetrainer/build/linux/x64/debug
 
-build all: phony intermediates_do_not_run/morse_trainer flutter/all plugins/audioplayers_linux/all
+build all: phony intermediates_do_not_run/morse_trainer flutter/all plugins/audioplayers_linux/all plugins/screen_retriever/all plugins/window_manager/all
 
 # =============================================================================
 
@@ -417,20 +651,34 @@ build flutter/all: phony
 build plugins/audioplayers_linux/all: phony plugins/audioplayers_linux/libaudioplayers_linux_plugin.so
 
 # =============================================================================
+
+#############################################
+# Folder: /home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/screen_retriever
+
+build plugins/screen_retriever/all: phony plugins/screen_retriever/libscreen_retriever_plugin.so
+
+# =============================================================================
+
+#############################################
+# Folder: /home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/window_manager
+
+build plugins/window_manager/all: phony plugins/window_manager/libwindow_manager_plugin.so
+
+# =============================================================================
 # Built-in targets
 
 
 #############################################
 # Re-run CMake if any of its inputs changed.
 
-build build.ninja /home/eman/github/mymorsetrainer/build/linux/x64/debug/cmake_install.cmake /home/eman/github/mymorsetrainer/build/linux/x64/debug/flutter/cmake_install.cmake /home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/audioplayers_linux/cmake_install.cmake: RERUN_CMAKE | /home/eman/github/mymorsetrainer/linux/CMakeLists.txt /home/eman/github/mymorsetrainer/linux/flutter/CMakeLists.txt /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/.plugin_symlinks/audioplayers_linux/linux/CMakeLists.txt /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/generated_config.cmake /home/eman/github/mymorsetrainer/linux/flutter/generated_plugins.cmake /usr/share/cmake/Modules/CMakeCXXInformation.cmake /usr/share/cmake/Modules/CMakeCommonLanguageInclude.cmake /usr/share/cmake/Modules/CMakeGenericSystem.cmake /usr/share/cmake/Modules/CMakeInitializeConfigs.cmake /usr/share/cmake/Modules/CMakeLanguageInformation.cmake /usr/share/cmake/Modules/CMakeSystemSpecificInformation.cmake /usr/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake /usr/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake /usr/share/cmake/Modules/Compiler/Clang-CXX.cmake /usr/share/cmake/Modules/Compiler/Clang.cmake /usr/share/cmake/Modules/Compiler/GNU.cmake /usr/share/cmake/Modules/ExternalProject/shared_internal_commands.cmake /usr/share/cmake/Modules/FetchContent.cmake /usr/share/cmake/Modules/FindPackageHandleStandardArgs.cmake /usr/share/cmake/Modules/FindPackageMessage.cmake /usr/share/cmake/Modules/FindPkgConfig.cmake /usr/share/cmake/Modules/Internal/CMakeCXXLinkerInformation.cmake /usr/share/cmake/Modules/Internal/CMakeCommonLinkerInformation.cmake /usr/share/cmake/Modules/Linker/GNU-CXX.cmake /usr/share/cmake/Modules/Linker/GNU.cmake /usr/share/cmake/Modules/Platform/Linker/GNU.cmake /usr/share/cmake/Modules/Platform/Linker/Linux-GNU-CXX.cmake /usr/share/cmake/Modules/Platform/Linker/Linux-GNU.cmake /usr/share/cmake/Modules/Platform/Linux-Clang-CXX.cmake /usr/share/cmake/Modules/Platform/Linux-GNU-CXX.cmake /usr/share/cmake/Modules/Platform/Linux-GNU.cmake /usr/share/cmake/Modules/Platform/Linux-Initialize.cmake /usr/share/cmake/Modules/Platform/Linux.cmake /usr/share/cmake/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/4.3.1/CMakeCXXCompiler.cmake CMakeFiles/4.3.1/CMakeSystem.cmake
+build build.ninja /home/eman/github/mymorsetrainer/build/linux/x64/debug/cmake_install.cmake /home/eman/github/mymorsetrainer/build/linux/x64/debug/flutter/cmake_install.cmake /home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/audioplayers_linux/cmake_install.cmake /home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/screen_retriever/cmake_install.cmake /home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/window_manager/cmake_install.cmake: RERUN_CMAKE | /home/eman/github/mymorsetrainer/linux/CMakeLists.txt /home/eman/github/mymorsetrainer/linux/flutter/CMakeLists.txt /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/.plugin_symlinks/audioplayers_linux/linux/CMakeLists.txt /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/.plugin_symlinks/screen_retriever/linux/CMakeLists.txt /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/.plugin_symlinks/window_manager/linux/CMakeLists.txt /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/generated_config.cmake /home/eman/github/mymorsetrainer/linux/flutter/generated_plugins.cmake /usr/share/cmake/Modules/CMakeCXXInformation.cmake /usr/share/cmake/Modules/CMakeCommonLanguageInclude.cmake /usr/share/cmake/Modules/CMakeGenericSystem.cmake /usr/share/cmake/Modules/CMakeInitializeConfigs.cmake /usr/share/cmake/Modules/CMakeLanguageInformation.cmake /usr/share/cmake/Modules/CMakeSystemSpecificInformation.cmake /usr/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake /usr/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake /usr/share/cmake/Modules/Compiler/Clang-CXX.cmake /usr/share/cmake/Modules/Compiler/Clang.cmake /usr/share/cmake/Modules/Compiler/GNU.cmake /usr/share/cmake/Modules/ExternalProject/shared_internal_commands.cmake /usr/share/cmake/Modules/FetchContent.cmake /usr/share/cmake/Modules/FindPackageHandleStandardArgs.cmake /usr/share/cmake/Modules/FindPackageMessage.cmake /usr/share/cmake/Modules/FindPkgConfig.cmake /usr/share/cmake/Modules/Internal/CMakeCXXLinkerInformation.cmake /usr/share/cmake/Modules/Internal/CMakeCommonLinkerInformation.cmake /usr/share/cmake/Modules/Linker/GNU-CXX.cmake /usr/share/cmake/Modules/Linker/GNU.cmake /usr/share/cmake/Modules/Platform/Linker/GNU.cmake /usr/share/cmake/Modules/Platform/Linker/Linux-GNU-CXX.cmake /usr/share/cmake/Modules/Platform/Linker/Linux-GNU.cmake /usr/share/cmake/Modules/Platform/Linux-Clang-CXX.cmake /usr/share/cmake/Modules/Platform/Linux-GNU-CXX.cmake /usr/share/cmake/Modules/Platform/Linux-GNU.cmake /usr/share/cmake/Modules/Platform/Linux-Initialize.cmake /usr/share/cmake/Modules/Platform/Linux.cmake /usr/share/cmake/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/4.3.2/CMakeCXXCompiler.cmake CMakeFiles/4.3.2/CMakeSystem.cmake
   pool = console
 
 
 #############################################
 # A missing CMake input file is not an error.
 
-build /home/eman/github/mymorsetrainer/linux/CMakeLists.txt /home/eman/github/mymorsetrainer/linux/flutter/CMakeLists.txt /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/.plugin_symlinks/audioplayers_linux/linux/CMakeLists.txt /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/generated_config.cmake /home/eman/github/mymorsetrainer/linux/flutter/generated_plugins.cmake /usr/share/cmake/Modules/CMakeCXXInformation.cmake /usr/share/cmake/Modules/CMakeCommonLanguageInclude.cmake /usr/share/cmake/Modules/CMakeGenericSystem.cmake /usr/share/cmake/Modules/CMakeInitializeConfigs.cmake /usr/share/cmake/Modules/CMakeLanguageInformation.cmake /usr/share/cmake/Modules/CMakeSystemSpecificInformation.cmake /usr/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake /usr/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake /usr/share/cmake/Modules/Compiler/Clang-CXX.cmake /usr/share/cmake/Modules/Compiler/Clang.cmake /usr/share/cmake/Modules/Compiler/GNU.cmake /usr/share/cmake/Modules/ExternalProject/shared_internal_commands.cmake /usr/share/cmake/Modules/FetchContent.cmake /usr/share/cmake/Modules/FindPackageHandleStandardArgs.cmake /usr/share/cmake/Modules/FindPackageMessage.cmake /usr/share/cmake/Modules/FindPkgConfig.cmake /usr/share/cmake/Modules/Internal/CMakeCXXLinkerInformation.cmake /usr/share/cmake/Modules/Internal/CMakeCommonLinkerInformation.cmake /usr/share/cmake/Modules/Linker/GNU-CXX.cmake /usr/share/cmake/Modules/Linker/GNU.cmake /usr/share/cmake/Modules/Platform/Linker/GNU.cmake /usr/share/cmake/Modules/Platform/Linker/Linux-GNU-CXX.cmake /usr/share/cmake/Modules/Platform/Linker/Linux-GNU.cmake /usr/share/cmake/Modules/Platform/Linux-Clang-CXX.cmake /usr/share/cmake/Modules/Platform/Linux-GNU-CXX.cmake /usr/share/cmake/Modules/Platform/Linux-GNU.cmake /usr/share/cmake/Modules/Platform/Linux-Initialize.cmake /usr/share/cmake/Modules/Platform/Linux.cmake /usr/share/cmake/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/4.3.1/CMakeCXXCompiler.cmake CMakeFiles/4.3.1/CMakeSystem.cmake: phony
+build /home/eman/github/mymorsetrainer/linux/CMakeLists.txt /home/eman/github/mymorsetrainer/linux/flutter/CMakeLists.txt /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/.plugin_symlinks/audioplayers_linux/linux/CMakeLists.txt /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/.plugin_symlinks/screen_retriever/linux/CMakeLists.txt /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/.plugin_symlinks/window_manager/linux/CMakeLists.txt /home/eman/github/mymorsetrainer/linux/flutter/ephemeral/generated_config.cmake /home/eman/github/mymorsetrainer/linux/flutter/generated_plugins.cmake /usr/share/cmake/Modules/CMakeCXXInformation.cmake /usr/share/cmake/Modules/CMakeCommonLanguageInclude.cmake /usr/share/cmake/Modules/CMakeGenericSystem.cmake /usr/share/cmake/Modules/CMakeInitializeConfigs.cmake /usr/share/cmake/Modules/CMakeLanguageInformation.cmake /usr/share/cmake/Modules/CMakeSystemSpecificInformation.cmake /usr/share/cmake/Modules/CMakeSystemSpecificInitialize.cmake /usr/share/cmake/Modules/Compiler/CMakeCommonCompilerMacros.cmake /usr/share/cmake/Modules/Compiler/Clang-CXX.cmake /usr/share/cmake/Modules/Compiler/Clang.cmake /usr/share/cmake/Modules/Compiler/GNU.cmake /usr/share/cmake/Modules/ExternalProject/shared_internal_commands.cmake /usr/share/cmake/Modules/FetchContent.cmake /usr/share/cmake/Modules/FindPackageHandleStandardArgs.cmake /usr/share/cmake/Modules/FindPackageMessage.cmake /usr/share/cmake/Modules/FindPkgConfig.cmake /usr/share/cmake/Modules/Internal/CMakeCXXLinkerInformation.cmake /usr/share/cmake/Modules/Internal/CMakeCommonLinkerInformation.cmake /usr/share/cmake/Modules/Linker/GNU-CXX.cmake /usr/share/cmake/Modules/Linker/GNU.cmake /usr/share/cmake/Modules/Platform/Linker/GNU.cmake /usr/share/cmake/Modules/Platform/Linker/Linux-GNU-CXX.cmake /usr/share/cmake/Modules/Platform/Linker/Linux-GNU.cmake /usr/share/cmake/Modules/Platform/Linux-Clang-CXX.cmake /usr/share/cmake/Modules/Platform/Linux-GNU-CXX.cmake /usr/share/cmake/Modules/Platform/Linux-GNU.cmake /usr/share/cmake/Modules/Platform/Linux-Initialize.cmake /usr/share/cmake/Modules/Platform/Linux.cmake /usr/share/cmake/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/4.3.2/CMakeCXXCompiler.cmake CMakeFiles/4.3.2/CMakeSystem.cmake: phony
 
 
 #############################################

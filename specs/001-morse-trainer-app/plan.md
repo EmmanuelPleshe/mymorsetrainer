@@ -8,14 +8,13 @@
 
 ## Summary
 
-Cross-platform morse code training application implementing the Koch method for progressive learning. Users start with K and M characters, achieve 90% accuracy to unlock subsequent letters. Supports multiple input methods (keyboard, touchscreen, game controller, audio input), adjustable tone/speed, spaced repetition for memory reinforcement, and gamification elements. Target platforms: Linux desktop and Android mobile.
+Cross-platform morse code training application implementing the Koch method for progressive learning. Users start with K and M characters, achieve 90% accuracy to unlock subsequent letters. Supports multiple input methods (keyboard, touchscreen, game controller), adjustable tone/speed, spaced repetition for memory reinforcement, and gamification elements. Audio input (microphone/line-in) deferred to post-MVP. Target platforms: Linux desktop and Android mobile.
 
 ## Technical Context
 
 **Language/Version**: Flutter 3.x / Dart 3.x  
 **Primary Dependencies**: 
 - `audioplayers` - Audio playback for morse code tones
-- `flutter_libsodium` or native code - Audio input decoding (platform channels)
 - `game_controller` - Game controller input handling
 - `sqflite` - Local SQLite storage for progress and settings
 - `flutter_bloc` - State management
@@ -23,8 +22,8 @@ Cross-platform morse code training application implementing the Koch method for 
 **Testing**: flutter_test, mocktail for unit tests  
 **Target Platform**: Linux desktop, Android mobile  
 **Project Type**: Cross-platform mobile + desktop application  
-**Performance Goals**: Audio latency <50ms, input recognition accuracy >95%, audio input decoding >90%  
-**Constraints**: Offline-capable, real-time audio processing required  
+**Performance Goals**: Audio latency <50ms, input recognition accuracy >95%  
+**Constraints**: Offline-capable  
 **Scale/Scope**: Single-user app, ~50 UI screens/flows estimated from feature set
 
 ## Constitution Check
@@ -34,7 +33,7 @@ Cross-platform morse code training application implementing the Koch method for 
 | Principle | Status | Notes |
 |-----------|--------|-------|
 | I. Cross-Platform Target | ✅ PASS | Flutter targets Linux and Android |
-| II. Multi-Input Support | ✅ PASS | Flutter packages available: keyboard (native), touchscreen (gestures), controller (game_controller package), audio input (platform channels with native signal processing) |
+| II. Multi-Input Support | ✅ PASS | Flutter packages available: keyboard (native), touchscreen (gestures), controller (game_controller package). Audio input deferred to post-MVP. |
 | III. Koch Method Learning | ✅ PASS | Core learning logic follows Koch method |
 | IV. Interactive Keying Loop | ✅ PASS | Audio playback → input capture → verify → feedback flow |
 | V. Spaced Repetition | ✅ PASS | SM-2 algorithm variant with 2/7/30/90 day intervals |
@@ -63,7 +62,7 @@ specs/001-morse-trainer-app/
 lib/
 ├── core/
 │   ├── audio/           # Morse code tone generation and playback
-│   ├── input/           # Input handlers (keyboard, touchscreen, controller, audio)
+│   ├── input/           # Input handlers (keyboard, touchscreen, controller). Audio deferred to post-MVP.
 │   └── timing/          # WPM timing calculations, dot/dash detection
 ├── data/
 │   ├── models/          # Entity data models
@@ -94,7 +93,7 @@ Research completed with the following decisions:
 
 1. **Flutter audio capabilities**: Using `audioplayers` for playback (proven <50ms latency). For tone generation, will use low-level platform channels with native audio APIs (Oboe on Android, PulseAudio on Linux).
 
-2. **Audio input decoding**: Will implement via platform channels - Kotlin/Swift code for Android/iOS, C++ for Linux. Use Goertzel algorithm for tone detection, simple threshold for straight key.
+2. **Audio input decoding**: ~~Will implement via platform channels - Kotlin/Swift code for Android/iOS, C++ for Linux. Use Goertzel algorithm for tone detection, simple threshold for straight key.~~ *Deferred to post-MVP (FR-002-A). DSP research required.*
 
 3. **Game controller input**: Using `game_controller` package or SDL2 via FFI for broader controller support.
 

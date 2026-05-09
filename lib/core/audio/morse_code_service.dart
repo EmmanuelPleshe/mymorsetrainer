@@ -51,7 +51,7 @@ class AudioPlaybackService implements AudioService {
   AudioPlaybackService._internal();
 
   // Timing parameters
-  double _toneFrequency = 800.0;  // Default 800Hz (from cw-trainer)
+  double _toneFrequency = 600.0;  // Default 600Hz
   double _wpm = 20.0;            // Character speed
   double _effWpm = 20.0;          // Effective speed (Farnsworth)
   double _volume = 0.5;

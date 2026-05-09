@@ -68,7 +68,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Runtime" OR NOT CMAKE_INSTALL_COMPONENT)
      NOT IS_SYMLINK "$ENV{DESTDIR}/home/eman/github/mymorsetrainer/build/linux/x64/debug/bundle/morse_trainer")
     file(RPATH_CHANGE
          FILE "$ENV{DESTDIR}/home/eman/github/mymorsetrainer/build/linux/x64/debug/bundle/morse_trainer"
-         OLD_RPATH "/home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/audioplayers_linux:/home/eman/github/mymorsetrainer/linux/flutter/ephemeral:"
+         OLD_RPATH "/home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/audioplayers_linux:/home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/screen_retriever:/home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/window_manager:/home/eman/github/mymorsetrainer/linux/flutter/ephemeral:"
          NEW_RPATH "$ORIGIN/lib")
     if(CMAKE_INSTALL_DO_STRIP)
       execute_process(COMMAND "/usr/bin/llvm-strip" "$ENV{DESTDIR}/home/eman/github/mymorsetrainer/build/linux/x64/debug/bundle/morse_trainer")
@@ -114,6 +114,30 @@ endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Runtime" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
+   "/home/eman/github/mymorsetrainer/build/linux/x64/debug/bundle/lib/libscreen_retriever_plugin.so")
+  if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
+    message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
+  endif()
+  if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
+    message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
+  endif()
+  file(INSTALL DESTINATION "/home/eman/github/mymorsetrainer/build/linux/x64/debug/bundle/lib" TYPE FILE FILES "/home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/screen_retriever/libscreen_retriever_plugin.so")
+endif()
+
+if(CMAKE_INSTALL_COMPONENT STREQUAL "Runtime" OR NOT CMAKE_INSTALL_COMPONENT)
+  list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
+   "/home/eman/github/mymorsetrainer/build/linux/x64/debug/bundle/lib/libwindow_manager_plugin.so")
+  if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
+    message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
+  endif()
+  if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
+    message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
+  endif()
+  file(INSTALL DESTINATION "/home/eman/github/mymorsetrainer/build/linux/x64/debug/bundle/lib" TYPE FILE FILES "/home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/window_manager/libwindow_manager_plugin.so")
+endif()
+
+if(CMAKE_INSTALL_COMPONENT STREQUAL "Runtime" OR NOT CMAKE_INSTALL_COMPONENT)
+  list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
    "/home/eman/github/mymorsetrainer/build/linux/x64/debug/bundle/lib/")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
@@ -146,6 +170,8 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/eman/github/mymorsetrainer/build/linux/x64/debug/flutter/cmake_install.cmake")
   include("/home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/audioplayers_linux/cmake_install.cmake")
+  include("/home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/screen_retriever/cmake_install.cmake")
+  include("/home/eman/github/mymorsetrainer/build/linux/x64/debug/plugins/window_manager/cmake_install.cmake")
 
 endif()
 

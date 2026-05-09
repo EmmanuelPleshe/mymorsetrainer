@@ -14,7 +14,6 @@ class KeyboardKeyerHandler {
 
   String _pattern = '';
   Timer? _autoSubmitTimer;
-  bool _acceptInput = true;
 
   static final Map<String, String> _morseToChar = {
     '.-': 'A', '-...': 'B', '-.-.': 'C', '-..': 'D', '.': 'E',
@@ -36,7 +35,6 @@ class KeyboardKeyerHandler {
   });
 
   void handleKeyDown() {
-    if (!_acceptInput) return;
     // Cancel any pending auto-submit - user is continuing to key
     _autoSubmitTimer?.cancel();
     onKeyDown?.call();
@@ -45,9 +43,9 @@ class KeyboardKeyerHandler {
   void handleKeyUp(int durationMs) {
     onKeyUp?.call();
 
-    // Use fixed WPM-based threshold: 2× dot duration
-    // At 20 WPM: 2×60ms = 120ms threshold
-    final threshold = dotDurationMs * 2;
+    // Use fixed WPM-based threshold: 3× dot duration
+    // At 20 WPM: 3×60ms = 180ms threshold
+    final threshold = dotDurationMs * 3;
     final symbol = durationMs >= threshold ? '-' : '.';
     _pattern += symbol;
 
@@ -60,10 +58,9 @@ class KeyboardKeyerHandler {
   void _scheduleAutoSubmit() {
     _autoSubmitTimer?.cancel();
 
-    // Use inter-character spacing (3× dot duration) as timeout threshold
-    // This matches actual Morse timing: after 3 units of silence, character is complete
-    final timeoutMs = dotDurationMs * 3;
-    _autoSubmitTimer = Timer(Duration(milliseconds: timeoutMs), () {
+    // Fixed 400ms timeout — enough time for any character pattern at any WPM
+    const timeoutMs = 400;
+    _autoSubmitTimer = Timer(const Duration(milliseconds: timeoutMs), () {
       if (_pattern.isNotEmpty && _morseToChar.containsKey(_pattern)) {
         final pattern = _pattern;
         final char = _morseToChar[pattern] ?? '?';
@@ -102,12 +99,5 @@ class KeyboardKeyerHandler {
 
   void dispose() {
     _autoSubmitTimer?.cancel();
-  }
-
-  void setAcceptInput(bool accept) {
-    _acceptInput = accept;
-    if (!accept) {
-      _autoSubmitTimer?.cancel();
-    }
   }
 }

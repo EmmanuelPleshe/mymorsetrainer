@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../../data/models/settings.dart';
 import '../../data/repositories/settings_repository.dart';
+import '../../core/audio/morse_code_service.dart';
 
 // Events
 abstract class SettingsEvent extends Equatable {
@@ -90,8 +91,13 @@ class SettingsError extends SettingsState {
 // BLoC
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   final SettingsRepository _settingsRepository;
+  final AudioPlaybackService? _audioService;
 
-  SettingsBloc(this._settingsRepository) : super(SettingsInitial()) {
+  SettingsBloc(
+    this._settingsRepository, {
+    AudioPlaybackService? audioService,
+  })  : _audioService = audioService,
+        super(SettingsInitial()) {
     on<LoadSettings>(_onLoadSettings);
     on<UpdateToneFrequency>(_onUpdateToneFrequency);
     on<UpdateWpm>(_onUpdateWpm);
@@ -111,10 +117,19 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     emit(SettingsLoading());
     try {
       final settings = await _settingsRepository.getSettings();
+      _syncAudio(settings);
       emit(SettingsLoaded(settings));
     } catch (e) {
       emit(SettingsError('Failed to load settings: $e'));
     }
+  }
+
+  void _syncAudio(AppSettings settings) {
+    _audioService?.setWpm(settings.wpm);
+    _audioService?.setEffWpm(settings.effWpm);
+    _audioService?.setToneFrequency(settings.toneFrequency);
+    _audioService?.setVolume(settings.volume);
+    _audioService?.setExtraWordSpace(settings.extraWordSpace);
   }
 
   Future<void> _onUpdateToneFrequency(
@@ -122,7 +137,9 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     Emitter<SettingsState> emit,
   ) async {
     try {
-      await _settingsRepository.updateToneFrequency(event.frequency);
+      final clamped = event.frequency.clamp(300.0, 2000.0);
+      await _settingsRepository.updateToneFrequency(clamped);
+      _audioService?.setToneFrequency(clamped);
       final settings = await _settingsRepository.getSettings();
       emit(SettingsLoaded(settings));
     } catch (e) {
@@ -135,7 +152,9 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     Emitter<SettingsState> emit,
   ) async {
     try {
-      await _settingsRepository.updateWpm(event.wpm);
+      final clamped = event.wpm.clamp(5.0, 40.0);
+      await _settingsRepository.updateWpm(clamped);
+      _audioService?.setWpm(clamped);
       final settings = await _settingsRepository.getSettings();
       emit(SettingsLoaded(settings));
     } catch (e) {
@@ -148,8 +167,10 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     Emitter<SettingsState> emit,
   ) async {
     try {
+      final clamped = event.effWpm.clamp(5.0, 40.0);
       final current = await _settingsRepository.getSettings();
-      await _settingsRepository.updateSettings(current.copyWith(effWpm: event.effWpm));
+      await _settingsRepository.updateSettings(current.copyWith(effWpm: clamped));
+      _audioService?.setEffWpm(clamped);
       final settings = await _settingsRepository.getSettings();
       emit(SettingsLoaded(settings));
     } catch (e) {
@@ -162,8 +183,10 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     Emitter<SettingsState> emit,
   ) async {
     try {
+      final clamped = event.extraWordSpace.clamp(0.0, 5.0);
       final current = await _settingsRepository.getSettings();
-      await _settingsRepository.updateSettings(current.copyWith(extraWordSpace: event.extraWordSpace));
+      await _settingsRepository.updateSettings(current.copyWith(extraWordSpace: clamped));
+      _audioService?.setExtraWordSpace(clamped);
       final settings = await _settingsRepository.getSettings();
       emit(SettingsLoaded(settings));
     } catch (e) {
@@ -176,7 +199,9 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     Emitter<SettingsState> emit,
   ) async {
     try {
-      await _settingsRepository.updateVolume(event.volume);
+      final clamped = event.volume.clamp(0.0, 1.0);
+      await _settingsRepository.updateVolume(clamped);
+      _audioService?.setVolume(clamped);
       final settings = await _settingsRepository.getSettings();
       emit(SettingsLoaded(settings));
     } catch (e) {

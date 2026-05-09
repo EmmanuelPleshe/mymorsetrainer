@@ -1,0 +1,1 @@
+ /home/eman/github/mymorsetrainer/.dart_tool/flutter_build/b7f8d24dbbdd5d69947938c5639577f3/native_assets.json: 

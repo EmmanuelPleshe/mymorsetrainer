@@ -4,23 +4,20 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/practice_session_bloc.dart';
 import '../bloc/settings_bloc.dart';
-import '../../core/audio/audio_service.dart';
 import '../../core/audio/morse_code_service.dart';
 import '../../core/input/keyboard_input_handler.dart';
 import '../../core/logging/logger.dart';
 import '../../core/logging/log_constants.dart';
 
 class PracticeScreen extends StatefulWidget {
-  final AudioService? audioService;
-
-  const PracticeScreen({super.key, this.audioService});
+  const PracticeScreen({super.key});
 
   @override
   State<PracticeScreen> createState() => _PracticeScreenState();
 }
 
 class _PracticeScreenState extends State<PracticeScreen> {
-  late final AudioService _audioService;
+  final AudioPlaybackService _audioService = AudioPlaybackService();
   KeyboardKeyerHandler? _keyerHandler;
   String _currentPattern = '';
   String _lastDecodedChar = '';
@@ -41,7 +38,6 @@ class _PracticeScreenState extends State<PracticeScreen> {
   @override
   void initState() {
     super.initState();
-    _audioService = widget.audioService ?? AudioPlaybackService();
     _initAudio();
   }
 
@@ -220,20 +216,6 @@ class _PracticeScreenState extends State<PracticeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Practice'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.help_outline),
-            onPressed: () => _showHelpBottomSheet(context),
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () => Navigator.pushNamed(context, '/settings'),
-          ),
-          IconButton(
-            icon: const Icon(Icons.bar_chart),
-            onPressed: () => Navigator.pushNamed(context, '/progress'),
-          ),
-        ],
       ),
       body: BlocListener<SettingsBloc, SettingsState>(
         listener: (context, state) {
@@ -243,27 +225,17 @@ class _PracticeScreenState extends State<PracticeScreen> {
         },
         child: BlocConsumer<PracticeSessionBloc, PracticeSessionState>(
           listener: (context, state) {
-            if (state is PracticeSessionActive && state.lastAnswerCorrect == null && !state.isRetrying) {
-              // New character (not retry) - clear feedback and play audio
+            if (state is PracticeSessionActive && state.lastAnswerCorrect == null) {
+              // New character or retry - clear feedback and keyer pattern
               setState(() {
                 _lastDecodedChar = '';
                 _feedbackHandled = false;
               });
               _keyerHandler?.clearPattern();
-              _keyerHandler?.setAcceptInput(true);
               final char = state.currentCharacter;
               if (char != null) {
                 _playCharacterAudio(char.symbol);
               }
-            }
-            if (state is PracticeSessionActive && state.isRetrying) {
-              // User is retrying after wrong answer - clear pattern but don't play audio yet
-              setState(() {
-                _lastDecodedChar = '';
-                _feedbackHandled = false;
-              });
-              _keyerHandler?.clearPattern();
-              _keyerHandler?.setAcceptInput(false);
             }
             if (state is PracticeSessionComplete) {
               _showCompletionDialog(context, state);
@@ -466,9 +438,11 @@ class _PracticeScreenState extends State<PracticeScreen> {
     // Only play feedback sound once per state (if sound effects enabled)
     if (!_feedbackHandled) {
       _feedbackHandled = true;
-      final settingsState = context.read<SettingsBloc>().state;
-      if (settingsState is SettingsLoaded && settingsState.settings.enableSoundEffects) {
-        _audioService.playCorrectFeedback();
+      if (isCorrect) {
+        final settingsState = context.read<SettingsBloc>().state;
+        if (settingsState is SettingsLoaded && settingsState.settings.enableSoundEffects) {
+          _audioService.playCorrectFeedback();
+        }
       }
     }
 
@@ -541,107 +515,6 @@ class _PracticeScreenState extends State<PracticeScreen> {
         title: const Text('Session Complete!'),
         content: Text('You got ${state.correctCount} out of ${state.totalQuestions} correct (${(state.accuracy * 100).toStringAsFixed(1)}%)'),
         actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))],
-      ),
-    );
-  }
-
-  void _showHelpBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.6,
-        minChildSize: 0.3,
-        maxChildSize: 0.9,
-        expand: false,
-        builder: (context, scrollController) {
-          return SingleChildScrollView(
-            controller: scrollController,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Container(
-                      width: 40,
-                      height: 4,
-                      margin: const EdgeInsets.only(bottom: 16),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-                  const Text(
-                    'How to Key',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    '• Hold SPACE briefly → dit (dot)\n'
-                    '• Hold SPACE longer → dah (dash)\n'
-                    '• Release SPACE → submit the pattern',
-                    style: TextStyle(fontSize: 15, height: 1.5),
-                  ),
-                  const Divider(height: 32),
-                  const Text(
-                    'What the Colors Mean',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      _buildColorDot(Colors.blue),
-                      const SizedBox(width: 8),
-                      const Text('Waiting for input', style: TextStyle(fontSize: 15)),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      _buildColorDot(Colors.green),
-                      const SizedBox(width: 8),
-                      const Text('Correct answer', style: TextStyle(fontSize: 15)),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      _buildColorDot(Colors.red),
-                      const SizedBox(width: 8),
-                      const Text('Wrong answer', style: TextStyle(fontSize: 15)),
-                    ],
-                  ),
-                  const Divider(height: 32),
-                  const Text(
-                    'Why Did It Submit Early?',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Morse code uses pauses to separate elements and characters. '
-                    'The app submits your pattern after a silence threshold. '
-                    'You can adjust this in Settings.',
-                    style: TextStyle(fontSize: 15, height: 1.5),
-                  ),
-                  const SizedBox(height: 24),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildColorDot(Color color) {
-    return Container(
-      width: 16,
-      height: 16,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
       ),
     );
   }

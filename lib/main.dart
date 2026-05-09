@@ -66,8 +66,10 @@ class MorseTrainerApp extends StatelessWidget {
             },
           ),
           BlocProvider(
-            create: (context) => SettingsBloc(context.read<SettingsRepository>())
-              ..add(const LoadSettings()),
+            create: (context) => SettingsBloc(
+              context.read<SettingsRepository>(),
+              audioService: AudioPlaybackService(),
+            )..add(const LoadSettings()),
           ),
         ],
         child: MaterialApp(
@@ -89,6 +91,7 @@ class MorseTrainerApp extends StatelessWidget {
           routes: {
             '/practice': (context) => const PracticeScreen(),
             '/progress': (context) => const ProgressScreen(),
+            '/settings': (context) => const SettingsScreen(),
           },
         ),
       ),

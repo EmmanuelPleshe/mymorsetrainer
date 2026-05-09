@@ -1,4 +1,3 @@
-import 'package:meta/meta.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -10,33 +9,29 @@ class DatabaseHelper {
 
   DatabaseHelper._init();
 
-  @visibleForTesting
+  /// Set a custom database path for testing (e.g., ':memory:').
+  /// Call [resetInstance] after setting to ensure the next [database]
+  /// call uses the new path.
   static void setTestDbPath(String path) {
     _testDbPath = path;
-    _database = null;
   }
 
-  @visibleForTesting
-  static void reset() {
+  /// Reset the singleton so the next [database] call re-initializes.
+  static void resetInstance() {
     _database = null;
-    _testDbPath = null;
   }
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB('morse_trainer.db');
+    final path = _testDbPath ?? join(
+      (await getApplicationDocumentsDirectory()).path,
+      'morse_trainer.db',
+    );
+    _database = await _initDB(path);
     return _database!;
   }
 
-  Future<Database> _initDB(String filePath) async {
-    final String path;
-    if (_testDbPath != null) {
-      path = _testDbPath!;
-    } else {
-      final directory = await getApplicationDocumentsDirectory();
-      path = join(directory.path, filePath);
-    }
-
+  Future<Database> _initDB(String path) async {
     return await openDatabase(
       path,
       version: 5,
@@ -115,9 +110,9 @@ class DatabaseHelper {
         id TEXT PRIMARY KEY,
         toneFrequency REAL NOT NULL DEFAULT 600.0,
         wpm REAL NOT NULL DEFAULT 20.0,
-        effWpm REAL NOT NULL DEFAULT 10.0,
+        effWpm REAL NOT NULL DEFAULT 20.0,
         extraWordSpace REAL NOT NULL DEFAULT 0.0,
-        volume REAL NOT NULL DEFAULT 1.0,
+        volume REAL NOT NULL DEFAULT 0.5,
         inputMethod INTEGER NOT NULL DEFAULT 0,
         enableGamification INTEGER NOT NULL DEFAULT 1,
         enableSoundEffects INTEGER NOT NULL DEFAULT 0,
@@ -130,9 +125,9 @@ class DatabaseHelper {
       'id': 'current',
       'toneFrequency': 600.0,
       'wpm': 20.0,
-      'effWpm': 10.0,
+      'effWpm': 20.0,
       'extraWordSpace': 0.0,
-      'volume': 1.0,
+      'volume': 0.5,
       'inputMethod': 0,
       'enableGamification': 1,
       'enableSoundEffects': 0,

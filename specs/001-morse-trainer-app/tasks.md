@@ -71,7 +71,7 @@ description: "Task list for Morse Trainer App feature implementation"
 
 ## Phase 4: User Story 2 - Practice with Multiple Input Methods (Priority: P1)
 
-**Goal**: Users can use keyboard, touchscreen, game controller, or audio input to key in morse code
+**Goal**: Users can use keyboard, touchscreen, or game controller to key in morse code. Audio input deferred to post-MVP.
 
 **Independent Test**: Each input method can independently trigger morse code input without affecting other functionality
 
@@ -80,7 +80,7 @@ description: "Task list for Morse Trainer App feature implementation"
 - [x] T021 [P] [US2] Create KeyboardInputHandler in lib/core/input/keyboard_input_handler.dart
 - [x] T022 [P] [US2] Create TouchscreenInputHandler in lib/core/input/touchscreen_input_handler.dart
 - [x] T023 [P] [US2] Create GameControllerInputHandler in lib/core/input/game_controller_input_handler.dart
-- [x] T024 [P] [US2] Create AudioInputHandler in lib/core/input/audio_input_handler.dart
+- [ ] ~~T024 [P] [US2] Create AudioInputHandler in lib/core/input/audio_input_handler.dart~~ *Deferred to post-MVP (FR-002-A)*
 - [x] T025 [US2] Create unified InputService in lib/core/input/input_service.dart (handlers work independently, no unified service needed)
 - [x] T026 [US2] Implement InputMethod selection UI in Settings screen
 - [x] T027 [US2] Add input calibration for timing thresholds (dot/dash distinction)
@@ -168,7 +168,7 @@ description: "Task list for Morse Trainer App feature implementation"
 - [ ] T056 Add onboarding flow for new users
 - [ ] T057 Add data export/backup functionality
 - [ ] T059 [US2] Add integration tests to verify keyboard/touchscreen/controller input recognition meets SC-006 (95% accuracy)
-- [ ] T060 [US2] Add integration tests to verify audio input decoding meets SC-007 (90% accuracy with proper key/interface)
+- [ ] ~~T060 [US2] Add integration tests to verify audio input decoding meets SC-007 (90% accuracy with proper key/interface)~~ *Deferred to post-MVP (FR-002-A)*
 - [x] T058 Accessibility - added screen flash for deaf/hard-of-hearing users
 
 ---
