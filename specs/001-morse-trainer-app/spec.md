@@ -42,7 +42,7 @@ User selects their preferred input method (keyboard, touchscreen, game controlle
 
 ### User Story 3 - Adjust Tone and Speed (Priority: P2)
 
-User can adjust the morse code audio tone (frequency) and speed (WPM) to their preference. Default settings are 800Hz tone and 15 WPM.
+User can adjust the morse code audio tone (frequency), character speed (WPM), and effective speed (WPM). Default settings are 600Hz tone, 20 WPM character speed, and 10 WPM effective speed.
 
 **Why this priority**: Comfortable learning - different users have different hearing abilities and preferred practice speeds.
 
@@ -50,7 +50,7 @@ User can adjust the morse code audio tone (frequency) and speed (WPM) to their p
 
 **Acceptance Scenarios**:
 
-1. **Given** default settings are 600Hz and 20 WPM, **When** user plays morse code, **Then** audio plays at 600Hz tone at 20 WPM speed
+1. **Given** default settings are 600Hz tone, 20 WPM character speed, and 10 WPM effective speed, **When** user plays morse code, **Then** audio plays at 600Hz tone with characters at 20 WPM and Farnsworth spacing for 10 WPM effective
 2. **Given** user changes tone to 800Hz, **When** morse code plays, **Then** audio pitch is 800Hz
 3. **Given** user changes speed to 25 WPM, **When** morse code plays, **Then** character timing reflects 25 WPM
 
@@ -121,8 +121,8 @@ User earns points for correct responses, maintains streaks for consecutive corre
 - **FR-003**: System MUST verify user keying against expected morse code pattern and provide immediate feedback (correct/incorrect)
 - **FR-004**: System MUST require 90% accuracy before unlocking next character in Koch sequence
 - **FR-005**: System MUST implement spaced repetition algorithm with intervals: 2 days → 7 days → 30 days → 90 days based on mastery level
-- **FR-006**: System MUST allow adjustment of audio tone frequency (default 800Hz, range 300Hz-2000Hz)
-- **FR-007**: System MUST allow adjustment of morse code speed in WPM (default 20 WPM, range 5-40 WPM)
+- **FR-006**: System MUST allow adjustment of audio tone frequency (default 600Hz, range 300Hz-2000Hz)
+- **FR-007**: System MUST allow adjustment of character speed in WPM (default 20 WPM, range 5-40 WPM) and effective speed in WPM (default 10 WPM, range 5-40 WPM, must be ≤ character speed)
 - **FR-008**: System MUST track user performance per character and schedule reviews based on spaced repetition
 - **FR-009**: System MUST provide word practice mode after alphabet completion
 - **FR-010**: System MUST provide QSO phrase practice mode after word completion
@@ -136,7 +136,7 @@ User earns points for correct responses, maintains streaks for consecutive corre
 - **Character**: Represents a letter or symbol with its morse code pattern (dots/dashes), current mastery level, and spaced repetition schedule
 - **UserProgress**: Tracks total points, current streak, longest streak, current level, and per-character performance
 - **Session**: Records a practice session including characters practiced, accuracy, duration, and input method used
-- **Settings**: User preferences including tone frequency, speed (WPM), preferred input method, and audio volume
+- **Settings**: User preferences including tone frequency, character speed (WPM), effective speed (WPM), preferred input method, and audio volume
 
 ## Success Criteria *(mandatory)*
 
@@ -154,7 +154,7 @@ User earns points for correct responses, maintains streaks for consecutive corre
 
 - Users have basic familiarity with keyboard or touchscreen devices
 - Audio input will use standard system audio APIs (PulseAudio on Linux, Oboe on Android)
-- Default 20 WPM speed is comfortable for beginners while being fast enough to build real-world skills
+- Default 20 WPM character speed / 10 WPM effective speed prevents counting dits while building real-world skills
 - Gamification elements can be disabled for users who prefer pure learning without points
 - Settings persist between sessions on the same device
 - Network connectivity is not required for core functionality (offline-first design)
