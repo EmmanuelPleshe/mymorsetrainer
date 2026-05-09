@@ -14,9 +14,9 @@ class AppSettings {
 
   AppSettings({
     this.id = 'current',
-    this.toneFrequency = 800.0,  // Default 800Hz (from cw-trainer)
-    this.wpm = 15.0,
-    this.effWpm = 10.0,
+    this.toneFrequency = 600.0,  // Default 600Hz
+    this.wpm = 20.0,
+    this.effWpm = 20.0,
     this.extraWordSpace = 0.0,
     this.volume = 0.5,
     this.inputMethod = InputMethod.keyboard,
@@ -69,7 +69,7 @@ class AppSettings {
   factory AppSettings.fromMap(Map<String, dynamic> map) {
     return AppSettings(
       id: map['id'] as String? ?? 'current',
-      toneFrequency: map['toneFrequency'] as double? ?? 800.0,
+      toneFrequency: map['toneFrequency'] as double? ?? 600.0,
       wpm: map['wpm'] as double? ?? 20.0,
       effWpm: map['effWpm'] as double? ?? 20.0,
       extraWordSpace: map['extraWordSpace'] as double? ?? 0.0,

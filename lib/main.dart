@@ -65,8 +65,10 @@ class MorseTrainerApp extends StatelessWidget {
             },
           ),
           BlocProvider(
-            create: (context) => SettingsBloc(context.read<SettingsRepository>())
-              ..add(const LoadSettings()),
+            create: (context) => SettingsBloc(
+              context.read<SettingsRepository>(),
+              audioService: AudioPlaybackService(),
+            )..add(const LoadSettings()),
           ),
         ],
         child: MaterialApp(
