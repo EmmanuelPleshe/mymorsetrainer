@@ -11,9 +11,9 @@
 
 **Purpose**: Ensure project is ready for development and testing.
 
-- [ ] T001 Verify `flutter pub get` has run and all dependencies resolve
-- [ ] T002 [P] Verify `flutter test` runs successfully with zero existing failures
-- [ ] T003 [P] Verify `flutter run` launches the app on Linux desktop
+- [x] T001 Verify `flutter pub get` has run and all dependencies resolve
+- [x] T002 [P] Verify `flutter test` runs successfully with zero existing failures
+- [x] T003 [P] Verify `flutter run` launches the app on Linux desktop
 
 ---
 
@@ -25,14 +25,14 @@
 
 ### Tests for Foundational (write first, confirm fail)
 
-- [ ] T004 [P] Write failing test: AppSettings constructor defaults match spec (WPM 20, effWPM 20, tone 600, volume 0.5) in `test/unit/settings_model_test.dart`
-- [ ] T005 [P] Write failing test: AppSettings.fromMap defaults match spec in `test/unit/settings_model_test.dart`
+- [x] T004 [P] Write failing test: AppSettings constructor defaults match spec (WPM 20, effWPM 20, tone 600, volume 0.5) in `test/unit/settings_model_test.dart`
+- [x] T005 [P] Write failing test: AppSettings.fromMap defaults match spec in `test/unit/settings_model_test.dart`
 
 ### Implementation for Foundational
 
-- [ ] T006 Align `AppSettings` constructor defaults to spec in `lib/data/models/settings.dart`
-- [ ] T007 Align `AppSettings.fromMap` defaults to spec in `lib/data/models/settings.dart`
-- [ ] T008 Align DB `settings` table defaults in `_createDB` to spec in `lib/data/database/database_helper.dart`
+- [x] T006 Align `AppSettings` constructor defaults to spec in `lib/data/models/settings.dart`
+- [x] T007 Align `AppSettings.fromMap` defaults to spec in `lib/data/models/settings.dart`
+- [x] T008 Align DB `settings` table defaults in `_createDB` to spec in `lib/data/database/database_helper.dart`
 
 **Checkpoint**: `flutter test` passes for model default tests. Constructor, fromMap, and DB schema defaults are identical.
 
@@ -46,19 +46,19 @@
 
 ### Tests for User Story 1 (write first, confirm fail) ⚠️
 
-- [ ] T009 [P] [US1] Write failing test: `SettingsRepository` round-trips WPM/effWPM via in-memory DB in `test/unit/settings_repository_test.dart`
-- [ ] T010 [P] [US1] Write failing test: `SettingsBloc` calls `AudioPlaybackService.setWpm` on `LoadSettings` with persisted WPM in `test/unit/settings_bloc_test.dart`
-- [ ] T011 [P] [US1] Write failing test: `SettingsBloc` calls `AudioPlaybackService.setEffWpm` on `LoadSettings` with persisted effWPM in `test/unit/settings_bloc_test.dart`
+- [x] T009 [P] [US1] Write failing test: `SettingsRepository` round-trips WPM/effWPM via in-memory DB in `test/unit/settings_repository_test.dart`
+- [x] T010 [P] [US1] Write failing test: `SettingsBloc` calls `AudioPlaybackService.setWpm` on `LoadSettings` with persisted WPM in `test/unit/settings_bloc_test.dart`
+- [x] T011 [P] [US1] Write failing test: `SettingsBloc` calls `AudioPlaybackService.setEffWpm` on `LoadSettings` with persisted effWPM in `test/unit/settings_bloc_test.dart`
 
 ### Implementation for User Story 1
 
-- [ ] T012 [US1] Add `AudioPlaybackService` parameter to `SettingsBloc` constructor in `lib/ui/bloc/settings_bloc.dart`
-- [ ] T013 [US1] In `_onLoadSettings`, after emitting `SettingsLoaded`, call `AudioPlaybackService.setWpm` and `setEffWpm` with loaded values in `lib/ui/bloc/settings_bloc.dart`
-- [ ] T014 [US1] In `_onUpdateWpm`, after successful DB write, call `AudioPlaybackService.setWpm` in `lib/ui/bloc/settings_bloc.dart`
-- [ ] T015 [US1] In `_onUpdateEffWpm`, after successful DB write, call `AudioPlaybackService.setEffWpm` in `lib/ui/bloc/settings_bloc.dart`
-- [ ] T016 [US1] Add WPM validation (clamp 5.0–40.0) in `_onUpdateWpm` before DB write in `lib/ui/bloc/settings_bloc.dart`
-- [ ] T017 [US1] Add effWPM validation (clamp 5.0–40.0) in `_onUpdateEffWpm` before DB write in `lib/ui/bloc/settings_bloc.dart`
-- [ ] T018 [P] [US1] Update `main.dart` to pass `AudioPlaybackService()` into `SettingsBloc` constructor in `lib/main.dart`
+- [x] T012 [US1] Add `AudioPlaybackService` parameter to `SettingsBloc` constructor in `lib/ui/bloc/settings_bloc.dart`
+- [x] T013 [US1] In `_onLoadSettings`, after emitting `SettingsLoaded`, call `AudioPlaybackService.setWpm` and `setEffWpm` with loaded values in `lib/ui/bloc/settings_bloc.dart`
+- [x] T014 [US1] In `_onUpdateWpm`, after successful DB write, call `AudioPlaybackService.setWpm` in `lib/ui/bloc/settings_bloc.dart`
+- [x] T015 [US1] In `_onUpdateEffWpm`, after successful DB write, call `AudioPlaybackService.setEffWpm` in `lib/ui/bloc/settings_bloc.dart`
+- [x] T016 [US1] Add WPM validation (clamp 5.0–40.0) in `_onUpdateWpm` before DB write in `lib/ui/bloc/settings_bloc.dart`
+- [x] T017 [US1] Add effWPM validation (clamp 5.0–40.0) in `_onUpdateEffWpm` before DB write in `lib/ui/bloc/settings_bloc.dart`
+- [x] T018 [P] [US1] Update `main.dart` to pass `AudioPlaybackService()` into `SettingsBloc` constructor in `lib/main.dart`
 
 **Checkpoint**: `flutter test` passes all US1 tests. `flutter run` → change WPM → close → reopen → WPM restored.
 
@@ -72,16 +72,16 @@
 
 ### Tests for User Story 3 (write first, confirm fail) ⚠️
 
-- [ ] T019 [P] [US3] Write failing test: `SettingsBloc` calls `AudioPlaybackService.setWpm` on `UpdateWpm` event in `test/unit/settings_bloc_test.dart`
-- [ ] T020 [P] [US3] Write failing test: `SettingsBloc` calls `AudioPlaybackService.setToneFrequency` on `UpdateToneFrequency` event in `test/unit/settings_bloc_test.dart`
-- [ ] T021 [P] [US3] Write failing test: `SettingsBloc` calls `AudioPlaybackService.setVolume` on `UpdateVolume` event in `test/unit/settings_bloc_test.dart`
+- [x] T019 [P] [US3] Write failing test: `SettingsBloc` calls `AudioPlaybackService.setWpm` on `UpdateWpm` event in `test/unit/settings_bloc_test.dart`
+- [x] T020 [P] [US3] Write failing test: `SettingsBloc` calls `AudioPlaybackService.setToneFrequency` on `UpdateToneFrequency` event in `test/unit/settings_bloc_test.dart`
+- [x] T021 [P] [US3] Write failing test: `SettingsBloc` calls `AudioPlaybackService.setVolume` on `UpdateVolume` event in `test/unit/settings_bloc_test.dart`
 
 ### Implementation for User Story 3
 
-- [ ] T022 [US3] Ensure `_onUpdateToneFrequency` calls `AudioPlaybackService.setToneFrequency` after DB write in `lib/ui/bloc/settings_bloc.dart`
-- [ ] T023 [US3] Ensure `_onUpdateVolume` calls `AudioPlaybackService.setVolume` after DB write in `lib/ui/bloc/settings_bloc.dart`
-- [ ] T024 [US3] Ensure `_onUpdateExtraWordSpace` calls `AudioPlaybackService.setExtraWordSpace` after DB write in `lib/ui/bloc/settings_bloc.dart`
-- [ ] T025 [US3] Ensure `AudioPlaybackService` setters update internal state immediately (timing params for WPM/effWPM, WAV regeneration for tone/volume) in `lib/core/audio/morse_code_service.dart`
+- [x] T022 [US3] Ensure `_onUpdateToneFrequency` calls `AudioPlaybackService.setToneFrequency` after DB write in `lib/ui/bloc/settings_bloc.dart`
+- [x] T023 [US3] Ensure `_onUpdateVolume` calls `AudioPlaybackService.setVolume` after DB write in `lib/ui/bloc/settings_bloc.dart`
+- [x] T024 [US3] Ensure `_onUpdateExtraWordSpace` calls `AudioPlaybackService.setExtraWordSpace` after DB write in `lib/ui/bloc/settings_bloc.dart`
+- [x] T025 [US3] Ensure `AudioPlaybackService` setters update internal state immediately (timing params for WPM/effWPM, WAV regeneration for tone/volume) in `lib/core/audio/morse_code_service.dart`
 
 **Checkpoint**: `flutter test` passes all US3 tests. `flutter run` → start playback → change WPM → hear new speed on next symbol.
 
@@ -95,15 +95,15 @@
 
 ### Tests for User Story 2 (write first, confirm fail) ⚠️
 
-- [ ] T026 [P] [US2] Write failing test: `SettingsRepository` round-trips tone/volume via in-memory DB in `test/unit/settings_repository_test.dart`
-- [ ] T027 [P] [US2] Write failing test: `SettingsBloc` calls `AudioPlaybackService.setToneFrequency` on `LoadSettings` in `test/unit/settings_bloc_test.dart`
-- [ ] T028 [P] [US2] Write failing test: `SettingsBloc` calls `AudioPlaybackService.setVolume` on `LoadSettings` in `test/unit/settings_bloc_test.dart`
+- [x] T026 [P] [US2] Write failing test: `SettingsRepository` round-trips tone/volume via in-memory DB in `test/unit/settings_repository_test.dart`
+- [x] T027 [P] [US2] Write failing test: `SettingsBloc` calls `AudioPlaybackService.setToneFrequency` on `LoadSettings` in `test/unit/settings_bloc_test.dart`
+- [x] T028 [P] [US2] Write failing test: `SettingsBloc` calls `AudioPlaybackService.setVolume` on `LoadSettings` in `test/unit/settings_bloc_test.dart`
 
 ### Implementation for User Story 2
 
-- [ ] T029 [US2] In `_onLoadSettings`, call `AudioPlaybackService.setToneFrequency` and `setVolume` with loaded values in `lib/ui/bloc/settings_bloc.dart`
-- [ ] T030 [US2] Add tone frequency validation (clamp 300.0–2000.0) in `_onUpdateToneFrequency` before DB write in `lib/ui/bloc/settings_bloc.dart`
-- [ ] T031 [US2] Add volume validation (clamp 0.0–1.0) in `_onUpdateVolume` before DB write in `lib/ui/bloc/settings_bloc.dart`
+- [x] T029 [US2] In `_onLoadSettings`, call `AudioPlaybackService.setToneFrequency` and `setVolume` with loaded values in `lib/ui/bloc/settings_bloc.dart`
+- [x] T030 [US2] Add tone frequency validation (clamp 300.0–2000.0) in `_onUpdateToneFrequency` before DB write in `lib/ui/bloc/settings_bloc.dart`
+- [x] T031 [US2] Add volume validation (clamp 0.0–1.0) in `_onUpdateVolume` before DB write in `lib/ui/bloc/settings_bloc.dart`
 
 **Checkpoint**: `flutter test` passes all US2 tests. `flutter run` → change tone/volume → close → reopen → values restored.
 
@@ -113,10 +113,10 @@
 
 **Purpose**: Integration validation and cleanup.
 
-- [ ] T032 [P] Write integration test: cold start loads persisted settings and initializes audio in `test/integration/settings_startup_test.dart`
-- [ ] T033 [P] Run `flutter test` — all unit and integration tests pass
-- [ ] T034 Run `flutter run` — manual verification per `quickstart.md`
-- [ ] T035 [P] Update `CLAUDE.md` if implementation deviated from plan
+- [x] T032 [P] Write integration test: cold start loads persisted settings and initializes audio in `test/integration/settings_startup_test.dart`
+- [x] T033 [P] Run `flutter test` — all unit and integration tests pass
+- [x] T034 Run `flutter run` — manual verification per `quickstart.md`
+- [x] T035 [P] Update `CLAUDE.md` if implementation deviated from plan
 
 ---
 
