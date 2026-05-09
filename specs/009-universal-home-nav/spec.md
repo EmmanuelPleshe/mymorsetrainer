@@ -56,12 +56,14 @@ When the user taps "<- Home" from an active practice mode, the app cleanly stops
 - What happens if session save fails due to a storage error? The user is still navigated to the home screen; the failure is logged silently without blocking the UI.
 - What happens on screens that already have a system back button or gesture? The "<- Home" button coexists with system navigation; both lead to the home screen.
 - What happens on tablets or wide screens where the layout differs? The "<- Home" button maintains the same upper-left position and visibility rules regardless of screen size.
+- What happens if the user rotates the device while in a full-screen practice mode? The bottom nav stays hidden, and upper-left home + upper-right icons remain in place.
+- What happens if the user presses the system back button from a tabbed screen? Standard tab back behavior (exits app) — home button is not shown on tabbed screens, so this is unaffected.
 
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
 
-- **FR-001**: The system MUST display a "<- Home" button in the upper left on every screen except the home screen.
+- **FR-001**: The system MUST display a "<- Home" button in the upper left on every screen except the home screen (practice modes, settings, etc.).
 - **FR-002**: The home button MUST be visually distinct from other UI elements.
 - **FR-003**: The home button MUST be tappable and respond with visual feedback.
 - **FR-004**: The system MUST NOT display the "<- Home" button on the home screen itself.
@@ -71,6 +73,8 @@ When the user taps "<- Home" from an active practice mode, the app cleanly stops
 - **FR-008**: When navigating home from an active practice mode, the system MUST save current session progress to the Smart Repetition Engine before the transition completes.
 - **FR-009**: The system MUST ignore duplicate taps on the home button while a navigation transition is already in progress.
 - **FR-010**: If session save fails, the system MUST still complete navigation to the home screen and log the failure without showing an error to the user.
+- **FR-011**: In full-screen practice/game modes, the system MUST hide the bottom navigation bar and move Practice/Progress/Settings icons to the upper-right AppBar.
+- **FR-012**: The system MUST support the Android system back button/gesture to return home from any non-home screen.
 
 ### Key Entities
 
@@ -85,6 +89,13 @@ When the user taps "<- Home" from an active practice mode, the app cleanly stops
 - **SC-003**: Audio stops within 200 ms of the home button being tapped.
 - **SC-004**: Session progress is saved successfully in ≥ 99% of home navigation events.
 - **SC-005**: Users rate the home navigation as "easy to find" in ≥ 90% of qualitative feedback responses.
+- **SC-006**: Bottom navigation bar is hidden on 100% of full-screen practice/game screens; upper-right icons are visible instead.
+
+## Clarifications
+
+### Session 2026-05-09
+
+- Q: Which screens get the home button vs. existing tabs? → A: Bottom nav bar is hidden in full-screen practice/game modes. Practice/Progress/Settings icons move to upper-right AppBar. Home/back button appears in upper-left. Settings screen also gets home button. Android back gesture/button supported on all non-home screens.
 
 ## Assumptions
 
