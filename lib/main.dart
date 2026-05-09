@@ -90,6 +90,7 @@ class MorseTrainerApp extends StatelessWidget {
           routes: {
             '/practice': (context) => const PracticeScreen(),
             '/progress': (context) => const ProgressScreen(),
+            '/settings': (context) => const SettingsScreen(),
           },
         ),
       ),

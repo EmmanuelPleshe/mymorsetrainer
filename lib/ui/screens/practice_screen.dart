@@ -216,16 +216,6 @@ class _PracticeScreenState extends State<PracticeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Practice'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () => Navigator.pushNamed(context, '/settings'),
-          ),
-          IconButton(
-            icon: const Icon(Icons.bar_chart),
-            onPressed: () => Navigator.pushNamed(context, '/progress'),
-          ),
-        ],
       ),
       body: BlocListener<SettingsBloc, SettingsState>(
         listener: (context, state) {

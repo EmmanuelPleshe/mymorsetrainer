@@ -22,6 +22,26 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Morse Trainer'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.school),
+            tooltip: 'Practice',
+            onPressed: () => widget.onComplete(),
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: 'Settings',
+            onPressed: () => Navigator.pushNamed(context, '/settings'),
+          ),
+          IconButton(
+            icon: const Icon(Icons.bar_chart),
+            tooltip: 'Progress',
+            onPressed: () => Navigator.pushNamed(context, '/progress'),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [
