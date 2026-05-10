@@ -5,19 +5,23 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/practice_session_bloc.dart';
 import '../bloc/settings_bloc.dart';
 import '../../core/audio/morse_code_service.dart';
+import '../../core/audio/audio_service.dart';
 import '../../core/input/keyboard_input_handler.dart';
 import '../../core/logging/logger.dart';
 import '../../core/logging/log_constants.dart';
+import '../widgets/home_app_bar.dart';
 
 class PracticeScreen extends StatefulWidget {
-  const PracticeScreen({super.key});
+  final AudioService? audioService;
+
+  const PracticeScreen({super.key, this.audioService});
 
   @override
   State<PracticeScreen> createState() => _PracticeScreenState();
 }
 
 class _PracticeScreenState extends State<PracticeScreen> {
-  final AudioPlaybackService _audioService = AudioPlaybackService();
+  late final AudioService _audioService;
   KeyboardKeyerHandler? _keyerHandler;
   String _currentPattern = '';
   String _lastDecodedChar = '';
@@ -38,6 +42,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
   @override
   void initState() {
     super.initState();
+    _audioService = widget.audioService ?? AudioPlaybackService();
     _initAudio();
   }
 
@@ -214,8 +219,18 @@ class _PracticeScreenState extends State<PracticeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Practice'),
+      appBar: HomeAppBar(
+        title: 'Practice',
+        showNavIcons: true,
+        onHomePressed: () async {
+          await _audioService.keyerUp();
+          _keyerHandler?.clearPattern();
+          if (mounted) {
+            setState(() {
+              _currentPattern = '';
+            });
+          }
+        },
       ),
       body: BlocListener<SettingsBloc, SettingsState>(
         listener: (context, state) {
@@ -233,7 +248,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
               });
               _keyerHandler?.clearPattern();
               final char = state.currentCharacter;
-              if (char != null) {
+              if (char != null && !state.isRetrying) {
                 _playCharacterAudio(char.symbol);
               }
             }

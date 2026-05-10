@@ -89,9 +89,45 @@ class MorseTrainerApp extends StatelessWidget {
           themeMode: ThemeMode.system,
           home: const HomeScreen(),
           routes: {
-            '/practice': (context) => const PracticeScreen(),
-            '/progress': (context) => const ProgressScreen(),
-            '/settings': (context) => const SettingsScreen(),
+            '/practice': (context) => PopScope(
+              canPop: false,
+              onPopInvoked: (didPop) {
+                if (!didPop) {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/',
+                    (route) => false,
+                  );
+                }
+              },
+              child: const PracticeScreen(),
+            ),
+            '/progress': (context) => PopScope(
+              canPop: false,
+              onPopInvoked: (didPop) {
+                if (!didPop) {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/',
+                    (route) => false,
+                  );
+                }
+              },
+              child: const ProgressScreen(),
+            ),
+            '/settings': (context) => PopScope(
+              canPop: false,
+              onPopInvoked: (didPop) {
+                if (!didPop) {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/',
+                    (route) => false,
+                  );
+                }
+              },
+              child: const SettingsScreen(),
+            ),
           },
         ),
       ),

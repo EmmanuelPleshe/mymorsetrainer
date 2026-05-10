@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/koch/word_practice_service.dart';
 import '../../data/models/word.dart';
 import '../bloc/practice_session_bloc.dart';
+import '../widgets/home_app_bar.dart';
 
 class WordPracticeScreen extends StatefulWidget {
   const WordPracticeScreen({super.key});
@@ -44,7 +45,7 @@ class _WordPracticeScreenState extends State<WordPracticeScreen> {
   Widget build(BuildContext context) {
     if (_words.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Word Practice')),
+        appBar: const HomeAppBar(title: 'Word Practice'),
         body: const Center(child: Text('No words available. Complete alphabet first.')),
       );
     }
@@ -52,9 +53,10 @@ class _WordPracticeScreenState extends State<WordPracticeScreen> {
     final currentWord = _words[_currentIndex];
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Word Practice'),
-        actions: [
+      appBar: HomeAppBar(
+        title: 'Word Practice',
+        showNavIcons: true,
+        extraActions: [
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {

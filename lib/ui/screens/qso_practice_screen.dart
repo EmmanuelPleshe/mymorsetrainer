@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../domain/koch/qso_service.dart';
 import '../../data/models/word.dart';
+import '../widgets/home_app_bar.dart';
 
 class QSOPracticeScreen extends StatefulWidget {
   const QSOPracticeScreen({super.key});
@@ -39,7 +40,7 @@ class _QSOPracticeScreenState extends State<QSOPracticeScreen> {
   Widget build(BuildContext context) {
     if (_phrases.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: const Text('QSO Practice')),
+        appBar: const HomeAppBar(title: 'QSO Practice'),
         body: const Center(child: Text('No phrases available.')),
       );
     }
@@ -47,9 +48,10 @@ class _QSOPracticeScreenState extends State<QSOPracticeScreen> {
     final currentPhrase = _phrases[_currentIndex];
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('QSO Phrases'),
-        actions: [
+      appBar: HomeAppBar(
+        title: 'QSO Phrases',
+        showNavIcons: true,
+        extraActions: [
           PopupMenuButton<String>(
             onSelected: (category) {
               setState(() {
