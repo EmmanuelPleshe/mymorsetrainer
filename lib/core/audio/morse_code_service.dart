@@ -42,6 +42,18 @@ class MorseCodeService {
   int getTotalLevels() {
     return (kochSequence.length / 2).ceil();
   }
+
+  /// Convert a word to its Morse pattern string with spaces between letters.
+  String wordToMorse(String word) {
+    final patterns = <String>[];
+    for (final char in word.toUpperCase().split('')) {
+      final pattern = _morseCode[char];
+      if (pattern != null) {
+        patterns.add(pattern);
+      }
+    }
+    return patterns.join(' ');
+  }
 }
 
 /// Audio playback with proper ARRL timing
@@ -174,6 +186,17 @@ class AudioPlaybackService implements AudioService {
       await playCharacter(characters[i]);
       if (i < characters.length - 1) {
         await Future.delayed(Duration(milliseconds: interWordSpaceMs));
+      }
+    }
+  }
+
+  Future<void> playWord(String word, {void Function(bool)? onFlash}) async {
+    final characters = word.toUpperCase().split('');
+    for (int i = 0; i < characters.length; i++) {
+      await playCharacter(characters[i], screenFlash: onFlash != null, onFlash: onFlash);
+      // Inter-letter gap: 3 dits (intra-char space is 1 dit, so add 2 more)
+      if (i < characters.length - 1) {
+        await Future.delayed(Duration(milliseconds: intraCharacterSpaceMs * 2));
       }
     }
   }

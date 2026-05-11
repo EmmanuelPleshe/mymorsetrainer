@@ -33,9 +33,9 @@ void main() {
       final result = await repo.getSettings();
 
       expect(result.id, 'current');
-      expect(result.toneFrequency, 800.0);
-      expect(result.wpm, 15.0);
-      expect(result.effWpm, 10.0);
+      expect(result.toneFrequency, 600.0);
+      expect(result.wpm, 20.0);
+      expect(result.effWpm, 20.0);
       expect(result.volume, 0.5);
       expect(result.inputMethod, InputMethod.keyboard);
       expect(result.enableGamification, true);

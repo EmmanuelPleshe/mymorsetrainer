@@ -62,8 +62,8 @@ void main() {
       expect(handler.currentPattern, '-.-');
       expect(submittedPattern, '');
 
-      // Wait for auto-submit timeout (400ms) to fire
-      await Future.delayed(const Duration(milliseconds: 500));
+      // Wait for auto-submit timeout (540ms at 20 WPM) to fire
+      await Future.delayed(const Duration(milliseconds: 700));
       expect(submittedPattern, '-.-');
     });
 

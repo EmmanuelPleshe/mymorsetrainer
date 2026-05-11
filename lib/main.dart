@@ -9,7 +9,6 @@ import 'data/repositories/user_progress_repository.dart';
 import 'ui/screens/onboarding_screen.dart';
 import 'data/repositories/character_repository.dart';
 import 'data/repositories/settings_repository.dart';
-import 'data/repositories/user_progress_repository.dart';
 import 'domain/gamification/gamification_service.dart';
 import 'domain/koch/koch_progression_service.dart';
 import 'domain/spaced_repetition/spaced_repetition_service.dart';
@@ -19,6 +18,7 @@ import 'ui/screens/help_screen.dart';
 import 'ui/screens/practice_screen.dart';
 import 'ui/screens/progress_screen.dart';
 import 'ui/screens/settings_screen.dart';
+import 'ui/screens/word_practice_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -127,6 +127,19 @@ class MorseTrainerApp extends StatelessWidget {
                 }
               },
               child: const SettingsScreen(),
+            ),
+            '/word-practice': (context) => PopScope(
+              canPop: false,
+              onPopInvoked: (didPop) {
+                if (!didPop) {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/',
+                    (route) => false,
+                  );
+                }
+              },
+              child: const WordPracticeScreen(),
             ),
           },
         ),

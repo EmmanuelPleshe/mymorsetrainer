@@ -63,7 +63,7 @@ void main() {
         // Pattern should be complete '..-', not prematurely submitted as '..'
         expect(handler.currentPattern, '..-');
         // Wait for auto-submit to fire
-        await Future.delayed(const Duration(milliseconds: 200));
+        await Future.delayed(const Duration(milliseconds: 500));
         expect(capturedPattern, '..-');
       });
 
@@ -74,7 +74,7 @@ void main() {
         handler.handleKeyUp(50); // dot
 
         // Wait longer than auto-submit timeout
-        await Future.delayed(const Duration(milliseconds: 200));
+        await Future.delayed(const Duration(milliseconds: 500));
 
         expect(capturedPattern, '.');
       });
@@ -97,7 +97,7 @@ void main() {
         expect(capturedPattern, isNull); // No submit yet
 
         // Wait for timeout
-        await Future.delayed(const Duration(milliseconds: 200));
+        await Future.delayed(const Duration(milliseconds: 500));
 
         // Now should submit '..'
         expect(capturedPattern, '..');
@@ -126,7 +126,7 @@ void main() {
         handler.clearPattern();
 
         expect(handler.currentPattern, '');
-        await Future.delayed(const Duration(milliseconds: 200));
+        await Future.delayed(const Duration(milliseconds: 500));
         expect(capturedPattern, isNull); // Timer cancelled, no submit
       });
     });
@@ -161,7 +161,7 @@ void main() {
         handler.submitNow();
 
         expect(capturedPattern, '.');
-        await Future.delayed(const Duration(milliseconds: 200));
+        await Future.delayed(const Duration(milliseconds: 500));
         // Should not fire again
         expect(capturedPattern, '.');
       });
@@ -182,7 +182,7 @@ void main() {
         handler.handleKeyUp(50); // dot - pattern '.....' not in lookup
 
         // Wait for auto-submit timer (3 * 60ms = 180ms)
-        await Future.delayed(const Duration(milliseconds: 200));
+        await Future.delayed(const Duration(milliseconds: 500));
 
         expect(capturedPattern, '.....');
       });

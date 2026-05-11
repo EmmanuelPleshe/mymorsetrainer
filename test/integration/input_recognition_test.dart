@@ -46,8 +46,8 @@ void main() {
         onPatternComplete: (_) {},
       );
       handler.handleKeyDown();
-      handler.handleKeyUp(120); // fast dash
-      expect(handler.currentPattern, '-');
+      handler.handleKeyUp(120); // fast dot at 20 WPM (threshold 180ms)
+      expect(handler.currentPattern, '.');
       handler.dispose();
     });
   });

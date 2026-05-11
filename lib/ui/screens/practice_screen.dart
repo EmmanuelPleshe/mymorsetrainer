@@ -9,6 +9,7 @@ import '../../core/audio/audio_service.dart';
 import '../../core/input/keyboard_input_handler.dart';
 import '../../core/logging/logger.dart';
 import '../../core/logging/log_constants.dart';
+import '../../data/repositories/user_progress_repository.dart';
 import '../widgets/home_app_bar.dart';
 
 class PracticeScreen extends StatefulWidget {
@@ -31,6 +32,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
   bool _countdownActive = false;
   int _countdownSeconds = 0;
   bool _screenFlash = false;
+  int _userLevel = 1;
 
   // Event-based key tracking
   DateTime? _keyDownStarted;
@@ -44,6 +46,16 @@ class _PracticeScreenState extends State<PracticeScreen> {
     super.initState();
     _audioService = widget.audioService ?? AudioPlaybackService();
     _initAudio();
+    _loadUserLevel();
+  }
+
+  Future<void> _loadUserLevel() async {
+    final level = await UserProgressRepository().getCurrentLevel();
+    if (mounted) {
+      setState(() {
+        _userLevel = level;
+      });
+    }
   }
 
   Future<void> _initAudio() async {
@@ -278,9 +290,10 @@ class _PracticeScreenState extends State<PracticeScreen> {
 
   Widget _buildStartScreen(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
           const Icon(Icons.radio, size: 80, color: Colors.blue),
           const SizedBox(height: 24),
           const Text('Morse Code Trainer', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
@@ -319,7 +332,28 @@ class _PracticeScreenState extends State<PracticeScreen> {
             label: const Text('Start Practice'),
             style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16)),
           ),
-        ],
+          const SizedBox(height: 16),
+          ElevatedButton.icon(
+            onPressed: _userLevel >= 2
+                ? () => Navigator.pushNamed(context, '/word-practice')
+                : null,
+            icon: const Icon(Icons.format_quote),
+            label: const Text('Common Words'),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              backgroundColor: _userLevel >= 2 ? null : Colors.grey.shade300,
+            ),
+          ),
+          if (_userLevel < 2)
+            const Padding(
+              padding: EdgeInsets.only(top: 4),
+              child: Text(
+                'Unlock at Level 2',
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

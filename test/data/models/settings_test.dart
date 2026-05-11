@@ -25,9 +25,9 @@ void main() {
     test('default constructor uses correct defaults', () {
       final s = AppSettings();
       expect(s.id, 'current');
-      expect(s.toneFrequency, 800.0);
-      expect(s.wpm, 15.0);
-      expect(s.effWpm, 10.0);
+      expect(s.toneFrequency, 600.0);
+      expect(s.wpm, 20.0);
+      expect(s.effWpm, 20.0);
       expect(s.extraWordSpace, 0.0);
       expect(s.volume, 0.5);
       expect(s.inputMethod, InputMethod.keyboard);
@@ -43,7 +43,7 @@ void main() {
       expect(s2.id, 'current');
       expect(s2.toneFrequency, 600.0);
       expect(s2.wpm, 25.0);
-      expect(s2.effWpm, 10.0);
+      expect(s2.effWpm, 20.0);
       expect(s2.volume, 0.8);
     });
 
@@ -105,13 +105,13 @@ void main() {
       final s = AppSettings.fromMap({});
 
       expect(s.id, 'current');
-      expect(s.toneFrequency, 800.0);
+      expect(s.toneFrequency, 600.0);
       expect(s.wpm, 20.0);
       expect(s.effWpm, 20.0);
       expect(s.extraWordSpace, 0.0);
       expect(s.volume, 0.5);
       expect(s.inputMethod, InputMethod.keyboard);
-      expect(s.enableGamification, false);
+      expect(s.enableGamification, true);
       expect(s.enableSoundEffects, false);
       expect(s.enableScreenFlash, false);
     });

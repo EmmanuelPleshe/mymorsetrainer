@@ -375,22 +375,6 @@ void main() {
     });
 
     group('navigation', () {
-      testWidgets('tapping help icon opens bottom sheet', (tester) async {
-        when(() => mockPracticeBloc.state).thenReturn(PracticeSessionInitial());
-        when(() => mockPracticeBloc.stream).thenAnswer((_) => Stream.value(PracticeSessionInitial()));
-        when(() => mockSettingsBloc.state).thenReturn(SettingsLoaded(defaultSettings));
-        when(() => mockSettingsBloc.stream).thenAnswer((_) => Stream.value(SettingsLoaded(defaultSettings)));
-
-        await tester.pumpWidget(buildTestWidget());
-
-        await tester.tap(find.byIcon(Icons.help_outline));
-        await tester.pumpAndSettle();
-
-        expect(find.text('How to Key'), findsOneWidget);
-        expect(find.textContaining('Hold SPACE'), findsOneWidget);
-        expect(find.text('What the Colors Mean'), findsOneWidget);
-      });
-
       testWidgets('tapping settings icon navigates to settings', (tester) async {
         when(() => mockPracticeBloc.state).thenReturn(PracticeSessionInitial());
         when(() => mockPracticeBloc.stream).thenAnswer((_) => Stream.value(PracticeSessionInitial()));

@@ -11,9 +11,12 @@ class KeyboardKeyerHandler {
   final VoidCallback? onKeyUp;
   final int dotDurationMs;
   final int dashDurationMs;
+  final int interLetterThresholdMs;
+  final int interWordThresholdMs;
 
   String _pattern = '';
   Timer? _autoSubmitTimer;
+  bool _acceptInput = true;
 
   static final Map<String, String> _morseToChar = {
     '.-': 'A', '-...': 'B', '-.-.': 'C', '-..': 'D', '.': 'E',
@@ -32,9 +35,13 @@ class KeyboardKeyerHandler {
     this.onKeyUp,
     required this.dotDurationMs,
     required this.dashDurationMs,
-  });
+    int? interLetterThresholdMs,
+    int? interWordThresholdMs,
+  })  : interLetterThresholdMs = interLetterThresholdMs ?? dotDurationMs * 3,
+        interWordThresholdMs = interWordThresholdMs ?? 400;
 
   void handleKeyDown() {
+    if (!_acceptInput) return;
     // Cancel any pending auto-submit - user is continuing to key
     _autoSubmitTimer?.cancel();
     onKeyDown?.call();
@@ -58,13 +65,11 @@ class KeyboardKeyerHandler {
   void _scheduleAutoSubmit() {
     _autoSubmitTimer?.cancel();
 
-    // Fixed 400ms timeout — enough time for any character pattern at any WPM
-    const timeoutMs = 400;
-    _autoSubmitTimer = Timer(const Duration(milliseconds: timeoutMs), () {
+    _autoSubmitTimer = Timer(Duration(milliseconds: interWordThresholdMs), () {
       if (_pattern.isNotEmpty && _morseToChar.containsKey(_pattern)) {
         final pattern = _pattern;
         final char = _morseToChar[pattern] ?? '?';
-        Logger().debug(LogCategory.ui, 'Auto-submitting pattern "$pattern" -> "$char" after ${timeoutMs}ms');
+        Logger().debug(LogCategory.ui, 'Auto-submitting pattern "$pattern" -> "$char" after ${interWordThresholdMs}ms');
         onPatternComplete(pattern);
         _pattern = '';
       } else if (_pattern.isNotEmpty) {
@@ -79,10 +84,9 @@ class KeyboardKeyerHandler {
   // Manual submit (called when user explicitly submits)
   void submitNow() {
     _autoSubmitTimer?.cancel();
-    if (_pattern.isNotEmpty && _morseToChar.containsKey(_pattern)) {
+    if (_pattern.isNotEmpty) {
       final pattern = _pattern;
-      final char = _morseToChar[pattern] ?? '?';
-      Logger().debug(LogCategory.ui, 'Manual submit pattern "$pattern" -> "$char"');
+      Logger().debug(LogCategory.ui, 'Manual submit pattern "$pattern"');
       onPatternComplete(pattern);
       _pattern = '';
     }
@@ -95,6 +99,13 @@ class KeyboardKeyerHandler {
     _autoSubmitTimer?.cancel();
     _pattern = '';
     Logger().debug(LogCategory.ui, 'Pattern after clear: "$_pattern"');
+  }
+
+  void setAcceptInput(bool accept) {
+    _acceptInput = accept;
+    if (!accept) {
+      _autoSubmitTimer?.cancel();
+    }
   }
 
   void dispose() {

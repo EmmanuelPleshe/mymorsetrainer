@@ -21,6 +21,9 @@ class DatabaseHelper {
     _database = null;
   }
 
+  /// Alias for [resetInstance].
+  static void reset() => resetInstance();
+
   Future<Database> get database async {
     if (_database != null) return _database!;
     final path = _testDbPath ?? join(

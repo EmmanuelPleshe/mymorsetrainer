@@ -84,9 +84,9 @@ void main() {
       expect(sql, contains('id TEXT PRIMARY KEY'));
       expect(sql, contains('toneFrequency REAL NOT NULL DEFAULT 600.0'));
       expect(sql, contains('wpm REAL NOT NULL DEFAULT 20.0'));
-      expect(sql, contains('effWpm REAL NOT NULL DEFAULT 10.0'));
+      expect(sql, contains('effWpm REAL NOT NULL DEFAULT 20.0'));
       expect(sql, contains('extraWordSpace REAL NOT NULL DEFAULT 0.0'));
-      expect(sql, contains('volume REAL NOT NULL DEFAULT 1.0'));
+      expect(sql, contains('volume REAL NOT NULL DEFAULT 0.5'));
       expect(sql, contains('inputMethod INTEGER NOT NULL DEFAULT 0'));
       expect(sql, contains('enableGamification INTEGER NOT NULL DEFAULT 1'));
       expect(sql, contains('enableSoundEffects INTEGER NOT NULL DEFAULT 0'));
@@ -103,9 +103,9 @@ void main() {
       expect(result.first['id'], 'current');
       expect(result.first['toneFrequency'], 600.0);
       expect(result.first['wpm'], 20.0);
-      expect(result.first['effWpm'], 10.0);
+      expect(result.first['effWpm'], 20.0);
       expect(result.first['extraWordSpace'], 0.0);
-      expect(result.first['volume'], 1.0);
+      expect(result.first['volume'], 0.5);
       expect(result.first['inputMethod'], 0);
       expect(result.first['enableGamification'], 1);
       expect(result.first['enableSoundEffects'], 0);
