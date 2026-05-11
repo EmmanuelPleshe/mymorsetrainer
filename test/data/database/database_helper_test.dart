@@ -92,6 +92,20 @@ void main() {
       expect(sql, contains('enableSoundEffects INTEGER NOT NULL DEFAULT 0'));
       expect(sql, contains('enableScreenFlash INTEGER NOT NULL DEFAULT 0'));
     });
+
+    test('creates word_familiarity table with correct columns', () async {
+      final db = await DatabaseHelper.instance.database;
+      final result = await db.rawQuery(
+        "SELECT sql FROM sqlite_master WHERE type='table' AND name='word_familiarity'",
+      );
+      final sql = result.first['sql'] as String;
+      expect(sql, contains('wordText TEXT PRIMARY KEY'));
+      expect(sql, contains('familiarityScore REAL NOT NULL DEFAULT 0.0'));
+      expect(sql, contains('totalAttempts INTEGER NOT NULL DEFAULT 0'));
+      expect(sql, contains('correctCount INTEGER NOT NULL DEFAULT 0'));
+      expect(sql, contains('lastReviewed TEXT'));
+      expect(sql, contains('nextReviewDue TEXT'));
+    });
   });
 
   group('default data', () {

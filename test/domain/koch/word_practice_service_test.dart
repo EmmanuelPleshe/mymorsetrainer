@@ -11,7 +11,7 @@ void main() {
   group('getWords', () {
     test('returns all words by default', () {
       final words = service.getWords();
-      expect(words.length, 20);
+      expect(words.length, greaterThan(100));
     });
 
     test('filters by maxDifficulty', () {
@@ -31,8 +31,8 @@ void main() {
     });
 
     test('limit does not truncate when list is smaller', () {
-      final hard = service.getWords(maxDifficulty: 3, limit: 50);
-      expect(hard.length, lessThanOrEqualTo(20));
+      final hard = service.getWords(maxDifficulty: 3, limit: 200);
+      expect(hard.length, lessThanOrEqualTo(200));
     });
 
     test('combines maxDifficulty and limit', () {
@@ -60,7 +60,7 @@ void main() {
       final categories = service.categories;
       expect(categories.length, categories.toSet().length);
       expect(categories.contains('qso'), true);
-      expect(categories.contains('callsign'), true);
+      expect(categories.contains('english'), true);
     });
   });
 

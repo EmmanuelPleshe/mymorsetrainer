@@ -5,6 +5,7 @@ import '../../core/audio/audio_service.dart';
 import '../../core/audio/morse_code_service.dart';
 import '../../core/input/keyboard_input_handler.dart';
 import '../../data/models/word.dart';
+import '../../data/repositories/word_familiarity_repository.dart';
 import '../../domain/koch/word_practice_service.dart';
 import '../widgets/home_app_bar.dart';
 
@@ -12,8 +13,9 @@ enum WordPhase { listening, keying, feedback }
 
 class WordPracticeScreen extends StatefulWidget {
   final AudioService? audioService;
+  final WordFamiliarityRepository? familiarityRepository;
 
-  const WordPracticeScreen({super.key, this.audioService});
+  const WordPracticeScreen({super.key, this.audioService, this.familiarityRepository});
 
   @override
   State<WordPracticeScreen> createState() => _WordPracticeScreenState();
@@ -22,13 +24,15 @@ class WordPracticeScreen extends StatefulWidget {
 class _WordPracticeScreenState extends State<WordPracticeScreen> {
   final WordPracticeService _wordService = WordPracticeService();
   late final AudioService _audioService;
-  late List<Word> _words;
+  late final WordFamiliarityRepository _familiarityRepo;
+  List<Word>? _words;
   int _currentIndex = 0;
   WordPhase _phase = WordPhase.listening;
   bool _isAudioPlaying = false;
   String _currentPattern = '';
   bool _isCorrect = false;
   bool _isReplaying = false;
+  bool _showScaffolding = false;
   KeyboardKeyerHandler? _keyerHandler;
   DateTime? _keyDownTime;
   Timer? _autoAdvanceTimer;
@@ -37,8 +41,13 @@ class _WordPracticeScreenState extends State<WordPracticeScreen> {
   void initState() {
     super.initState();
     _audioService = widget.audioService ?? AudioPlaybackService();
-    _words = _wordService.getWords(limit: 20);
-    _words.shuffle();
+    _familiarityRepo = widget.familiarityRepository ?? WordFamiliarityRepository();
+    _initWords();
+  }
+
+  Future<void> _initWords() async {
+    final allWords = _wordService.getWords();
+    _words = await _familiarityRepo.getWeightedWords(allWords, 20);
     _initKeyer();
     HardwareKeyboard.instance.addHandler(_handleKeyEvent);
     _playCurrentWord();
@@ -64,14 +73,26 @@ class _WordPracticeScreenState extends State<WordPracticeScreen> {
   }
 
   Future<void> _playCurrentWord() async {
-    if (_currentIndex >= _words.length) return;
-    final word = _words[_currentIndex];
+    final words = _words;
+    if (words == null || _currentIndex >= words.length) return;
+    final word = words[_currentIndex];
+
+    final scaffolding = await _familiarityRepo.getScaffoldingLevelForWord(word.text);
+    final needsScaffolding = scaffolding == ScaffoldingLevel.high;
 
     setState(() {
       _phase = WordPhase.listening;
       _isAudioPlaying = true;
       _currentPattern = '';
+      _showScaffolding = needsScaffolding;
     });
+
+    if (needsScaffolding) {
+      // Show word text for 2 seconds before audio
+      await Future.delayed(const Duration(seconds: 2));
+      if (!mounted) return;
+      setState(() => _showScaffolding = false);
+    }
 
     await _audioService.initialize();
     await _audioService.playWord(word.text);
@@ -107,22 +128,30 @@ class _WordPracticeScreenState extends State<WordPracticeScreen> {
     return false;
   }
 
-  void _submitPattern() {
+  Future<void> _submitPattern() async {
     if (_phase != WordPhase.keying) return;
-    final word = _words[_currentIndex];
+    final words = _words;
+    if (words == null) return;
+    final word = words[_currentIndex];
     final targetPattern = word.morseCode.replaceAll(' ', '');
     final submittedPattern = _keyerHandler?.currentPattern ?? '';
 
+    final isCorrect = submittedPattern == targetPattern;
+
     setState(() {
-      _isCorrect = submittedPattern == targetPattern;
+      _isCorrect = isCorrect;
       _phase = WordPhase.feedback;
       _isReplaying = true;
     });
 
     _keyerHandler?.clearPattern();
 
-    if (_isCorrect) {
+    // Record familiarity
+    if (isCorrect) {
+      await _familiarityRepo.recordCorrect(word.text);
       _audioService.playCorrectFeedback();
+    } else {
+      await _familiarityRepo.recordIncorrect(word.text);
     }
 
     _replayFeedback(word);
@@ -160,11 +189,14 @@ class _WordPracticeScreenState extends State<WordPracticeScreen> {
 
   void _nextWord() {
     _autoAdvanceTimer?.cancel();
-    setState(() {
-      _currentIndex = (_currentIndex + 1) % _words.length;
-      _currentPattern = '';
-      _isCorrect = false;
-    });
+    final words = _words;
+    if (words != null) {
+      setState(() {
+        _currentIndex = (_currentIndex + 1) % words.length;
+        _currentPattern = '';
+        _isCorrect = false;
+      });
+    }
     _playCurrentWord();
   }
 
@@ -183,14 +215,22 @@ class _WordPracticeScreenState extends State<WordPracticeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_words.isEmpty) {
+    final words = _words;
+    if (words == null) {
+      return Scaffold(
+        appBar: const HomeAppBar(title: 'Word Practice'),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (words.isEmpty) {
       return Scaffold(
         appBar: const HomeAppBar(title: 'Word Practice'),
         body: const Center(child: Text('No words available. Complete alphabet first.')),
       );
     }
 
-    final currentWord = _words[_currentIndex];
+    final currentWord = words[_currentIndex];
 
     return Scaffold(
       appBar: HomeAppBar(
@@ -206,7 +246,7 @@ class _WordPracticeScreenState extends State<WordPracticeScreen> {
             icon: const Icon(Icons.refresh),
             onPressed: () {
               setState(() {
-                _words.shuffle();
+                words.shuffle();
                 _currentIndex = 0;
                 _phase = WordPhase.listening;
                 _currentPattern = '';
@@ -230,7 +270,7 @@ class _WordPracticeScreenState extends State<WordPracticeScreen> {
             _buildControls(currentWord),
             const SizedBox(height: 16),
             Text(
-              'Word ${_currentIndex + 1} of ${_words.length}',
+              'Word ${_currentIndex + 1} of ${words.length}',
               style: const TextStyle(color: Colors.grey),
             ),
           ],
@@ -318,6 +358,30 @@ class _WordPracticeScreenState extends State<WordPracticeScreen> {
 
   Widget _buildMainContent(Word word) {
     if (_phase == WordPhase.feedback) {
+      return Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          children: [
+            Text(
+              word.text,
+              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              word.morseCode,
+              style: const TextStyle(fontSize: 20, color: Colors.grey, fontFamily: 'monospace'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Show word text during scaffolding preview
+    if (_showScaffolding) {
       return Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(

@@ -37,7 +37,7 @@ class DatabaseHelper {
   Future<Database> _initDB(String path) async {
     return await openDatabase(
       path,
-      version: 5,
+      version: 6,
       onCreate: _createDB,
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
@@ -59,6 +59,20 @@ class DatabaseHelper {
         if (oldVersion < 5) {
           try {
             await db.execute("ALTER TABLE user_progress ADD COLUMN skipIntroOnboarding INTEGER NOT NULL DEFAULT 0");
+          } catch (_) {}
+        }
+        if (oldVersion < 6) {
+          try {
+            await db.execute('''
+              CREATE TABLE word_familiarity (
+                wordText TEXT PRIMARY KEY,
+                familiarityScore REAL NOT NULL DEFAULT 0.0,
+                totalAttempts INTEGER NOT NULL DEFAULT 0,
+                correctCount INTEGER NOT NULL DEFAULT 0,
+                lastReviewed TEXT,
+                nextReviewDue TEXT
+              )
+            ''');
           } catch (_) {}
         }
       },
@@ -120,6 +134,17 @@ class DatabaseHelper {
         enableGamification INTEGER NOT NULL DEFAULT 1,
         enableSoundEffects INTEGER NOT NULL DEFAULT 0,
         enableScreenFlash INTEGER NOT NULL DEFAULT 0
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE word_familiarity (
+        wordText TEXT PRIMARY KEY,
+        familiarityScore REAL NOT NULL DEFAULT 0.0,
+        totalAttempts INTEGER NOT NULL DEFAULT 0,
+        correctCount INTEGER NOT NULL DEFAULT 0,
+        lastReviewed TEXT,
+        nextReviewDue TEXT
       )
     ''');
 
