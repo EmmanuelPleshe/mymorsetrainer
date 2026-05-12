@@ -1,12 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morse_trainer/core/input/keyboard_input_handler.dart';
+import 'package:morse_trainer/core/timing/morse_timing_engine.dart';
 
 void main() {
   group('KeyboardKeyerHandler - Input Recognition', () {
     test('short press (< threshold) generates dot', () {
       final handler = KeyboardKeyerHandler(
-        dotDurationMs: 60,
-        dashDurationMs: 180,
+        timingEngine: MorseTimingEngine(wpm: 20, effWpm: 20),
         onPatternComplete: (_) {},
       );
       handler.handleKeyDown();
@@ -17,8 +17,7 @@ void main() {
 
     test('long press (>= threshold) generates dash', () {
       final handler = KeyboardKeyerHandler(
-        dotDurationMs: 60,
-        dashDurationMs: 180,
+        timingEngine: MorseTimingEngine(wpm: 20, effWpm: 20),
         onPatternComplete: (_) {},
       );
       handler.handleKeyDown();
@@ -29,8 +28,7 @@ void main() {
 
     test('handles slow keying (newbie)', () {
       final handler = KeyboardKeyerHandler(
-        dotDurationMs: 60,
-        dashDurationMs: 180,
+        timingEngine: MorseTimingEngine(wpm: 20, effWpm: 20),
         onPatternComplete: (_) {},
       );
       handler.handleKeyDown();
@@ -41,8 +39,7 @@ void main() {
 
     test('handles fast keying (experienced)', () {
       final handler = KeyboardKeyerHandler(
-        dotDurationMs: 60,
-        dashDurationMs: 180,
+        timingEngine: MorseTimingEngine(wpm: 20, effWpm: 20),
         onPatternComplete: (_) {},
       );
       handler.handleKeyDown();

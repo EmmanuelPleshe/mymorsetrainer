@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morse_trainer/core/input/keyboard_input_handler.dart';
+import 'package:morse_trainer/core/timing/morse_timing_engine.dart';
 
 void main() {
   group('KeyboardKeyerHandler', () {
@@ -14,8 +15,7 @@ void main() {
       keyDownCalled = false;
       keyUpCalled = false;
       handler = KeyboardKeyerHandler(
-        dotDurationMs: 60, // 20 WPM
-        dashDurationMs: 180,
+        timingEngine: MorseTimingEngine(wpm: 20, effWpm: 20),
         onPatternComplete: (pattern) => capturedPattern = pattern,
         onKeyDown: () => keyDownCalled = true,
         onKeyUp: () => keyUpCalled = true,
@@ -28,19 +28,19 @@ void main() {
 
     group('regression: premature auto-submit', () {
       test('should NOT auto-submit while user is still keying within 2 units', () async {
-        // At 20 WPM: dotDurationMs = 60ms, auto-submit timeout = 180ms (3 units)
+        // At 20 WPM: dotDurationMs = 60ms, auto-submit timeout = 540ms (9 units)
         // User keys: dot (60ms down) -> up -> wait 100ms -> dash (180ms down)
-        // Total between key events: 160ms, still under 180ms timeout
+        // Total between key events: 160ms, still under 540ms timeout
         // Should NOT trigger auto-submit
 
         handler.handleKeyDown();
         expect(keyDownCalled, true);
 
         // Short press = dot
-        handler.handleKeyUp(50); // 50ms < 120ms threshold = dot
+        handler.handleKeyUp(50); // 50ms < 180ms threshold = dot
         expect(keyUpCalled, true);
 
-        // Wait but NOT long enough for auto-submit (100ms < 180ms)
+        // Wait but NOT long enough for auto-submit (100ms < 540ms)
         await Future.delayed(const Duration(milliseconds: 100));
 
         // Should still have pattern, not submitted yet
@@ -62,19 +62,19 @@ void main() {
 
         // Pattern should be complete '..-', not prematurely submitted as '..'
         expect(handler.currentPattern, '..-');
-        // Wait for auto-submit to fire
-        await Future.delayed(const Duration(milliseconds: 500));
+        // Wait for auto-submit to fire (timeout = 540ms at 20 WPM)
+        await Future.delayed(const Duration(milliseconds: 600));
         expect(capturedPattern, '..-');
       });
 
-      test('should auto-submit after 3 units of silence', () async {
-        // User keys: dot, then waits > 180ms (3 units)
+      test('should auto-submit after 9 units of silence', () async {
+        // User keys: dot, then waits > 540ms (9 units)
         // Should auto-submit '.'
         handler.handleKeyDown();
         handler.handleKeyUp(50); // dot
 
         // Wait longer than auto-submit timeout
-        await Future.delayed(const Duration(milliseconds: 500));
+        await Future.delayed(const Duration(milliseconds: 600));
 
         expect(capturedPattern, '.');
       });
@@ -96,8 +96,8 @@ void main() {
         expect(handler.currentPattern, '..');
         expect(capturedPattern, isNull); // No submit yet
 
-        // Wait for timeout
-        await Future.delayed(const Duration(milliseconds: 500));
+        // Wait for timeout (540ms at 20 WPM)
+        await Future.delayed(const Duration(milliseconds: 600));
 
         // Now should submit '..'
         expect(capturedPattern, '..');
@@ -107,13 +107,13 @@ void main() {
     group('dot/dash classification', () {
       test('short press generates dot', () {
         handler.handleKeyDown();
-        handler.handleKeyUp(50); // 50ms < 120ms threshold (2x dot at 20wpm)
+        handler.handleKeyUp(50); // 50ms < 180ms threshold (3x dot at 20wpm)
         expect(handler.currentPattern, '.');
       });
 
       test('long press generates dash', () {
         handler.handleKeyDown();
-        handler.handleKeyUp(200); // 200ms >= 120ms threshold
+        handler.handleKeyUp(200); // 200ms >= 180ms threshold
         expect(handler.currentPattern, '-');
       });
     });
@@ -181,8 +181,8 @@ void main() {
         handler.handleKeyDown();
         handler.handleKeyUp(50); // dot - pattern '.....' not in lookup
 
-        // Wait for auto-submit timer (3 * 60ms = 180ms)
-        await Future.delayed(const Duration(milliseconds: 500));
+        // Wait for auto-submit timer (9 * 60ms = 540ms)
+        await Future.delayed(const Duration(milliseconds: 600));
 
         expect(capturedPattern, '.....');
       });

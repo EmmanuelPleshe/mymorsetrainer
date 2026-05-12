@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morse_trainer/core/input/keyboard_input_handler.dart';
+import 'package:morse_trainer/core/timing/morse_timing_engine.dart';
 
 void main() {
   group('KeyboardKeyerHandler', () {
@@ -10,8 +11,7 @@ void main() {
     setUp(() {
       submittedPattern = '';
       handler = KeyboardKeyerHandler(
-        dotDurationMs: 60,   // 20 WPM
-        dashDurationMs: 180,
+        timingEngine: MorseTimingEngine(wpm: 20, effWpm: 20),
         onPatternComplete: (pattern) {
           submittedPattern = pattern;
         },
@@ -29,8 +29,8 @@ void main() {
     });
 
     test('casual tap (150ms) generates dot at 20 WPM', () {
-      // Threshold at 20 WPM = 3 × 60 = 180ms
-      // Casual spacebar taps are ~100-150ms — must register as dots
+      // Threshold at 20 WPM = 3 x 60 = 180ms
+      // Casual spacebar taps are ~100-150ms - must register as dots
       handler.handleKeyDown();
       handler.handleKeyUp(150);
       expect(handler.currentPattern, '.');
@@ -75,7 +75,7 @@ void main() {
       await Future.delayed(const Duration(milliseconds: 250));
 
       // With buggy 180ms timeout, auto-submit would have fired by now
-      // With fixed 400ms timeout, pattern should still be pending
+      // With fixed 540ms timeout, pattern should still be pending
       expect(handler.currentPattern, '-');
       expect(submittedPattern, '');
     });
