@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morse_trainer/core/input/game_controller_input_handler.dart';
+import 'package:morse_trainer/core/timing/morse_timing_engine.dart';
 
 void main() {
   group('GameControllerKeyerHandler', () {
@@ -13,8 +14,7 @@ void main() {
       keyDownCalled = false;
       keyUpCalled = false;
       handler = GameControllerKeyerHandler(
-        dotDurationMs: 60,
-        dashDurationMs: 180,
+        timingEngine: MorseTimingEngine(wpm: 20, effWpm: 20),
         onPatternComplete: (pattern) => capturedPattern = pattern,
         onKeyDown: () => keyDownCalled = true,
         onKeyUp: () => keyUpCalled = true,
@@ -28,7 +28,7 @@ void main() {
     group('dot/dash classification', () {
       test('short press generates dot', () {
         handler.handleButtonDown();
-        handler.handleButtonUp(50); // 50ms < 120ms threshold
+        handler.handleButtonUp(50); // 50ms < 180ms threshold
         expect(handler.currentPattern, '.');
         expect(keyDownCalled, true);
         expect(keyUpCalled, true);
@@ -36,19 +36,19 @@ void main() {
 
       test('long press generates dash', () {
         handler.handleButtonDown();
-        handler.handleButtonUp(200); // 200ms >= 120ms threshold
+        handler.handleButtonUp(200); // 200ms >= 180ms threshold
         expect(handler.currentPattern, '-');
       });
 
-      test('threshold is exactly 2x dotDurationMs', () {
+      test('threshold is exactly 3x dotDurationMs', () {
         handler.handleButtonDown();
-        handler.handleButtonUp(119); // just under 120ms
+        handler.handleButtonUp(179); // just under 180ms
         expect(handler.currentPattern, '.');
 
         handler.clearPattern();
 
         handler.handleButtonDown();
-        handler.handleButtonUp(120); // exactly at threshold
+        handler.handleButtonUp(180); // exactly at threshold
         expect(handler.currentPattern, '-');
       });
     });
@@ -60,7 +60,7 @@ void main() {
 
         expect(handler.currentPattern, '.');
 
-        await Future.delayed(const Duration(milliseconds: 1600));
+        await Future.delayed(const Duration(milliseconds: 600));
         expect(capturedPattern, '.');
         expect(handler.currentPattern, '');
       });
@@ -69,19 +69,19 @@ void main() {
         handler.handleButtonDown();
         handler.handleButtonUp(50); // dot
 
-        // Wait 800ms
-        await Future.delayed(const Duration(milliseconds: 800));
+        // Wait 300ms (not long enough for 540ms timeout)
+        await Future.delayed(const Duration(milliseconds: 300));
 
         // New press resets timer
         handler.handleButtonDown();
         handler.handleButtonUp(50); // dot
 
-        await Future.delayed(const Duration(milliseconds: 800));
+        await Future.delayed(const Duration(milliseconds: 300));
         expect(capturedPattern, isNull);
         expect(handler.currentPattern, '..');
 
         // Wait full timeout from last press
-        await Future.delayed(const Duration(milliseconds: 1600));
+        await Future.delayed(const Duration(milliseconds: 600));
         expect(capturedPattern, '..');
       });
     });
@@ -136,7 +136,7 @@ void main() {
         handler.clearPattern();
 
         expect(handler.currentPattern, '');
-        await Future.delayed(const Duration(milliseconds: 1600));
+        await Future.delayed(const Duration(milliseconds: 600));
         expect(capturedPattern, isNull);
       });
     });
@@ -147,7 +147,7 @@ void main() {
         handler.handleButtonUp(50); // dot
         handler.dispose();
 
-        await Future.delayed(const Duration(milliseconds: 1600));
+        await Future.delayed(const Duration(milliseconds: 600));
         expect(capturedPattern, isNull);
       });
     });

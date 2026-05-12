@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morse_trainer/core/input/audio_input_handler.dart';
+import 'package:morse_trainer/core/timing/morse_timing_engine.dart';
 
 void main() {
   group('AudioKeyerHandler', () {
@@ -13,8 +14,7 @@ void main() {
       keyDownCalled = false;
       keyUpCalled = false;
       handler = AudioKeyerHandler(
-        dotDurationMs: 60,
-        dashDurationMs: 180,
+        timingEngine: MorseTimingEngine(wpm: 20, effWpm: 20),
         onPatternComplete: (pattern) => capturedPattern = pattern,
         onKeyDown: () => keyDownCalled = true,
         onKeyUp: () => keyUpCalled = true,
@@ -49,7 +49,7 @@ void main() {
 
         expect(handler.currentPattern, '.');
 
-        await Future.delayed(const Duration(milliseconds: 1600));
+        await Future.delayed(const Duration(milliseconds: 600));
         expect(capturedPattern, '.');
         expect(handler.currentPattern, '');
       });
@@ -62,7 +62,7 @@ void main() {
         }
 
         expect(handler.currentPattern, '......');
-        await Future.delayed(const Duration(milliseconds: 1600));
+        await Future.delayed(const Duration(milliseconds: 600));
         expect(capturedPattern, isNull);
       });
 
@@ -70,20 +70,20 @@ void main() {
         handler.handleToneDetected();
         handler.handleToneStopped(); // dot
 
-        // Wait 800ms (not long enough for 1500ms timeout)
-        await Future.delayed(const Duration(milliseconds: 800));
+        // Wait 300ms (not long enough for 540ms timeout)
+        await Future.delayed(const Duration(milliseconds: 300));
 
         // New tone resets timer
         handler.handleToneDetected();
         handler.handleToneStopped(); // dot
 
-        await Future.delayed(const Duration(milliseconds: 800));
-        // Total since first tone: 1600ms, but timer was reset
+        await Future.delayed(const Duration(milliseconds: 300));
+        // Total since first tone: 600ms, but timer was reset
         expect(capturedPattern, isNull);
         expect(handler.currentPattern, '..');
 
         // Now wait full timeout from last tone
-        await Future.delayed(const Duration(milliseconds: 1600));
+        await Future.delayed(const Duration(milliseconds: 600));
         expect(capturedPattern, '..');
       });
     });
@@ -141,7 +141,7 @@ void main() {
         handler.clearPattern();
 
         expect(handler.currentPattern, '');
-        await Future.delayed(const Duration(milliseconds: 1600));
+        await Future.delayed(const Duration(milliseconds: 600));
         expect(capturedPattern, isNull);
       });
     });
@@ -152,7 +152,7 @@ void main() {
         handler.handleToneStopped(); // dot
         handler.dispose();
 
-        await Future.delayed(const Duration(milliseconds: 1600));
+        await Future.delayed(const Duration(milliseconds: 600));
         expect(capturedPattern, isNull);
       });
     });
