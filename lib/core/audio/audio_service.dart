@@ -34,8 +34,6 @@ abstract class AudioService {
     void Function(bool)? onFlash,
   });
 
-  Future<void> playSequence(List<String> characters);
-
   Future<void> playWord(String word, {void Function(bool)? onFlash});
 
   Future<void> keyerDown();

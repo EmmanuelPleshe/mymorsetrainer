@@ -172,15 +172,6 @@ class AudioPlaybackService implements AudioService {
     await Future.delayed(Duration(milliseconds: interCharacterSpaceMs));
   }
 
-  Future<void> playSequence(List<String> characters) async {
-    for (int i = 0; i < characters.length; i++) {
-      await playCharacter(characters[i]);
-      if (i < characters.length - 1) {
-        await Future.delayed(Duration(milliseconds: interWordSpaceMs));
-      }
-    }
-  }
-
   Future<void> playWord(String word, {void Function(bool)? onFlash}) async {
     final characters = word.toUpperCase().split('');
     for (int i = 0; i < characters.length; i++) {
