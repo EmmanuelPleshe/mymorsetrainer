@@ -89,5 +89,28 @@ void main() {
     test('asserts on negative effWpm', () {
       expect(() => MorseTimingEngine(wpm: 20, effWpm: -5), throwsAssertionError);
     });
+
+    group('zero drift regression', () {
+      test('changing WPM updates playback and keyer identically', () {
+        final at20 = MorseTimingEngine(wpm: 20, effWpm: 20);
+        final at15 = MorseTimingEngine(wpm: 15, effWpm: 15);
+
+        expect(at15.dotDurationMs, 80);
+        expect(at15.dashDurationMs, 240);
+        expect(at15.keyerDotDashThresholdMs, 240);
+        expect(at20.keyerDotDashThresholdMs / at20.dotDurationMs,
+               at15.keyerDotDashThresholdMs / at15.dotDurationMs);
+      });
+
+      test('Farnsworth does not affect dot/dash threshold', () {
+        final standard = MorseTimingEngine(wpm: 20, effWpm: 20);
+        final farnsworth = MorseTimingEngine(wpm: 20, effWpm: 10);
+
+        expect(farnsworth.dotDurationMs, standard.dotDurationMs);
+        expect(farnsworth.keyerDotDashThresholdMs, standard.keyerDotDashThresholdMs);
+        expect(farnsworth.interCharacterSpaceMs, greaterThan(standard.interCharacterSpaceMs));
+        expect(farnsworth.interWordSpaceMs, greaterThan(standard.interWordSpaceMs));
+      });
+    });
   });
 }
