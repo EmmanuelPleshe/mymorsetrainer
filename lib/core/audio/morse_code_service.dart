@@ -154,12 +154,16 @@ class AudioPlaybackService implements AudioService {
       if (symbol == '.') {
         await _playDot();
         if (screenFlash) onFlash?.call(true);
-        await Future.delayed(Duration(milliseconds: intraCharacterSpaceMs));
+        if (i < pattern.length - 1) {
+          await Future.delayed(Duration(milliseconds: intraCharacterSpaceMs));
+        }
         if (screenFlash) onFlash?.call(false);
       } else {
         await _playDash();
         if (screenFlash) onFlash?.call(true);
-        await Future.delayed(Duration(milliseconds: intraCharacterSpaceMs));
+        if (i < pattern.length - 1) {
+          await Future.delayed(Duration(milliseconds: intraCharacterSpaceMs));
+        }
         if (screenFlash) onFlash?.call(false);
       }
     }
