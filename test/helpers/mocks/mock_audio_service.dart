@@ -1,5 +1,6 @@
 import 'package:mocktail/mocktail.dart';
 import 'package:morse_trainer/core/audio/audio_service.dart';
+import 'package:morse_trainer/core/timing/morse_timing_engine.dart';
 
 class MockAudioService extends Mock implements AudioService {
   @override
@@ -19,6 +20,9 @@ class MockAudioService extends Mock implements AudioService {
 
   @override
   int get interWordSpaceMs => 420;
+
+  @override
+  MorseTimingEngine get timingEngine => MorseTimingEngine(wpm: 20, effWpm: 20);
 
   @override
   double get toneFrequency => 800;
