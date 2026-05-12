@@ -28,10 +28,15 @@ void main() {
     });
 
     test('dot/dash threshold scales with WPM', () {
-      final engine20 = MorseTimingEngine(wpm: 20, effWpm: 20);
       final engine15 = MorseTimingEngine(wpm: 15, effWpm: 15);
       expect(engine15.dotDurationMs, 80);
       expect(engine15.keyerDotDashThresholdMs, 240); // 3x80
+    });
+
+    test('effWpm > wpm uses standard spacing', () {
+      final engine = MorseTimingEngine(wpm: 10, effWpm: 20);
+      expect(engine.interCharacterSpaceMs, 360); // 3 * 120
+      expect(engine.interWordSpaceMs, 840); // 7 * 120
     });
 
     test('extraWordSpace added to interWordSpace', () {
@@ -79,6 +84,10 @@ void main() {
 
     test('asserts on negative wpm', () {
       expect(() => MorseTimingEngine(wpm: -5, effWpm: 20), throwsAssertionError);
+    });
+
+    test('asserts on negative effWpm', () {
+      expect(() => MorseTimingEngine(wpm: 20, effWpm: -5), throwsAssertionError);
     });
   });
 }
