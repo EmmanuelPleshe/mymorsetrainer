@@ -181,10 +181,8 @@ class AudioPlaybackService implements AudioService {
     final characters = word.toUpperCase().split('');
     for (int i = 0; i < characters.length; i++) {
       await playCharacter(characters[i], screenFlash: onFlash != null, onFlash: onFlash);
-      // Inter-letter gap: 3 dits (intra-char space is 1 dit, so add 2 more)
-      if (i < characters.length - 1) {
-        await Future.delayed(Duration(milliseconds: intraCharacterSpaceMs * 2));
-      }
+      // playCharacter already adds interCharacterSpaceMs at the end
+      // No extra delay needed between letters
     }
   }
 
