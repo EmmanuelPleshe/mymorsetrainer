@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import '../timing/morse_timing_engine.dart';
+
 /// Abstract interface for audio playback services.
 /// Allows injecting real [AudioPlaybackService] or fakes in tests.
 abstract class AudioService {
@@ -15,6 +17,8 @@ abstract class AudioService {
   int get intraCharacterSpaceMs;
   int get interCharacterSpaceMs;
   int get interWordSpaceMs;
+
+  MorseTimingEngine get timingEngine;
 
   Future<void> initialize();
 

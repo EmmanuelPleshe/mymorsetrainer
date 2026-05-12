@@ -134,6 +134,13 @@ void main() {
         final base = service.interWordSpaceMs - 300;
         expect(service.interWordSpaceMs, base + 300);
       });
+
+      test('timingEngine reflects current WPM settings', () {
+        service.setWpm(15);
+        service.setEffWpm(15);
+        expect(service.timingEngine.dotDurationMs, 80);
+        expect(service.timingEngine.keyerDotDashThresholdMs, 240);
+      });
     });
 
     group('setters clamp values', () {

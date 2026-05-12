@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
+import '../timing/morse_timing_engine.dart';
 import 'audio_service.dart';
 
 /// Morse code timing based on ARRL PARIS standard (50 units per word)
@@ -75,47 +76,22 @@ class AudioPlaybackService implements AudioService {
   String? _keyerWavPath;
   Process? _keyerProcess;
 
+  MorseTimingEngine _timingEngine = MorseTimingEngine(wpm: 20, effWpm: 20);
+
+  MorseTimingEngine get timingEngine => _timingEngine;
+
   double get toneFrequency => _toneFrequency;
   double get wpm => _wpm;
   double get effWpm => _effWpm;
   double get volume => _volume;
   double get extraWordSpace => _extraWordSpace;
 
-  // Timing calculations based on PARIS standard (50 units per word)
-  // 1 unit = 1200 / WPM milliseconds
-  int get unitMs => (1200 / _wpm).round();
-
-  int get dotDurationMs => unitMs;
-  int get dashDurationMs => unitMs * 3;
-  int get intraCharacterSpaceMs => unitMs;
-  int get interCharacterSpaceMs => _calcInterCharSpace();
-  int get interWordSpaceMs => _calcInterWordSpace();
-
-  int _calcInterCharSpace() {
-    // ARRL Farnsworth standard formula
-    if (_effWpm >= _wpm) return unitMs * 3;
-    final c = _wpm;
-    final s = _effWpm;
-    final t_a = (60 * c - 37.2 * s) / (s * c);
-    final t_c = (3 * t_a) / 19;
-    return (3 * unitMs) + (t_c * 1000).round();
-  }
-
-  int _calcInterWordSpace() {
-    // ARRL Farnsworth standard formula
-    if (_effWpm >= _wpm) {
-      final base = unitMs * 7;
-      final extra = (_extraWordSpace * 1000).round();
-      return base + extra;
-    }
-    final c = _wpm;
-    final s = _effWpm;
-    final t_a = (60 * c - 37.2 * s) / (s * c);
-    final t_w = (7 * t_a) / 19;
-    final base = unitMs * 7;
-    final extra = (_extraWordSpace * 1000).round();
-    return base + (t_w * 1000).round() + extra;
-  }
+  int get unitMs => _timingEngine.dotDurationMs;
+  int get dotDurationMs => _timingEngine.dotDurationMs;
+  int get dashDurationMs => _timingEngine.dashDurationMs;
+  int get intraCharacterSpaceMs => _timingEngine.intraCharacterSpaceMs;
+  int get interCharacterSpaceMs => _timingEngine.interCharacterSpaceMs;
+  int get interWordSpaceMs => _timingEngine.interWordSpaceMs;
 
   Future<void> initialize() async {
     await _pregenerateTones();
@@ -142,14 +118,25 @@ class AudioPlaybackService implements AudioService {
 
   void setWpm(double wpm) {
     _wpm = wpm.clamp(5.0, 40.0);
+    _updateTimingEngine();
   }
 
   void setEffWpm(double effWpm) {
     _effWpm = effWpm.clamp(5.0, 40.0);
+    _updateTimingEngine();
   }
 
   void setExtraWordSpace(double seconds) {
     _extraWordSpace = seconds.clamp(0.0, 5.0);
+    _updateTimingEngine();
+  }
+
+  void _updateTimingEngine() {
+    _timingEngine = MorseTimingEngine(
+      wpm: _wpm,
+      effWpm: _effWpm,
+      extraWordSpace: (_extraWordSpace * 1000).round(),
+    );
   }
 
   void setVolume(double volume) {
