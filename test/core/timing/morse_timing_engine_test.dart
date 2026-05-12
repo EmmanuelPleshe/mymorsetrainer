@@ -40,11 +40,45 @@ void main() {
       expect(withExtra.interWordSpaceMs, base.interWordSpaceMs + 500);
     });
 
-    test('immutability: same inputs produce same values', () {
+    test('consistent values for identical inputs', () {
       final a = MorseTimingEngine(wpm: 15, effWpm: 10, extraWordSpace: 200);
       final b = MorseTimingEngine(wpm: 15, effWpm: 10, extraWordSpace: 200);
       expect(a.dotDurationMs, b.dotDurationMs);
       expect(a.interCharacterSpaceMs, b.interCharacterSpaceMs);
+    });
+
+    test('boundary effWpm equals wpm uses standard spacing', () {
+      final engine = MorseTimingEngine(wpm: 20, effWpm: 20);
+      expect(engine.interCharacterSpaceMs, 180); // 3 * 60
+      expect(engine.interWordSpaceMs, 420); // 7 * 60
+    });
+
+    test('low WPM timing', () {
+      final engine = MorseTimingEngine(wpm: 5, effWpm: 5);
+      expect(engine.dotDurationMs, 240);
+      expect(engine.dashDurationMs, 720);
+      expect(engine.interCharacterSpaceMs, 720);
+      expect(engine.interWordSpaceMs, 1680);
+    });
+
+    test('high WPM timing', () {
+      final engine = MorseTimingEngine(wpm: 40, effWpm: 40);
+      expect(engine.dotDurationMs, 30);
+      expect(engine.dashDurationMs, 90);
+      expect(engine.interCharacterSpaceMs, 90);
+      expect(engine.interWordSpaceMs, 210);
+    });
+
+    test('asserts on zero wpm', () {
+      expect(() => MorseTimingEngine(wpm: 0, effWpm: 20), throwsAssertionError);
+    });
+
+    test('asserts on zero effWpm', () {
+      expect(() => MorseTimingEngine(wpm: 20, effWpm: 0), throwsAssertionError);
+    });
+
+    test('asserts on negative wpm', () {
+      expect(() => MorseTimingEngine(wpm: -5, effWpm: 20), throwsAssertionError);
     });
   });
 }
