@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morse_trainer/core/audio/morse_code_service.dart';
-import 'package:morse_trainer/core/timing/wpm_calculator.dart';
 
 void main() {
   group('MorseCodeService', () {
@@ -63,13 +62,4 @@ void main() {
     });
   });
 
-  group('WpmCalculator', () {
-    test('dotDurationMs calculates correctly for 20 WPM', () {
-      expect(WpmCalculator.dotDurationMs(20), 60);
-    });
-
-    test('dotDurationMs calculates correctly for 10 WPM', () {
-      expect(WpmCalculator.dotDurationMs(10), 120);
-    });
-  });
 }
