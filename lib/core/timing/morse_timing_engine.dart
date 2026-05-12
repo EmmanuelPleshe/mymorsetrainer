@@ -21,17 +21,16 @@ class MorseTimingEngine {
     final s = effWpm;
     final tA = (60 * c - 37.2 * s) / (s * c);
     final tC = (3 * tA) / 19;
-    return (dotDurationMs * 3) + (tC * 1000).round();
+    return (tC * 1000).round();
   }
 
   int get interWordSpaceMs {
-    final base = dotDurationMs * 7;
-    if (effWpm >= wpm) return base + extraWordSpace;
+    if (effWpm >= wpm) return dotDurationMs * 7 + extraWordSpace;
     final c = wpm;
     final s = effWpm;
     final tA = (60 * c - 37.2 * s) / (s * c);
     final tW = (7 * tA) / 19;
-    return base + (tW * 1000).round() + extraWordSpace;
+    return (tW * 1000).round() + extraWordSpace;
   }
 
   int get keyerDotDashThresholdMs => dotDurationMs * 3;

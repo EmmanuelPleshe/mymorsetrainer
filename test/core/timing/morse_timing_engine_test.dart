@@ -23,8 +23,8 @@ void main() {
       final engine = MorseTimingEngine(wpm: 20, effWpm: 10);
       expect(engine.dotDurationMs, 60); // character speed unchanged
       expect(engine.dashDurationMs, 180);
-      expect(engine.interCharacterSpaceMs, greaterThan(180));
-      expect(engine.interWordSpaceMs, greaterThan(420));
+      expect(engine.interCharacterSpaceMs, 654); // Farnsworth total
+      expect(engine.interWordSpaceMs, 1525); // Farnsworth total
     });
 
     test('dot/dash threshold scales with WPM', () {
