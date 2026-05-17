@@ -7,6 +7,7 @@ import '../bloc/settings_bloc.dart';
 import '../../core/audio/morse_code_service.dart';
 import '../../core/audio/audio_service.dart';
 import '../../core/input/keyboard_input_handler.dart';
+import '../../core/input/morse_command_handler.dart';
 import '../../core/logging/logger.dart';
 import '../../core/logging/log_constants.dart';
 import '../../data/repositories/user_progress_repository.dart';
@@ -24,6 +25,7 @@ class PracticeScreen extends StatefulWidget {
 class _PracticeScreenState extends State<PracticeScreen> {
   late final AudioService _audioService;
   KeyboardKeyerHandler? _keyerHandler;
+  MorseCommandHandler? _commandHandler;
   String _currentPattern = '';
   String _lastDecodedChar = '';
   bool _feedbackHandled = false;
@@ -88,8 +90,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
 
   void _initKeyer() {
     _keyerHandler = KeyboardKeyerHandler(
-      dotDurationMs: _audioService.dotDurationMs,
-      dashDurationMs: _audioService.dashDurationMs,
+      timingEngine: _audioService.timingEngine,
       onPatternComplete: (pattern) {
         final decoded = _decodePattern(pattern);
         Logger().debug(LogCategory.ui, 'Submitting "$pattern" = "$decoded"');
@@ -116,6 +117,42 @@ class _PracticeScreenState extends State<PracticeScreen> {
         setState(() => _screenFlash = false);
       },
     );
+    _commandHandler = MorseCommandHandler(
+      timingEngine: _audioService.timingEngine,
+      onCommand: (cmd) => _handleCommand(cmd),
+    );
+  }
+
+  void _handleCommand(String cmd) {
+    Logger().info(LogCategory.ui, 'Morse command: $cmd');
+    final state = context.read<PracticeSessionBloc>().state;
+    if (state is PracticeSessionInitial) {
+      switch (cmd) {
+        case 'sp':
+          context.read<PracticeSessionBloc>().add(StartSession(_selectedLevel));
+          break;
+        case 'up':
+          if (_selectedLevel < 20) setState(() => _selectedLevel++);
+          break;
+        case 'do':
+          if (_selectedLevel > 1) setState(() => _selectedLevel--);
+          break;
+      }
+    } else if (state is PracticeSessionComplete) {
+      switch (cmd) {
+        case 're':
+          context.read<PracticeSessionBloc>().add(StartSession(_selectedLevel));
+          break;
+        case 'ne':
+          if (_selectedLevel < 20) {
+            context.read<PracticeSessionBloc>().add(StartSession(_selectedLevel + 1));
+          }
+          break;
+        case 'ex':
+          context.read<PracticeSessionBloc>().add(const EndSession());
+          break;
+      }
+    }
   }
 
   String _decodePattern(String pattern) {
@@ -150,6 +187,10 @@ class _PracticeScreenState extends State<PracticeScreen> {
 
     final now = DateTime.now();
 
+    // Determine which handler to use based on bloc state
+    final blocState = context.read<PracticeSessionBloc>().state;
+    final useCommandHandler = blocState is! PracticeSessionActive;
+
     if (event is KeyDownEvent) {
       // Debounce: ignore if too soon after last key down (Linux ghost key bug)
       if (_lastKeyDownTime != null &&
@@ -166,7 +207,11 @@ class _PracticeScreenState extends State<PracticeScreen> {
       _lastKeyDownTime = now;
       _keyDownStarted = now;
       debugPrint('  -> KEY DOWN, starting timer');
-      _keyerHandler?.handleKeyDown();
+      if (useCommandHandler) {
+        _commandHandler?.handleKeyDown();
+      } else {
+        _keyerHandler?.handleKeyDown();
+      }
       return true;
     }
 
@@ -184,10 +229,14 @@ class _PracticeScreenState extends State<PracticeScreen> {
         debugPrint('  -> KEY UP after $duration ms');
         // Sanity check: ignore glitches shorter than 30ms
         if (duration >= _minDurationMs) {
-          _keyerHandler?.handleKeyUp(duration);
-          setState(() {
-            _currentPattern = _keyerHandler?.currentPattern ?? '';
-          });
+          if (useCommandHandler) {
+            _commandHandler?.handleKeyUp(duration);
+          } else {
+            _keyerHandler?.handleKeyUp(duration);
+            setState(() {
+              _currentPattern = _keyerHandler?.currentPattern ?? '';
+            });
+          }
         } else {
           debugPrint('  -> IGNORED (too short: $duration ms)');
         }
@@ -237,11 +286,6 @@ class _PracticeScreenState extends State<PracticeScreen> {
         onHomePressed: () async {
           await _audioService.keyerUp();
           _keyerHandler?.clearPattern();
-          if (mounted) {
-            setState(() {
-              _currentPattern = '';
-            });
-          }
         },
       ),
       body: BlocListener<SettingsBloc, SettingsState>(
@@ -259,6 +303,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
                 _feedbackHandled = false;
               });
               _keyerHandler?.clearPattern();
+              _commandHandler?.flush();
               final char = state.currentCharacter;
               if (char != null && !state.isRetrying) {
                 _playCharacterAudio(char.symbol);
@@ -365,7 +410,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 50),
       color: _screenFlash ? Colors.white : null,
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
@@ -471,12 +516,30 @@ class _PracticeScreenState extends State<PracticeScreen> {
         ),
       ),
       const SizedBox(height: 16),
-      ElevatedButton.icon(
-        onPressed: () => _playCharacterAudio(
-          (context.read<PracticeSessionBloc>().state as PracticeSessionActive).currentCharacter?.symbol ?? '',
-        ),
-        icon: const Icon(Icons.volume_up),
-        label: const Text('Replay Sound'),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton.icon(
+            onPressed: () => _playCharacterAudio(
+              (context.read<PracticeSessionBloc>().state as PracticeSessionActive).currentCharacter?.symbol ?? '',
+            ),
+            icon: const Icon(Icons.volume_up),
+            label: const Text('Replay'),
+          ),
+          const SizedBox(width: 12),
+          ElevatedButton.icon(
+            onPressed: () async {
+              await _audioService.keyerUp();
+              _keyerHandler?.clearPattern();
+              if (mounted) {
+                context.read<PracticeSessionBloc>().add(const EndSession());
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            icon: const Icon(Icons.stop),
+            label: const Text('End'),
+          ),
+        ],
       ),
     ],
   );
@@ -550,6 +613,13 @@ class _PracticeScreenState extends State<PracticeScreen> {
                 : null,
               icon: const Icon(Icons.arrow_forward),
               label: const Text('Keep Going'),
+            ),
+            const SizedBox(width: 16),
+            ElevatedButton.icon(
+              onPressed: () => context.read<PracticeSessionBloc>().add(const EndSession()),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.grey.shade600),
+              icon: const Icon(Icons.exit_to_app),
+              label: const Text('Exit'),
             ),
           ],
         ),

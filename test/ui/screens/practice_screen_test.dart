@@ -1,5 +1,6 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -275,7 +276,7 @@ void main() {
         expect(find.text('Key the character you heard:'), findsOneWidget);
         expect(find.text('Hold SPACE to key'), findsOneWidget);
         expect(find.text('Hold for dash, tap for dot'), findsOneWidget);
-        expect(find.text('Replay Sound'), findsOneWidget);
+        expect(find.text('Replay'), findsOneWidget);
       });
 
       testWidgets('shows stats during active session', (tester) async {
@@ -366,7 +367,7 @@ void main() {
         await tester.pumpWidget(buildTestWidget());
         await tester.pump();
 
-        await tester.tap(find.text('Replay Sound'));
+        await tester.tap(find.text('Replay'));
         await tester.pump();
 
         // BlocListener plays audio on initial state + replay tap = 2 calls
@@ -456,6 +457,38 @@ void main() {
       });
     });
 
+    group('completion summary', () {
+      testWidgets('tapping Exit dispatches EndSession', (tester) async {
+        tester.view.physicalSize = const Size(1080, 1920);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.reset);
+
+        final completeState = PracticeSessionComplete(
+          correctCount: 18,
+          totalQuestions: 20,
+          accuracy: 0.9,
+          unlockedNextLevel: true,
+        );
+
+        when(() => mockPracticeBloc.state).thenReturn(completeState);
+        when(() => mockPracticeBloc.stream).thenAnswer((_) => Stream.value(completeState));
+        when(() => mockSettingsBloc.state).thenReturn(SettingsLoaded(defaultSettings));
+        when(() => mockSettingsBloc.stream).thenAnswer((_) => Stream.value(SettingsLoaded(defaultSettings)));
+
+        await tester.pumpWidget(buildTestWidget());
+        await tester.pump();
+
+        // Dismiss the completion dialog first
+        await tester.tap(find.text('OK'));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('Exit'));
+        await tester.pump();
+
+        verify(() => mockPracticeBloc.add(any(that: isA<EndSession>()))).called(1);
+      });
+    });
+
     group('retry state', () {
       testWidgets('isRetrying disables keyer input but still shows character', (tester) async {
         tester.view.physicalSize = const Size(1080, 1920);
@@ -507,6 +540,48 @@ void main() {
         verify(() => mockAudioService.setWpm(20.0)).called(2);
         verify(() => mockAudioService.setEffWpm(10.0)).called(2);
         verify(() => mockAudioService.setVolume(0.5)).called(2);
+      });
+    });
+    group('morse command control', () {
+      testWidgets('routes key events to command handler when state is initial', (tester) async {
+        when(() => mockPracticeBloc.state).thenReturn(PracticeSessionInitial());
+        when(() => mockPracticeBloc.stream).thenAnswer((_) => Stream.value(PracticeSessionInitial()));
+        when(() => mockSettingsBloc.state).thenReturn(SettingsLoaded(defaultSettings));
+        when(() => mockSettingsBloc.stream).thenAnswer((_) => Stream.value(SettingsLoaded(defaultSettings)));
+
+        await tester.pumpWidget(buildTestWidget());
+        await tester.pump();
+
+        // Dispatch a space key down — this should reach the command handler, not the active keyer
+        // The active keyer would call mockAudioService.keyerDown, so verify it was NOT called
+        // (because we're not in active session)
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.space);
+        await tester.pump();
+
+        // In non-active state, keyerDown should NOT be called (command handler suppresses audio)
+        verifyNever(() => mockAudioService.keyerDown());
+      });
+
+      testWidgets('routes key events to command handler when state is complete', (tester) async {
+        final completeState = PracticeSessionComplete(
+          correctCount: 18,
+          totalQuestions: 20,
+          accuracy: 0.9,
+          unlockedNextLevel: true,
+        );
+
+        when(() => mockPracticeBloc.state).thenReturn(completeState);
+        when(() => mockPracticeBloc.stream).thenAnswer((_) => Stream.value(completeState));
+        when(() => mockSettingsBloc.state).thenReturn(SettingsLoaded(defaultSettings));
+        when(() => mockSettingsBloc.stream).thenAnswer((_) => Stream.value(SettingsLoaded(defaultSettings)));
+
+        await tester.pumpWidget(buildTestWidget());
+        await tester.pump();
+
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.space);
+        await tester.pump();
+
+        verifyNever(() => mockAudioService.keyerDown());
       });
     });
   });
