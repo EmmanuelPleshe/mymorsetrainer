@@ -8,7 +8,7 @@ class MorseCommandHandler {
   final MorseTimingEngine timingEngine;
   final void Function(String command) onCommand;
   String _wordBuffer = '';
-  bool _manualSubmit = false;
+  bool _isManualSubmit = false;
   DateTime? _lastKeyUpTime;
   Timer? _wordGapTimer;
   KeyboardKeyerHandler? _keyer;
@@ -22,7 +22,8 @@ class MorseCommandHandler {
       onPatternComplete: (pattern) {
         final char = _decodePattern(pattern);
         _wordBuffer += char;
-        if (!_manualSubmit && _wordBuffer.length >= 2) {
+        // Auto-submit from keyer means word gap detected; fire command immediately
+        if (!_isManualSubmit && _wordBuffer.length >= 2) {
           onCommand(_wordBuffer.toLowerCase());
           _wordBuffer = '';
         }
@@ -50,10 +51,10 @@ class MorseCommandHandler {
       final gap = now.difference(_lastKeyUpTime!).inMilliseconds;
       if (gap >= timingEngine.dotDurationMs * 2) {
         try {
-          _manualSubmit = true;
+          _isManualSubmit = true;
           _keyer?.submitNow();
         } finally {
-          _manualSubmit = false;
+          _isManualSubmit = false;
         }
       }
     }
@@ -80,7 +81,13 @@ class MorseCommandHandler {
 
   void flush() {
     _wordGapTimer?.cancel();
-    if (_wordBuffer.isNotEmpty) {
+    try {
+      _isManualSubmit = true;
+      _keyer?.submitNow();
+    } finally {
+      _isManualSubmit = false;
+    }
+    if (_wordBuffer.length >= 2) {
       onCommand(_wordBuffer.toLowerCase());
       _wordBuffer = '';
     }
