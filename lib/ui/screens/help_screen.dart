@@ -98,7 +98,10 @@ class HelpScreen extends StatelessWidget {
                 '→ Check your device volume and that Sound Effects are enabled in Settings.\n\n'
                 'Keyboard not responding?\n'
                 '→ Make sure the practice screen is focused (tap the blue circle) and '
-                'you are using the Spacebar.',
+                'you are using the Spacebar.\n\n'
+                'Need to report a bug?\n'
+                '→ Go to Settings → Report Issue on GitHub. The app will open your browser '
+                'with a bug report template that explains how to attach your log file.',
           ),
         ],
       ),

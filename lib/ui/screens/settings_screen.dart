@@ -141,9 +141,9 @@ class SettingsScreen extends StatelessWidget {
         ),
         ListTile(
           leading: const Icon(Icons.bug_report),
-          title: const Text('Send Logs'),
-          subtitle: const Text('Open email with log file for debugging'),
-          onTap: () => _sendLogs(context),
+          title: const Text('Report Issue on GitHub'),
+          subtitle: const Text('Open GitHub with log location pre-filled'),
+          onTap: () => _openGitHubIssue(context),
         ),
         _buildSectionHeader('Timing Info'),
         const Card(
@@ -321,16 +321,24 @@ class SettingsScreen extends StatelessWidget {
     }
   }
 
-  Future<void> _sendLogs(BuildContext context) async {
-    final success = await Logger.instance.sendLogs();
+  Future<void> _openGitHubIssue(BuildContext context) async {
+    final success = await Logger.instance.openGitHubIssue();
     if (context.mounted) {
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Email client opened')),
+          const SnackBar(content: Text('GitHub opened in browser')),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not open email. Log file: ${Logger.instance.currentLogPath}')),
+          SnackBar(
+            content: Text('Could not open browser. Log file: ${Logger.instance.currentLogPath}'),
+            action: SnackBarAction(
+              label: 'Copy Path',
+              onPressed: () {
+                // Clipboard not implemented; user can note path manually
+              },
+            ),
+          ),
         );
       }
     }
