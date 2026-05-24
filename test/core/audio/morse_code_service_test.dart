@@ -3,7 +3,16 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:morse_trainer/core/audio/morse_code_service.dart';
 
+late bool _aplayAvailable;
+
 void main() {
+  try {
+    final result = Process.runSync('which', ['aplay']);
+    _aplayAvailable = result.exitCode == 0;
+  } catch (_) {
+    _aplayAvailable = false;
+  }
+
   group('AudioPlaybackService', () {
     late AudioPlaybackService service;
 
@@ -36,6 +45,7 @@ void main() {
 
       test(
         'keyerDown recreates missing keyer file instead of silently failing',
+        skip: !_aplayAvailable,
         () async {
           await service.initialize();
           expect(File('/tmp/morse_keyer.wav').existsSync(), true);
@@ -53,6 +63,7 @@ void main() {
 
       test(
         'playCharacter recreates missing dot/dash files instead of silently failing',
+        skip: !_aplayAvailable,
         () async {
           await service.initialize();
 
@@ -68,7 +79,9 @@ void main() {
         },
       );
 
-      test('playCorrectFeedback recreates its own file', () async {
+      test('playCorrectFeedback recreates its own file',
+        skip: !_aplayAvailable,
+        () async {
         await service.initialize();
 
         // Delete the feedback file if it exists from a previous run
