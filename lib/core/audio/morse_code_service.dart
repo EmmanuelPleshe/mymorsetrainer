@@ -2,6 +2,9 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
+import '../timing/morse_timing_engine.dart';
+import 'audio_service.dart';
+
 /// Morse code timing based on ARRL PARIS standard (50 units per word)
 /// Reference: https://github.com/spasutto/cw-trainer
 class MorseCodeService {
@@ -40,10 +43,22 @@ class MorseCodeService {
   int getTotalLevels() {
     return (kochSequence.length / 2).ceil();
   }
+
+  /// Convert a word to its Morse pattern string with spaces between letters.
+  String wordToMorse(String word) {
+    final patterns = <String>[];
+    for (final char in word.toUpperCase().split('')) {
+      final pattern = _morseCode[char];
+      if (pattern != null) {
+        patterns.add(pattern);
+      }
+    }
+    return patterns.join(' ');
+  }
 }
 
 /// Audio playback with proper ARRL timing
-class AudioPlaybackService {
+class AudioPlaybackService implements AudioService {
   static final AudioPlaybackService _instance = AudioPlaybackService._internal();
   factory AudioPlaybackService() => _instance;
   AudioPlaybackService._internal();
@@ -61,47 +76,22 @@ class AudioPlaybackService {
   String? _keyerWavPath;
   Process? _keyerProcess;
 
+  MorseTimingEngine _timingEngine = MorseTimingEngine(wpm: 20, effWpm: 20);
+
+  MorseTimingEngine get timingEngine => _timingEngine;
+
   double get toneFrequency => _toneFrequency;
   double get wpm => _wpm;
   double get effWpm => _effWpm;
   double get volume => _volume;
   double get extraWordSpace => _extraWordSpace;
 
-  // Timing calculations based on PARIS standard (50 units per word)
-  // 1 unit = 1200 / WPM milliseconds
-  int get unitMs => (1200 / _wpm).round();
-
-  int get dotDurationMs => unitMs;
-  int get dashDurationMs => unitMs * 3;
-  int get intraCharacterSpaceMs => unitMs;
-  int get interCharacterSpaceMs => _calcInterCharSpace();
-  int get interWordSpaceMs => _calcInterWordSpace();
-
-  int _calcInterCharSpace() {
-    // ARRL Farnsworth standard formula
-    if (_effWpm >= _wpm) return unitMs * 3;
-    final c = _wpm;
-    final s = _effWpm;
-    final t_a = (60 * c - 37.2 * s) / (s * c);
-    final t_c = (3 * t_a) / 19;
-    return (3 * unitMs) + (t_c * 1000).round();
-  }
-
-  int _calcInterWordSpace() {
-    // ARRL Farnsworth standard formula
-    if (_effWpm >= _wpm) {
-      final base = unitMs * 7;
-      final extra = (_extraWordSpace * 1000).round();
-      return base + extra;
-    }
-    final c = _wpm;
-    final s = _effWpm;
-    final t_a = (60 * c - 37.2 * s) / (s * c);
-    final t_w = (7 * t_a) / 19;
-    final base = unitMs * 7;
-    final extra = (_extraWordSpace * 1000).round();
-    return base + (t_w * 1000).round() + extra;
-  }
+  int get unitMs => _timingEngine.dotDurationMs;
+  int get dotDurationMs => _timingEngine.dotDurationMs;
+  int get dashDurationMs => _timingEngine.dashDurationMs;
+  int get intraCharacterSpaceMs => _timingEngine.intraCharacterSpaceMs;
+  int get interCharacterSpaceMs => _timingEngine.interCharacterSpaceMs;
+  int get interWordSpaceMs => _timingEngine.interWordSpaceMs;
 
   Future<void> initialize() async {
     await _pregenerateTones();
@@ -128,14 +118,25 @@ class AudioPlaybackService {
 
   void setWpm(double wpm) {
     _wpm = wpm.clamp(5.0, 40.0);
+    _updateTimingEngine();
   }
 
   void setEffWpm(double effWpm) {
     _effWpm = effWpm.clamp(5.0, 40.0);
+    _updateTimingEngine();
   }
 
   void setExtraWordSpace(double seconds) {
     _extraWordSpace = seconds.clamp(0.0, 5.0);
+    _updateTimingEngine();
+  }
+
+  void _updateTimingEngine() {
+    _timingEngine = MorseTimingEngine(
+      wpm: _wpm,
+      effWpm: _effWpm,
+      extraWordSpace: (_extraWordSpace * 1000).round(),
+    );
   }
 
   void setVolume(double volume) {
@@ -153,12 +154,16 @@ class AudioPlaybackService {
       if (symbol == '.') {
         await _playDot();
         if (screenFlash) onFlash?.call(true);
-        await Future.delayed(Duration(milliseconds: intraCharacterSpaceMs));
+        if (i < pattern.length - 1) {
+          await Future.delayed(Duration(milliseconds: intraCharacterSpaceMs));
+        }
         if (screenFlash) onFlash?.call(false);
       } else {
         await _playDash();
         if (screenFlash) onFlash?.call(true);
-        await Future.delayed(Duration(milliseconds: intraCharacterSpaceMs));
+        if (i < pattern.length - 1) {
+          await Future.delayed(Duration(milliseconds: intraCharacterSpaceMs));
+        }
         if (screenFlash) onFlash?.call(false);
       }
     }
@@ -167,24 +172,42 @@ class AudioPlaybackService {
     await Future.delayed(Duration(milliseconds: interCharacterSpaceMs));
   }
 
-  Future<void> playSequence(List<String> characters) async {
+  Future<void> playWord(String word, {void Function(bool)? onFlash}) async {
+    final characters = word.toUpperCase().split('');
     for (int i = 0; i < characters.length; i++) {
-      await playCharacter(characters[i]);
-      if (i < characters.length - 1) {
-        await Future.delayed(Duration(milliseconds: interWordSpaceMs));
-      }
+      await playCharacter(characters[i], screenFlash: onFlash != null, onFlash: onFlash);
+      // playCharacter already adds interCharacterSpaceMs at the end
+      // No extra delay needed between letters
+    }
+  }
+
+  Future<void> _ensureFileExists(String? path) async {
+    if (path == null || !File(path).existsSync()) {
+      await initialize();
     }
   }
 
   Future<void> _playDot() async {
     if (_dotWavPath != null) {
-      await Process.run('aplay', ['-q', _dotWavPath!]);
+      await _ensureFileExists(_dotWavPath);
+      final result = await Process.run('aplay', ['-q', _dotWavPath!]);
+      if (result.exitCode != 0) {
+        throw StateError(
+          'Audio playback failed for dot ($_dotWavPath): ${result.stderr}',
+        );
+      }
     }
   }
 
   Future<void> _playDash() async {
     if (_dashWavPath != null) {
-      await Process.run('aplay', ['-q', _dashWavPath!]);
+      await _ensureFileExists(_dashWavPath);
+      final result = await Process.run('aplay', ['-q', _dashWavPath!]);
+      if (result.exitCode != 0) {
+        throw StateError(
+          'Audio playback failed for dash ($_dashWavPath): ${result.stderr}',
+        );
+      }
     }
   }
 
@@ -193,6 +216,7 @@ class AudioPlaybackService {
     // Kill any existing first to avoid overlapping (adds ~10ms but prevents audio glitches)
     await keyerUp();
     if (_keyerWavPath != null) {
+      await _ensureFileExists(_keyerWavPath);
       // Use aplay with -d for duration-based (no need to kill on key up)
       // Also use -q for quiet, -v for volume
       _keyerProcess = await Process.start('aplay', ['-q', '-d', '5', _keyerWavPath!]);
@@ -211,7 +235,12 @@ class AudioPlaybackService {
     final wav = _generateSineWave(150, 880, _volume);
     final path = '/tmp/morse_correct.wav';
     await File(path).writeAsBytes(wav);
-    await Process.run('aplay', ['-q', path]);
+    final result = await Process.run('aplay', ['-q', path]);
+    if (result.exitCode != 0) {
+      throw StateError(
+        'Audio playback failed for correct feedback ($path): ${result.stderr}',
+      );
+    }
   }
 
   Future<void> dispose() async {

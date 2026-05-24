@@ -1,0 +1,210 @@
+import 'dart:async';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:morse_trainer/core/input/keyboard_input_handler.dart';
+import 'package:morse_trainer/core/timing/morse_timing_engine.dart';
+
+void main() {
+  group('KeyboardKeyerHandler', () {
+    late KeyboardKeyerHandler handler;
+    String? capturedPattern;
+    bool keyDownCalled = false;
+    bool keyUpCalled = false;
+
+    setUp(() {
+      capturedPattern = null;
+      keyDownCalled = false;
+      keyUpCalled = false;
+      handler = KeyboardKeyerHandler(
+        timingEngine: MorseTimingEngine(wpm: 20, effWpm: 20),
+        onPatternComplete: (pattern) => capturedPattern = pattern,
+        onKeyDown: () => keyDownCalled = true,
+        onKeyUp: () => keyUpCalled = true,
+      );
+    });
+
+    tearDown(() {
+      handler.dispose();
+    });
+
+    group('regression: premature auto-submit', () {
+      test('should NOT auto-submit while user is still keying within 2 units', () async {
+        // At 20 WPM: dotDurationMs = 60ms, auto-submit timeout = 540ms (9 units)
+        // User keys: dot (60ms down) -> up -> wait 100ms -> dash (180ms down)
+        // Total between key events: 160ms, still under 540ms timeout
+        // Should NOT trigger auto-submit
+
+        handler.handleKeyDown();
+        expect(keyDownCalled, true);
+
+        // Short press = dot
+        handler.handleKeyUp(50); // 50ms < 180ms threshold = dot
+        expect(keyUpCalled, true);
+
+        // Wait but NOT long enough for auto-submit (100ms < 540ms)
+        await Future.delayed(const Duration(milliseconds: 100));
+
+        // Should still have pattern, not submitted yet
+        expect(capturedPattern, isNull);
+        expect(handler.currentPattern, '.');
+      });
+
+      test('should NOT auto-submit while user is still keying same character', () async {
+        // User keys: dot-dot-dash (3 symbols for 'U' = '..-')
+        // Each symbol within inter-character space - NO waiting between!
+
+        handler.handleKeyDown();
+        handler.handleKeyUp(50); // dot
+        // Immediately key again - this cancels any pending auto-submit
+        handler.handleKeyDown();
+        handler.handleKeyUp(50); // dot
+        handler.handleKeyDown();
+        handler.handleKeyUp(200); // dash
+
+        // Pattern should be complete '..-', not prematurely submitted as '..'
+        expect(handler.currentPattern, '..-');
+        // Wait for auto-submit to fire (timeout = 540ms at 20 WPM)
+        await Future.delayed(const Duration(milliseconds: 600));
+        expect(capturedPattern, '..-');
+      });
+
+      test('should auto-submit after 9 units of silence', () async {
+        // User keys: dot, then waits > 540ms (9 units)
+        // Should auto-submit '.'
+        handler.handleKeyDown();
+        handler.handleKeyUp(50); // dot
+
+        // Wait longer than auto-submit timeout
+        await Future.delayed(const Duration(milliseconds: 600));
+
+        expect(capturedPattern, '.');
+      });
+    });
+
+    group('regression: double-processing race', () {
+      test('should cancel previous timer when user keys again', () async {
+        // User keys: dot, then immediately keys another (within timeout)
+        // Should cancel first timer, not submit twice
+
+        handler.handleKeyDown();
+        handler.handleKeyUp(50); // dot
+
+        // Immediately key again before timer fires
+        handler.handleKeyDown();
+        handler.handleKeyUp(50); // another dot
+
+        // Should have both dots in pattern, not submitted as single dot
+        expect(handler.currentPattern, '..');
+        expect(capturedPattern, isNull); // No submit yet
+
+        // Wait for timeout (540ms at 20 WPM)
+        await Future.delayed(const Duration(milliseconds: 600));
+
+        // Now should submit '..'
+        expect(capturedPattern, '..');
+      });
+    });
+
+    group('dot/dash classification', () {
+      test('short press generates dot', () {
+        handler.handleKeyDown();
+        handler.handleKeyUp(50); // 50ms < 180ms threshold (3x dot at 20wpm)
+        expect(handler.currentPattern, '.');
+      });
+
+      test('long press generates dash', () {
+        handler.handleKeyDown();
+        handler.handleKeyUp(200); // 200ms >= 180ms threshold
+        expect(handler.currentPattern, '-');
+      });
+    });
+
+    group('clearPattern', () {
+      test('cancels timer and resets pattern', () async {
+        handler.handleKeyDown();
+        handler.handleKeyUp(50);
+
+        handler.clearPattern();
+
+        expect(handler.currentPattern, '');
+        await Future.delayed(const Duration(milliseconds: 500));
+        expect(capturedPattern, isNull); // Timer cancelled, no submit
+      });
+    });
+
+    group('submitNow', () {
+      test('submits valid pattern immediately', () {
+        handler.handleKeyDown();
+        handler.handleKeyUp(50); // dot
+        handler.handleKeyDown();
+        handler.handleKeyUp(50); // dot
+        handler.handleKeyDown();
+        handler.handleKeyUp(200); // dash
+
+        expect(handler.currentPattern, '..-');
+
+        handler.submitNow();
+
+        expect(capturedPattern, '..-');
+        expect(handler.currentPattern, '');
+      });
+
+      test('does nothing when pattern is empty', () {
+        handler.submitNow();
+        expect(capturedPattern, isNull);
+        expect(handler.currentPattern, '');
+      });
+
+      test('cancels pending auto-submit timer', () async {
+        handler.handleKeyDown();
+        handler.handleKeyUp(50); // dot
+
+        handler.submitNow();
+
+        expect(capturedPattern, '.');
+        await Future.delayed(const Duration(milliseconds: 500));
+        // Should not fire again
+        expect(capturedPattern, '.');
+      });
+    });
+
+    group('incomplete pattern auto-submit', () {
+      test('submits unknown pattern after timeout', () async {
+        // Key a pattern that is not in the morse lookup
+        handler.handleKeyDown();
+        handler.handleKeyUp(50); // dot
+        handler.handleKeyDown();
+        handler.handleKeyUp(50); // dot
+        handler.handleKeyDown();
+        handler.handleKeyUp(50); // dot
+        handler.handleKeyDown();
+        handler.handleKeyUp(50); // dot
+        handler.handleKeyDown();
+        handler.handleKeyUp(50); // dot - pattern '.....' not in lookup
+
+        // Wait for auto-submit timer (9 * 60ms = 540ms)
+        await Future.delayed(const Duration(milliseconds: 600));
+
+        expect(capturedPattern, '.....');
+      });
+    });
+
+    group('input blocking', () {
+      test('blocks input when setAcceptInput(false)', () {
+        handler.setAcceptInput(false);
+
+        handler.handleKeyDown();
+
+        expect(keyDownCalled, false);
+        expect(handler.currentPattern, '');
+      });
+
+      test('allows input when setAcceptInput(true)', () {
+        handler.setAcceptInput(true);
+
+        handler.handleKeyDown();
+
+        expect(keyDownCalled, true);
+      });
+    });
+  });
+}

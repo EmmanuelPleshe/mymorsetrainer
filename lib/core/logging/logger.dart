@@ -106,7 +106,20 @@ class Logger {
         ),
       );
 
-  /// Open email client with log file path
+  /// Open GitHub issue page with bug report template
+  Future<bool> openGitHubIssue() async {
+    const url =
+        'https://github.com/EmmanuelPleshe/mymorsetrainer/issues/new?template=bug_report.yml';
+    final uri = Uri.parse(url);
+
+    if (await canLaunchUrl(uri)) {
+      return await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+    return false;
+  }
+
+  /// Legacy: Open email client with log file path
+  @Deprecated('Use openGitHubIssue() instead')
   Future<bool> sendLogs({String? to}) async {
     if (_currentLogPath == null || _currentLogPath!.isEmpty) {
       return false;

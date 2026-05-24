@@ -3,7 +3,9 @@ import '../database/database_helper.dart';
 import '../models/character.dart';
 
 class CharacterRepository {
-  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
+  final DatabaseHelper _dbHelper;
+
+  CharacterRepository({DatabaseHelper? dbHelper}) : _dbHelper = dbHelper ?? DatabaseHelper.instance;
 
   Future<List<Character>> getAllCharacters() async {
     final db = await _dbHelper.database;

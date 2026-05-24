@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -5,33 +7,47 @@ import 'package:window_manager/window_manager.dart';
 import 'core/audio/morse_code_service.dart';
 import 'core/logging/logger.dart';
 import 'core/logging/log_constants.dart';
+import 'core/platform/app_initializer.dart';
 import 'data/repositories/user_progress_repository.dart';
 import 'ui/screens/onboarding_screen.dart';
 import 'data/repositories/character_repository.dart';
 import 'data/repositories/settings_repository.dart';
-import 'data/repositories/user_progress_repository.dart';
 import 'domain/gamification/gamification_service.dart';
 import 'domain/koch/koch_progression_service.dart';
 import 'domain/spaced_repetition/spaced_repetition_service.dart';
 import 'ui/bloc/practice_session_bloc.dart';
 import 'ui/bloc/settings_bloc.dart';
+import 'ui/screens/help_screen.dart';
 import 'ui/screens/practice_screen.dart';
 import 'ui/screens/progress_screen.dart';
 import 'ui/screens/settings_screen.dart';
+import 'ui/screens/word_practice_screen.dart';
+
+bool get _isDesktop {
+  return Platform.isLinux || Platform.isMacOS || Platform.isWindows;
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await windowManager.ensureInitialized();
-  sqfliteFfiInit();
-  databaseFactory = databaseFactoryFfi;
 
-  // Initialize logger
-  await Logger.instance.initialize();
-  await Logger.instance.info(LogCategory.general, 'Application starting');
+  final initializer = AppInitializer(
+    initializeWindowManager: windowManager.ensureInitialized,
+    initializeSqfliteFfi: () {
+      sqfliteFfiInit();
+      databaseFactory = databaseFactoryFfi;
+    },
+    initializeLogger: () async {
+      await Logger.instance.initialize();
+      await Logger.instance.info(LogCategory.general, 'Application starting');
+    },
+    initializeCharacterRepo: () async {
+      final characterRepo = CharacterRepository();
+      await characterRepo.initializeCharacters();
+    },
+    isDesktop: _isDesktop,
+  );
 
-  // Initialize database with default characters
-  final characterRepo = CharacterRepository();
-  await characterRepo.initializeCharacters();
+  await initializer.initialize();
 
   runApp(const MorseTrainerApp());
 }
@@ -88,8 +104,58 @@ class MorseTrainerApp extends StatelessWidget {
           themeMode: ThemeMode.system,
           home: const HomeScreen(),
           routes: {
-            '/practice': (context) => const PracticeScreen(),
-            '/progress': (context) => const ProgressScreen(),
+            '/practice': (context) => PopScope(
+              canPop: false,
+              onPopInvoked: (didPop) {
+                if (!didPop) {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/',
+                    (route) => false,
+                  );
+                }
+              },
+              child: const PracticeScreen(),
+            ),
+            '/progress': (context) => PopScope(
+              canPop: false,
+              onPopInvoked: (didPop) {
+                if (!didPop) {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/',
+                    (route) => false,
+                  );
+                }
+              },
+              child: const ProgressScreen(),
+            ),
+            '/settings': (context) => PopScope(
+              canPop: false,
+              onPopInvoked: (didPop) {
+                if (!didPop) {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/',
+                    (route) => false,
+                  );
+                }
+              },
+              child: const SettingsScreen(),
+            ),
+            '/word-practice': (context) => PopScope(
+              canPop: false,
+              onPopInvoked: (didPop) {
+                if (!didPop) {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    '/',
+                    (route) => false,
+                  );
+                }
+              },
+              child: const WordPracticeScreen(),
+            ),
           },
         ),
       ),
@@ -98,7 +164,9 @@ class MorseTrainerApp extends StatelessWidget {
 }
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, this.userProgressRepository});
+
+  final UserProgressRepository? userProgressRepository;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -116,18 +184,22 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Wi
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    windowManager.addListener(this);
+    if (_isDesktop) {
+      windowManager.addListener(this);
+    }
     _screens = [
       const PracticeScreen(),
       const ProgressScreen(),
       SettingsScreen(onReplayIntro: _replayOnboarding),
+      const HelpScreen(),
     ];
     _checkOnboarding();
   }
 
   Future<void> _checkOnboarding() async {
-    final repo = UserProgressRepository();
+    final repo = widget.userProgressRepository ?? UserProgressRepository();
     final progress = await repo.getUserProgress();
+    if (!mounted) return;
     setState(() {
       // Show onboarding if not completed AND not skipping (or force replay)
       _showOnboarding = _forceReplayOnboarding || (!progress.hasCompletedOnboarding && !progress.skipIntroOnboarding);
@@ -145,13 +217,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Wi
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    windowManager.removeListener(this);
+    if (_isDesktop) {
+      windowManager.removeListener(this);
+    }
     AudioPlaybackService().dispose();
     super.dispose();
   }
 
   @override
   void onWindowClose() async {
+    if (!_isDesktop) return;
     // Dispose audio BEFORE window closes - critical for avoiding segfault
     await AudioPlaybackService().dispose();
     await windowManager.destroy();
@@ -180,30 +255,42 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Wi
       );
     }
 
-    return Scaffold(
-      body: _screens[_currentIndex],
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentIndex,
-        onDestinationSelected: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.school),
-            label: 'Practice',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.bar_chart),
-            label: 'Progress',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
-      ),
+    return BlocBuilder<PracticeSessionBloc, PracticeSessionState>(
+      builder: (context, sessionState) {
+        final hideBottomNav = _currentIndex == 0 && sessionState is PracticeSessionActive;
+
+        return Scaffold(
+          body: _screens[_currentIndex],
+          bottomNavigationBar: hideBottomNav
+              ? null
+              : NavigationBar(
+                  selectedIndex: _currentIndex,
+                  onDestinationSelected: (index) {
+                    setState(() {
+                      _currentIndex = index;
+                    });
+                  },
+                  destinations: const [
+                    NavigationDestination(
+                      icon: Icon(Icons.school),
+                      label: 'Practice',
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.bar_chart),
+                      label: 'Progress',
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.settings),
+                      label: 'Settings',
+                    ),
+                    NavigationDestination(
+                      icon: Icon(Icons.help_outline),
+                      label: 'Help',
+                    ),
+                  ],
+                ),
+        );
+      },
     );
   }
 }

@@ -5,20 +5,27 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/practice_session_bloc.dart';
 import '../bloc/settings_bloc.dart';
 import '../../core/audio/morse_code_service.dart';
+import '../../core/audio/audio_service.dart';
 import '../../core/input/keyboard_input_handler.dart';
+import '../../core/input/morse_command_handler.dart';
 import '../../core/logging/logger.dart';
 import '../../core/logging/log_constants.dart';
+import '../../data/repositories/user_progress_repository.dart';
+import '../widgets/home_app_bar.dart';
 
 class PracticeScreen extends StatefulWidget {
-  const PracticeScreen({super.key});
+  final AudioService? audioService;
+
+  const PracticeScreen({super.key, this.audioService});
 
   @override
   State<PracticeScreen> createState() => _PracticeScreenState();
 }
 
 class _PracticeScreenState extends State<PracticeScreen> {
-  final AudioPlaybackService _audioService = AudioPlaybackService();
+  late final AudioService _audioService;
   KeyboardKeyerHandler? _keyerHandler;
+  MorseCommandHandler? _commandHandler;
   String _currentPattern = '';
   String _lastDecodedChar = '';
   bool _feedbackHandled = false;
@@ -27,6 +34,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
   bool _countdownActive = false;
   int _countdownSeconds = 0;
   bool _screenFlash = false;
+  int _userLevel = 1;
 
   // Event-based key tracking
   DateTime? _keyDownStarted;
@@ -38,7 +46,18 @@ class _PracticeScreenState extends State<PracticeScreen> {
   @override
   void initState() {
     super.initState();
+    _audioService = widget.audioService ?? AudioPlaybackService();
     _initAudio();
+    _loadUserLevel();
+  }
+
+  Future<void> _loadUserLevel() async {
+    final level = await UserProgressRepository().getCurrentLevel();
+    if (mounted) {
+      setState(() {
+        _userLevel = level;
+      });
+    }
   }
 
   Future<void> _initAudio() async {
@@ -71,8 +90,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
 
   void _initKeyer() {
     _keyerHandler = KeyboardKeyerHandler(
-      dotDurationMs: _audioService.dotDurationMs,
-      dashDurationMs: _audioService.dashDurationMs,
+      timingEngine: _audioService.timingEngine,
       onPatternComplete: (pattern) {
         final decoded = _decodePattern(pattern);
         Logger().debug(LogCategory.ui, 'Submitting "$pattern" = "$decoded"');
@@ -99,6 +117,42 @@ class _PracticeScreenState extends State<PracticeScreen> {
         setState(() => _screenFlash = false);
       },
     );
+    _commandHandler = MorseCommandHandler(
+      timingEngine: _audioService.timingEngine,
+      onCommand: (cmd) => _handleCommand(cmd),
+    );
+  }
+
+  void _handleCommand(String cmd) {
+    Logger().info(LogCategory.ui, 'Morse command: $cmd');
+    final state = context.read<PracticeSessionBloc>().state;
+    if (state is PracticeSessionInitial) {
+      switch (cmd) {
+        case 'sp':
+          context.read<PracticeSessionBloc>().add(StartSession(_selectedLevel));
+          break;
+        case 'up':
+          if (_selectedLevel < 20) setState(() => _selectedLevel++);
+          break;
+        case 'do':
+          if (_selectedLevel > 1) setState(() => _selectedLevel--);
+          break;
+      }
+    } else if (state is PracticeSessionComplete) {
+      switch (cmd) {
+        case 're':
+          context.read<PracticeSessionBloc>().add(StartSession(_selectedLevel));
+          break;
+        case 'ne':
+          if (_selectedLevel < 20) {
+            context.read<PracticeSessionBloc>().add(StartSession(_selectedLevel + 1));
+          }
+          break;
+        case 'ex':
+          context.read<PracticeSessionBloc>().add(const EndSession());
+          break;
+      }
+    }
   }
 
   String _decodePattern(String pattern) {
@@ -133,6 +187,10 @@ class _PracticeScreenState extends State<PracticeScreen> {
 
     final now = DateTime.now();
 
+    // Determine which handler to use based on bloc state
+    final blocState = context.read<PracticeSessionBloc>().state;
+    final useCommandHandler = blocState is! PracticeSessionActive;
+
     if (event is KeyDownEvent) {
       // Debounce: ignore if too soon after last key down (Linux ghost key bug)
       if (_lastKeyDownTime != null &&
@@ -149,7 +207,11 @@ class _PracticeScreenState extends State<PracticeScreen> {
       _lastKeyDownTime = now;
       _keyDownStarted = now;
       debugPrint('  -> KEY DOWN, starting timer');
-      _keyerHandler?.handleKeyDown();
+      if (useCommandHandler) {
+        _commandHandler?.handleKeyDown();
+      } else {
+        _keyerHandler?.handleKeyDown();
+      }
       return true;
     }
 
@@ -167,10 +229,14 @@ class _PracticeScreenState extends State<PracticeScreen> {
         debugPrint('  -> KEY UP after $duration ms');
         // Sanity check: ignore glitches shorter than 30ms
         if (duration >= _minDurationMs) {
-          _keyerHandler?.handleKeyUp(duration);
-          setState(() {
-            _currentPattern = _keyerHandler?.currentPattern ?? '';
-          });
+          if (useCommandHandler) {
+            _commandHandler?.handleKeyUp(duration);
+          } else {
+            _keyerHandler?.handleKeyUp(duration);
+            setState(() {
+              _currentPattern = _keyerHandler?.currentPattern ?? '';
+            });
+          }
         } else {
           debugPrint('  -> IGNORED (too short: $duration ms)');
         }
@@ -214,18 +280,13 @@ class _PracticeScreenState extends State<PracticeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Practice'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () => Navigator.pushNamed(context, '/settings'),
-          ),
-          IconButton(
-            icon: const Icon(Icons.bar_chart),
-            onPressed: () => Navigator.pushNamed(context, '/progress'),
-          ),
-        ],
+      appBar: HomeAppBar(
+        title: 'Practice',
+        showNavIcons: true,
+        onHomePressed: () async {
+          await _audioService.keyerUp();
+          _keyerHandler?.clearPattern();
+        },
       ),
       body: BlocListener<SettingsBloc, SettingsState>(
         listener: (context, state) {
@@ -242,8 +303,9 @@ class _PracticeScreenState extends State<PracticeScreen> {
                 _feedbackHandled = false;
               });
               _keyerHandler?.clearPattern();
+              _commandHandler?.flush();
               final char = state.currentCharacter;
-              if (char != null) {
+              if (char != null && !state.isRetrying) {
                 _playCharacterAudio(char.symbol);
               }
             }
@@ -273,9 +335,10 @@ class _PracticeScreenState extends State<PracticeScreen> {
 
   Widget _buildStartScreen(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
           const Icon(Icons.radio, size: 80, color: Colors.blue),
           const SizedBox(height: 24),
           const Text('Morse Code Trainer', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
@@ -314,7 +377,28 @@ class _PracticeScreenState extends State<PracticeScreen> {
             label: const Text('Start Practice'),
             style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16)),
           ),
-        ],
+          const SizedBox(height: 16),
+          ElevatedButton.icon(
+            onPressed: _userLevel >= 2
+                ? () => Navigator.pushNamed(context, '/word-practice')
+                : null,
+            icon: const Icon(Icons.format_quote),
+            label: const Text('Common Words'),
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              backgroundColor: _userLevel >= 2 ? null : Colors.grey.shade300,
+            ),
+          ),
+          if (_userLevel < 2)
+            const Padding(
+              padding: EdgeInsets.only(top: 4),
+              child: Text(
+                'Unlock at Level 2',
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -326,7 +410,7 @@ class _PracticeScreenState extends State<PracticeScreen> {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 50),
       color: _screenFlash ? Colors.white : null,
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
@@ -432,12 +516,30 @@ class _PracticeScreenState extends State<PracticeScreen> {
         ),
       ),
       const SizedBox(height: 16),
-      ElevatedButton.icon(
-        onPressed: () => _playCharacterAudio(
-          (context.read<PracticeSessionBloc>().state as PracticeSessionActive).currentCharacter?.symbol ?? '',
-        ),
-        icon: const Icon(Icons.volume_up),
-        label: const Text('Replay Sound'),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton.icon(
+            onPressed: () => _playCharacterAudio(
+              (context.read<PracticeSessionBloc>().state as PracticeSessionActive).currentCharacter?.symbol ?? '',
+            ),
+            icon: const Icon(Icons.volume_up),
+            label: const Text('Replay'),
+          ),
+          const SizedBox(width: 12),
+          ElevatedButton.icon(
+            onPressed: () async {
+              await _audioService.keyerUp();
+              _keyerHandler?.clearPattern();
+              if (mounted) {
+                context.read<PracticeSessionBloc>().add(const EndSession());
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            icon: const Icon(Icons.stop),
+            label: const Text('End'),
+          ),
+        ],
       ),
     ],
   );
@@ -448,9 +550,11 @@ class _PracticeScreenState extends State<PracticeScreen> {
     // Only play feedback sound once per state (if sound effects enabled)
     if (!_feedbackHandled) {
       _feedbackHandled = true;
-      final settingsState = context.read<SettingsBloc>().state;
-      if (settingsState is SettingsLoaded && settingsState.settings.enableSoundEffects) {
-        _audioService.playCorrectFeedback();
+      if (isCorrect) {
+        final settingsState = context.read<SettingsBloc>().state;
+        if (settingsState is SettingsLoaded && settingsState.settings.enableSoundEffects) {
+          _audioService.playCorrectFeedback();
+        }
       }
     }
 
@@ -509,6 +613,13 @@ class _PracticeScreenState extends State<PracticeScreen> {
                 : null,
               icon: const Icon(Icons.arrow_forward),
               label: const Text('Keep Going'),
+            ),
+            const SizedBox(width: 16),
+            ElevatedButton.icon(
+              onPressed: () => context.read<PracticeSessionBloc>().add(const EndSession()),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.grey.shade600),
+              icon: const Icon(Icons.exit_to_app),
+              label: const Text('Exit'),
             ),
           ],
         ),

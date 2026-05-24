@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/services.dart';
+import '../../core/timing/morse_timing_engine.dart';
 
 typedef KeyerCallback = void Function(String morsePattern);
 
@@ -7,8 +8,7 @@ class GameControllerKeyerHandler {
   final KeyerCallback onPatternComplete;
   final VoidCallback? onKeyDown;
   final VoidCallback? onKeyUp;
-  final int dotDurationMs;
-  final int dashDurationMs;
+  final MorseTimingEngine timingEngine;
 
   String _pattern = '';
   Timer? _autoSubmitTimer;
@@ -29,8 +29,7 @@ class GameControllerKeyerHandler {
     required this.onPatternComplete,
     this.onKeyDown,
     this.onKeyUp,
-    required this.dotDurationMs,
-    required this.dashDurationMs,
+    required this.timingEngine,
   });
 
   void handleButtonDown() {
@@ -44,7 +43,7 @@ class GameControllerKeyerHandler {
     _isPressed = false;
     onKeyUp?.call();
 
-    final threshold = dotDurationMs * 2;
+    final threshold = timingEngine.keyerDotDashThresholdMs;
     final symbol = durationMs >= threshold ? '-' : '.';
     _pattern += symbol;
 
@@ -53,13 +52,16 @@ class GameControllerKeyerHandler {
 
   void _scheduleAutoSubmit() {
     _autoSubmitTimer?.cancel();
-    _autoSubmitTimer = Timer(const Duration(milliseconds: 1500), () {
-      if (_pattern.isNotEmpty && _morseToChar.containsKey(_pattern)) {
-        final pattern = _pattern;
-        onPatternComplete(pattern);
-        _pattern = '';
-      }
-    });
+    _autoSubmitTimer = Timer(
+      Duration(milliseconds: timingEngine.keyerInterWordThresholdMs),
+      () {
+        if (_pattern.isNotEmpty && _morseToChar.containsKey(_pattern)) {
+          final pattern = _pattern;
+          onPatternComplete(pattern);
+          _pattern = '';
+        }
+      },
+    );
   }
 
   void submitNow() {

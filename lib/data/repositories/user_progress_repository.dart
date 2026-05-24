@@ -2,7 +2,9 @@ import '../database/database_helper.dart';
 import '../models/user_progress.dart';
 
 class UserProgressRepository {
-  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
+  final DatabaseHelper _dbHelper;
+
+  UserProgressRepository({DatabaseHelper? dbHelper}) : _dbHelper = dbHelper ?? DatabaseHelper.instance;
 
   Future<UserProgress> getUserProgress() async {
     final db = await _dbHelper.database;

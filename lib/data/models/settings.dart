@@ -75,7 +75,7 @@ class AppSettings {
       extraWordSpace: map['extraWordSpace'] as double? ?? 0.0,
       volume: map['volume'] as double? ?? 0.5,
       inputMethod: InputMethod.values[map['inputMethod'] as int? ?? 0],
-      enableGamification: map['enableGamification'] == 1,
+      enableGamification: (map['enableGamification'] as int? ?? 1) == 1,
       enableSoundEffects: map['enableSoundEffects'] == 1,
       enableScreenFlash: map['enableScreenFlash'] == 1,
     );

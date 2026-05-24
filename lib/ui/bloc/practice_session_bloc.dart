@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import '../../data/models/character.dart';
 import '../../data/repositories/user_progress_repository.dart';
@@ -46,6 +47,10 @@ class CompleteOnboarding extends PracticeSessionEvent {
   const CompleteOnboarding({this.skipIntro = false});
 }
 
+class EndSession extends PracticeSessionEvent {
+  const EndSession();
+}
+
 // States
 abstract class PracticeSessionState extends Equatable {
   const PracticeSessionState();
@@ -65,6 +70,7 @@ class PracticeSessionActive extends PracticeSessionState {
   final int totalAnswered;
   final int currentStreak;
   final bool? lastAnswerCorrect;
+  final bool isRetrying;
   final bool showUnlockNotification;
 
   const PracticeSessionActive({
@@ -74,6 +80,7 @@ class PracticeSessionActive extends PracticeSessionState {
     required this.totalAnswered,
     required this.currentStreak,
     this.lastAnswerCorrect,
+    this.isRetrying = false,
     this.showUnlockNotification = false,
   });
 
@@ -92,6 +99,7 @@ class PracticeSessionActive extends PracticeSessionState {
     int? totalAnswered,
     int? currentStreak,
     bool? lastAnswerCorrect,
+    bool? isRetrying,
     bool? showUnlockNotification,
   }) {
     return PracticeSessionActive(
@@ -101,6 +109,7 @@ class PracticeSessionActive extends PracticeSessionState {
       totalAnswered: totalAnswered ?? this.totalAnswered,
       currentStreak: currentStreak ?? this.currentStreak,
       lastAnswerCorrect: lastAnswerCorrect ?? this.lastAnswerCorrect,
+      isRetrying: isRetrying ?? this.isRetrying,
       showUnlockNotification: showUnlockNotification ?? this.showUnlockNotification,
     );
   }
@@ -113,6 +122,7 @@ class PracticeSessionActive extends PracticeSessionState {
         totalAnswered,
         currentStreak,
         lastAnswerCorrect,
+        isRetrying,
         showUnlockNotification,
       ];
 }
@@ -153,12 +163,13 @@ class PracticeSessionBloc
         _spacedRepetitionService = spacedRepetitionService,
         _userProgressRepository = userProgressRepository,
         super(PracticeSessionInitial()) {
-    on<StartSession>(_onStartSession);
-    on<SubmitAnswer>(_onSubmitAnswer);
-    on<SubmitMorsePattern>(_onSubmitMorsePattern);
-    on<NextCharacter>(_onNextCharacter);
-    on<PlayCurrentCharacter>(_onPlayCurrentCharacter);
-    on<CompleteOnboarding>(_onCompleteOnboarding);
+    on<StartSession>(_onStartSession, transformer: sequential());
+    on<SubmitAnswer>(_onSubmitAnswer, transformer: sequential());
+    on<SubmitMorsePattern>(_onSubmitMorsePattern, transformer: sequential());
+    on<NextCharacter>(_onNextCharacter, transformer: sequential());
+    on<PlayCurrentCharacter>(_onPlayCurrentCharacter, transformer: sequential());
+    on<CompleteOnboarding>(_onCompleteOnboarding, transformer: sequential());
+    on<EndSession>(_onEndSession, transformer: sequential());
   }
 
   Future<void> _onCompleteOnboarding(
@@ -172,6 +183,13 @@ class PracticeSessionBloc
         skipIntroOnboarding: event.skipIntro,
       ),
     );
+  }
+
+  void _onEndSession(
+    EndSession event,
+    Emitter<PracticeSessionState> emit,
+  ) {
+    emit(PracticeSessionInitial());
   }
 
   Future<void> _onStartSession(
@@ -283,42 +301,61 @@ class PracticeSessionBloc
       totalAnswered: currentState.totalAnswered + 1,
       currentStreak: newStreak,
       lastAnswerCorrect: isCorrect,
+      isRetrying: false,
       showUnlockNotification: unlockedNextLevel,
     ));
 
     // Auto-advance or auto-retry with brief delay
     await Future.delayed(Duration(milliseconds: isCorrect ? 400 : 600));
 
+    // Capture updated state after first emit so subsequent emits don't
+    // double-count totalAnswered using the stale currentState.
+    final afterFeedback = state as PracticeSessionActive;
+
     if (isCorrect) {
-      final nextIndex = currentState.currentIndex + 1;
-      if (nextIndex >= currentState.characters.length) {
+      final nextIndex = afterFeedback.currentIndex + 1;
+      if (nextIndex >= afterFeedback.characters.length) {
         // Session complete
         await _gamificationService.completeSession();
         emit(PracticeSessionComplete(
-          correctCount: newCorrectCount,
-          totalQuestions: currentState.totalAnswered + 1,
-          accuracy: newCorrectCount / (currentState.totalAnswered + 1),
-          unlockedNextLevel: unlockedNextLevel,
+          correctCount: afterFeedback.correctCount,
+          totalQuestions: afterFeedback.totalAnswered,
+          accuracy: afterFeedback.accuracy,
+          unlockedNextLevel: afterFeedback.showUnlockNotification,
         ));
         return;
       }
 
       // Advance to next character
-      emit(currentState.copyWith(
+      emit(PracticeSessionActive(
+        characters: afterFeedback.characters,
         currentIndex: nextIndex,
-        correctCount: newCorrectCount,
-        totalAnswered: currentState.totalAnswered + 1,
-        currentStreak: newStreak,
+        correctCount: afterFeedback.correctCount,
+        totalAnswered: afterFeedback.totalAnswered,
+        currentStreak: afterFeedback.currentStreak,
         lastAnswerCorrect: null,
+        isRetrying: false,
         showUnlockNotification: false,
       ));
     } else {
-      // Wrong answer: reset for immediate retry, stay on same character
-      emit(currentState.copyWith(
-        correctCount: newCorrectCount,
-        totalAnswered: currentState.totalAnswered + 1,
-        currentStreak: newStreak,
+      // Wrong answer: set retry state, stay on same character
+      emit(afterFeedback.copyWith(
+        lastAnswerCorrect: false,
+        isRetrying: true,
+        showUnlockNotification: false,
+      ));
+
+      // Wait for retry window, then reset for retry input
+      await Future.delayed(const Duration(milliseconds: 600));
+      final afterRetry = state as PracticeSessionActive;
+      emit(PracticeSessionActive(
+        characters: afterRetry.characters,
+        currentIndex: afterRetry.currentIndex,
+        correctCount: afterRetry.correctCount,
+        totalAnswered: afterRetry.totalAnswered,
+        currentStreak: afterRetry.currentStreak,
         lastAnswerCorrect: null,
+        isRetrying: false,
         showUnlockNotification: false,
       ));
     }
@@ -349,9 +386,14 @@ class PracticeSessionBloc
       return;
     }
 
-    emit(currentState.copyWith(
+    emit(PracticeSessionActive(
+      characters: currentState.characters,
       currentIndex: currentState.currentIndex + 1,
+      correctCount: currentState.correctCount,
+      totalAnswered: currentState.totalAnswered,
+      currentStreak: currentState.currentStreak,
       lastAnswerCorrect: null,
+      isRetrying: false,
       showUnlockNotification: false,
     ));
   }

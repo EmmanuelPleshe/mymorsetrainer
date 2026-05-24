@@ -2,7 +2,9 @@ import '../database/database_helper.dart';
 import '../models/settings.dart';
 
 class SettingsRepository {
-  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
+  final DatabaseHelper _dbHelper;
+
+  SettingsRepository({DatabaseHelper? dbHelper}) : _dbHelper = dbHelper ?? DatabaseHelper.instance;
 
   Future<AppSettings> getSettings() async {
     final db = await _dbHelper.database;
