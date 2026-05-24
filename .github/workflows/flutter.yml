@@ -78,10 +78,14 @@ jobs:
       - name: Build Linux
         run: flutter build linux --release
 
+      - name: Sanitize ref name
+        id: sanitize
+        run: echo "SAFE_REF=${GITHUB_REF_NAME//\//-}" >> "$GITHUB_OUTPUT"
+
       - name: Upload Linux artifact
         uses: actions/upload-artifact@v4
         with:
-          name: linux-build-${{ github.ref_name }}
+          name: linux-build-${{ steps.sanitize.outputs.SAFE_REF }}
           path: build/linux/x64/release/bundle/
 
   build-android:
@@ -105,10 +109,14 @@ jobs:
       - name: Build Android APK
         run: flutter build apk --release
 
+      - name: Sanitize ref name
+        id: sanitize
+        run: echo "SAFE_REF=${GITHUB_REF_NAME//\//-}" >> "$GITHUB_OUTPUT"
+
       - name: Upload Android artifact
         uses: actions/upload-artifact@v4
         with:
-          name: android-build-${{ github.ref_name }}
+          name: android-build-${{ steps.sanitize.outputs.SAFE_REF }}
           path: build/app/outputs/flutter-apk/app-release.apk
 
   build-windows:
@@ -133,10 +141,14 @@ jobs:
       - name: Build Windows
         run: flutter build windows --release
 
+      - name: Sanitize ref name
+        id: sanitize
+        run: echo "SAFE_REF=${GITHUB_REF_NAME//\//-}" >> "$GITHUB_OUTPUT"
+
       - name: Upload Windows artifact
         uses: actions/upload-artifact@v4
         with:
-          name: windows-build-${{ github.ref_name }}
+          name: windows-build-${{ steps.sanitize.outputs.SAFE_REF }}
           path: build/windows/x64/runner/Release/
 
   build-macos:
@@ -161,10 +173,14 @@ jobs:
       - name: Build macOS
         run: flutter build macos --release
 
+      - name: Sanitize ref name
+        id: sanitize
+        run: echo "SAFE_REF=${GITHUB_REF_NAME//\//-}" >> "$GITHUB_OUTPUT"
+
       - name: Upload macOS artifact
         uses: actions/upload-artifact@v4
         with:
-          name: macos-build-${{ github.ref_name }}
+          name: macos-build-${{ steps.sanitize.outputs.SAFE_REF }}
           path: build/macos/Build/Products/Release/
 
   release:
@@ -178,28 +194,32 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Sanitize ref name
+        id: sanitize
+        run: echo "SAFE_REF=${GITHUB_REF_NAME//\//-}" >> "$GITHUB_OUTPUT"
+
       - name: Download Linux
         uses: actions/download-artifact@v4
         with:
-          name: linux-build-${{ github.ref_name }}
+          name: linux-build-${{ steps.sanitize.outputs.SAFE_REF }}
           path: linux-build
 
       - name: Download Windows
         uses: actions/download-artifact@v4
         with:
-          name: windows-build-${{ github.ref_name }}
+          name: windows-build-${{ steps.sanitize.outputs.SAFE_REF }}
           path: windows-build
 
       - name: Download Android
         uses: actions/download-artifact@v4
         with:
-          name: android-build-${{ github.ref_name }}
+          name: android-build-${{ steps.sanitize.outputs.SAFE_REF }}
           path: android-build
 
       - name: Download macOS
         uses: actions/download-artifact@v4
         with:
-          name: macos-build-${{ github.ref_name }}
+          name: macos-build-${{ steps.sanitize.outputs.SAFE_REF }}
           path: macos-build
 
       - name: Create Release
