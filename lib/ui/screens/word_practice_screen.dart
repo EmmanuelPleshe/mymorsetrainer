@@ -55,9 +55,7 @@ class _WordPracticeScreenState extends State<WordPracticeScreen> {
 
   void _initKeyer() {
     _keyerHandler = KeyboardKeyerHandler(
-      dotDurationMs: _audioService.dotDurationMs,
-      dashDurationMs: _audioService.dashDurationMs,
-      interWordThresholdMs: _audioService.dotDurationMs * 9,
+      timingEngine: _audioService.timingEngine,
       onPatternComplete: (pattern) {
         // Auto-submit on word boundary (long pause)
         _submitPattern();

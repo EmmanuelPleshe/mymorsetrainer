@@ -20,20 +20,25 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final showBack = Navigator.of(context).canPop();
+
     return AppBar(
       title: Text(title),
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
-        tooltip: 'Home',
-        onPressed: () async {
-          if (onHomePressed != null) {
-            await onHomePressed!();
-          }
-          if (context.mounted) {
-            Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
-          }
-        },
-      ),
+      leading: showBack
+          ? IconButton(
+              icon: const Icon(Icons.arrow_back),
+              tooltip: 'Back',
+              onPressed: () async {
+                if (onHomePressed != null) {
+                  await onHomePressed!();
+                }
+                if (context.mounted) {
+                  Navigator.of(context).pop();
+                }
+              },
+            )
+          : null,
+      automaticallyImplyLeading: false,
       actions: [
         if (extraActions != null) ...extraActions!,
         if (showNavIcons) ...[

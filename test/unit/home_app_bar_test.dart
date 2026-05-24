@@ -4,29 +4,50 @@ import 'package:morse_trainer/ui/widgets/home_app_bar.dart';
 
 void main() {
   group('HomeAppBar', () {
-    testWidgets('shows home button and title', (tester) async {
+    Future<void> pumpWithPushedRoute(WidgetTester tester, Widget appBar) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            appBar: const HomeAppBar(title: 'Test'),
+          home: Builder(
+            builder: (context) => ElevatedButton(
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => Scaffold(appBar: appBar as PreferredSizeWidget),
+                ),
+              ),
+              child: const Text('Push'),
+            ),
           ),
         ),
       );
+      await tester.tap(find.text('Push'));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('shows back button when route can pop', (tester) async {
+      await pumpWithPushedRoute(tester, const HomeAppBar(title: 'Test'));
 
       expect(find.byIcon(Icons.arrow_back), findsOneWidget);
       expect(find.text('Test'), findsOneWidget);
     });
 
-    testWidgets('shows nav icons when showNavIcons=true', (tester) async {
+    testWidgets('hides back button when on first route', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
-            appBar: const HomeAppBar(
-              title: 'Practice',
-              showNavIcons: true,
-            ),
+            appBar: HomeAppBar(title: 'Test'),
           ),
         ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byIcon(Icons.arrow_back), findsNothing);
+      expect(find.text('Test'), findsOneWidget);
+    });
+
+    testWidgets('shows nav icons when showNavIcons=true', (tester) async {
+      await pumpWithPushedRoute(
+        tester,
+        const HomeAppBar(title: 'Practice', showNavIcons: true),
       );
 
       expect(find.byIcon(Icons.school), findsOneWidget);
@@ -35,15 +56,9 @@ void main() {
     });
 
     testWidgets('hides nav icons when showNavIcons=false', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            appBar: const HomeAppBar(
-              title: 'Settings',
-              showNavIcons: false,
-            ),
-          ),
-        ),
+      await pumpWithPushedRoute(
+        tester,
+        const HomeAppBar(title: 'Settings', showNavIcons: false),
       );
 
       expect(find.byIcon(Icons.school), findsNothing);
@@ -51,17 +66,14 @@ void main() {
       expect(find.byIcon(Icons.settings), findsNothing);
     });
 
-    testWidgets('home button calls onHomePressed callback', (tester) async {
+    testWidgets('back button calls onHomePressed then pops', (tester) async {
       bool pressed = false;
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            appBar: HomeAppBar(
-              title: 'Test',
-              onHomePressed: () async => pressed = true,
-            ),
-          ),
+      await pumpWithPushedRoute(
+        tester,
+        HomeAppBar(
+          title: 'Test',
+          onHomePressed: () async => pressed = true,
         ),
       );
 
@@ -79,9 +91,20 @@ void main() {
           initialRoute: '/practice',
           routes: {
             '/practice': (context) => Scaffold(
-                  appBar: const HomeAppBar(
-                    title: 'Practice',
-                    showNavIcons: true,
+                  body: Builder(
+                    builder: (context) => ElevatedButton(
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => Scaffold(
+                            appBar: const HomeAppBar(
+                              title: 'Practice',
+                              showNavIcons: true,
+                            ),
+                          ),
+                        ),
+                      ),
+                      child: const Text('Push'),
+                    ),
                   ),
                 ),
             '/progress': (context) {
@@ -95,6 +118,8 @@ void main() {
           },
         ),
       );
+      await tester.tap(find.text('Push'));
+      await tester.pumpAndSettle();
 
       await tester.tap(find.byTooltip('Progress'));
       await tester.pumpAndSettle();

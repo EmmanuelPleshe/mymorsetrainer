@@ -326,6 +326,51 @@ void main() {
         },
       );
     });
+
+    group('EndSession', () {
+      blocTest<PracticeSessionBloc, PracticeSessionState>(
+        'returns to initial state from active session',
+        build: () => PracticeSessionBloc(
+          kochService: mockKochService,
+          gamificationService: mockGamificationService,
+          spacedRepetitionService: mockSpacedRepetitionService,
+          userProgressRepository: mockUserProgressRepository,
+        ),
+        act: (bloc) async {
+          bloc.add(const StartSession(1));
+          await Future.delayed(const Duration(milliseconds: 50));
+          bloc.add(const EndSession());
+        },
+        expect: () => [
+          isA<PracticeSessionLoading>(),
+          isA<PracticeSessionActive>(),
+          isA<PracticeSessionInitial>(),
+        ],
+      );
+
+      blocTest<PracticeSessionBloc, PracticeSessionState>(
+        'returns to initial state from complete state',
+        build: () => PracticeSessionBloc(
+          kochService: mockKochService,
+          gamificationService: mockGamificationService,
+          spacedRepetitionService: mockSpacedRepetitionService,
+          userProgressRepository: mockUserProgressRepository,
+        ),
+        act: (bloc) async {
+          bloc.add(const StartSession(1));
+          await Future.delayed(const Duration(milliseconds: 50));
+          bloc.add(const SubmitMorsePattern('-.-'));
+          await Future.delayed(const Duration(milliseconds: 500));
+          bloc.add(const SubmitMorsePattern('--'));
+          await Future.delayed(const Duration(milliseconds: 500));
+          bloc.add(const EndSession());
+        },
+        wait: const Duration(milliseconds: 200),
+        verify: (bloc) {
+          expect(bloc.state, isA<PracticeSessionInitial>());
+        },
+      );
+    });
   });
 }
 
