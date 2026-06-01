@@ -1,2 +1,14 @@
-# Spec Kit personal constitution
-.specify/.worktrees/
+# Flutter/Dart generated files
+.dart_tool/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+pubspec.lock
+
+# IDE / tool directories
+.claude/
+.specify/
+
+# OS
+.DS_Store
