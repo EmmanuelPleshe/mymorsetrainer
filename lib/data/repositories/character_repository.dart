@@ -1,4 +1,5 @@
 import 'package:sqflite/sqflite.dart';
+import '../../core/audio/morse_code_mapper.dart';
 import '../database/database_helper.dart';
 import '../models/character.dart';
 
@@ -86,27 +87,15 @@ class CharacterRepository {
     final existing = await getAllCharacters();
     if (existing.isNotEmpty) return;
 
-    final morseCode = {
-      'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.',
-      'F': '..-.', 'G': '--.', 'H': '....', 'I': '..', 'J': '.---',
-      'K': '-.-', 'L': '.-..', 'M': '--', 'N': '-.', 'O': '---',
-      'P': '.--.', 'Q': '--.-', 'R': '.-.', 'S': '...', 'T': '-',
-      'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-', 'Y': '-.--',
-      'Z': '--..',
-    };
-
-    final kochSequence = [
-      'K', 'M', 'R', 'S', 'U', 'A', 'P', 'L', 'W', 'I',
-      'N', 'J', 'E', 'F', 'O', 'Y', 'V', 'G', 'Q', 'Z',
-      'H', 'B', 'D', 'X', 'C',
-    ];
+    final mapper = MorseCodeMapper();
+    final kochSequence = MorseCodeMapper.kochSequence;
 
     for (int i = 0; i < kochSequence.length; i++) {
       final symbol = kochSequence[i];
       await insertCharacter(Character(
         id: 'char_$symbol',
         symbol: symbol,
-        morsePattern: morseCode[symbol] ?? '',
+        morsePattern: mapper.getMorsePattern(symbol) ?? '',
         kochOrder: i,
         isUnlocked: i < 2,
       ));

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:morse_trainer/core/audio/morse_code_mapper.dart';
 import 'package:morse_trainer/data/database/database_helper.dart';
 import 'package:morse_trainer/data/models/character.dart';
 import 'package:morse_trainer/data/repositories/character_repository.dart';
@@ -243,7 +244,7 @@ void main() {
       await repo.initializeCharacters();
 
       final calls = verify(() => mockDb.insert('characters', captureAny(), conflictAlgorithm: any(named: 'conflictAlgorithm'))).captured;
-      expect(calls.length, 25); // kochSequence.length
+      expect(calls.length, MorseCodeMapper.kochSequence.length);
 
       // Verify first two are unlocked
       final firstMap = calls[0] as Map<String, dynamic>;
@@ -255,7 +256,7 @@ void main() {
 
       // Verify third is locked
       final thirdMap = calls[2] as Map<String, dynamic>;
-      expect(thirdMap['symbol'], 'R');
+      expect(thirdMap['symbol'], 'U');
       expect(thirdMap['isUnlocked'], 0);
     });
   });

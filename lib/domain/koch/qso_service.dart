@@ -1,3 +1,4 @@
+import '../../core/audio/morse_code_mapper.dart';
 import '../../data/models/word.dart';
 
 class QSOService {
@@ -45,6 +46,6 @@ class QSOService {
   }
 
   String phraseToMorse(String text) {
-    return Word.textToMorse(text);
+    return MorseCodeMapper().wordToMorse(text);
   }
 }

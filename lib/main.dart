@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:window_manager/window_manager.dart';
+import 'core/audio/morse_code_mapper.dart';
 import 'core/audio/morse_code_service.dart';
 import 'core/logging/logger.dart';
 import 'core/logging/log_constants.dart';
@@ -44,6 +45,7 @@ class MorseTrainerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
+        RepositoryProvider(create: (_) => MorseCodeMapper()),
         RepositoryProvider(create: (_) => CharacterRepository()),
         RepositoryProvider(create: (_) => UserProgressRepository()),
         RepositoryProvider(create: (_) => SettingsRepository()),

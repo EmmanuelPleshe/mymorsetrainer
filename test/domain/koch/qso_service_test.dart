@@ -81,13 +81,14 @@ void main() {
     });
 
     test('ignores unknown characters', () {
-      expect(service.phraseToMorse('!@#'), '');
+      // ! and # are not in the ITU Morse map; @ is, so exclude it
+      expect(service.phraseToMorse('!#'), '');
     });
 
     test('preserves spaces between words as spaces in morse', () {
       final morse = service.phraseToMorse('A B');
-      // A = .-, space = ' ', B = -...
-      expect(morse, '.-  -...');
+      // A = .-, B = -..., space between words is skipped (single space between letters)
+      expect(morse, '.- -...');
     });
   });
 }

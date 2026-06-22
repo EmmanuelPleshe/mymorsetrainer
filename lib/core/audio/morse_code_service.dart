@@ -4,58 +4,7 @@ import 'dart:typed_data';
 
 import '../timing/morse_timing_engine.dart';
 import 'audio_service.dart';
-
-/// Morse code timing based on ARRL PARIS standard (50 units per word)
-/// Reference: https://github.com/spasutto/cw-trainer
-class MorseCodeService {
-  static const Map<String, String> _morseCode = {
-    'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.',
-    'F': '..-.', 'G': '--.', 'H': '....', 'I': '..', 'J': '.---',
-    'K': '-.-', 'L': '.-..', 'M': '--', 'N': '-.', 'O': '---',
-    'P': '.--.', 'Q': '--.-', 'R': '.-.', 'S': '...', 'T': '-',
-    'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-', 'Y': '-.--',
-    'Z': '--..', '0': '-----', '1': '.----', '2': '..---', '3': '...--',
-    '4': '....-', '5': '.....', '6': '-....', '7': '--...', '8': '---..',
-    '9': '----.', '.': '.-.-.-', ',': '--..--', '?': '..--..', '/': '-..-.',
-  };
-
-  static const List<String> kochSequence = [
-    'K', 'M', 'R', 'S', 'U', 'A', 'P', 'L', 'W', 'I',
-    '.', 'N', 'J', 'E', 'F', '0', 'Y', 'V', 'G', '5',
-    '/', 'Q', '9', 'Z', 'H', '3', '8', 'B', '?', '4',
-    '2', '7', 'C', '1', 'D', '6', 'X', ',',
-  ];
-
-  String? getMorsePattern(String character) {
-    return _morseCode[character.toUpperCase()];
-  }
-
-  List<String> getAllCharacters() {
-    return List.unmodifiable(_morseCode.keys.toList());
-  }
-
-  List<String> getCharactersForLevel(int level) {
-    final count = (level + 1) * 2;
-    if (count >= kochSequence.length) return List.unmodifiable(kochSequence);
-    return List.unmodifiable(kochSequence.sublist(0, count));
-  }
-
-  int getTotalLevels() {
-    return (kochSequence.length / 2).ceil();
-  }
-
-  /// Convert a word to its Morse pattern string with spaces between letters.
-  String wordToMorse(String word) {
-    final patterns = <String>[];
-    for (final char in word.toUpperCase().split('')) {
-      final pattern = _morseCode[char];
-      if (pattern != null) {
-        patterns.add(pattern);
-      }
-    }
-    return patterns.join(' ');
-  }
-}
+import 'morse_code_mapper.dart';
 
 /// Audio playback with proper ARRL timing
 class AudioPlaybackService implements AudioService {
@@ -144,7 +93,7 @@ class AudioPlaybackService implements AudioService {
   }
 
   Future<void> playCharacter(String character, {bool screenFlash = false, Function(bool)? onFlash}) async {
-    final pattern = MorseCodeService().getMorsePattern(character);
+    final pattern = MorseCodeMapper().getMorsePattern(character);
     if (pattern == null) return;
 
     await initialize();
