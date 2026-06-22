@@ -3,9 +3,12 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:morse_trainer/data/database/database_helper.dart';
 import 'package:morse_trainer/data/repositories/settings_repository.dart';
 import 'package:morse_trainer/ui/bloc/settings_bloc.dart';
-import 'package:morse_trainer/core/audio/morse_code_service.dart';
+import 'package:morse_trainer/core/audio/audio_playback_service.dart';
 
 void main() {
+  // Shared instance across tests in this file (replaces the old singleton).
+  late AudioPlaybackService audioService;
+
   setUpAll(() {
     sqfliteFfiInit();
     databaseFactory = databaseFactoryFfi;
@@ -14,10 +17,11 @@ void main() {
   setUp(() async {
     DatabaseHelper.setTestDbPath(':memory:');
     DatabaseHelper.resetInstance();
-    AudioPlaybackService().setWpm(20.0);
-    AudioPlaybackService().setEffWpm(20.0);
-    AudioPlaybackService().setToneFrequency(600.0);
-    AudioPlaybackService().setVolume(0.5);
+    audioService = AudioPlaybackService();
+    audioService.setWpm(20.0);
+    audioService.setEffWpm(20.0);
+    audioService.setToneFrequency(600.0);
+    audioService.setVolume(0.5);
   });
 
   tearDown(() async {
@@ -34,7 +38,7 @@ void main() {
     );
 
     // Act: simulate cold start by creating a new BLoC
-    final bloc = SettingsBloc(repo, audioService: AudioPlaybackService());
+    final bloc = SettingsBloc(repo, audioService: audioService);
     bloc.add(const LoadSettings());
 
     // Assert: state transitions to SettingsLoaded
@@ -47,10 +51,10 @@ void main() {
     expect(settings.volume, 0.3);
 
     // Assert: audio service is initialized with persisted values
-    expect(AudioPlaybackService().wpm, 25.0);
-    expect(AudioPlaybackService().effWpm, 18.0);
-    expect(AudioPlaybackService().toneFrequency, 700.0);
-    expect(AudioPlaybackService().volume, 0.3);
+    expect(audioService.wpm, 25.0);
+    expect(audioService.effWpm, 18.0);
+    expect(audioService.toneFrequency, 700.0);
+    expect(audioService.volume, 0.3);
 
     await bloc.close();
   });

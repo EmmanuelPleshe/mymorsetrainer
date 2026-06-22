@@ -4,20 +4,21 @@ import 'dart:typed_data';
 
 import '../timing/morse_timing_engine.dart';
 import 'audio_service.dart';
-import 'morse_code_mapper.dart';
 
-/// Audio playback with proper ARRL timing
+/// Concrete [AudioService] that plays pre-generated WAV tones via `aplay`.
+///
+/// Sequencing logic (assembling characters/words from dots, dashes, and
+/// pauses) lives in [MorseCodeCoordinator]; this class only owns timing
+/// configuration, tone generation, keyer control, and feedback sounds.
 class AudioPlaybackService implements AudioService {
-  static final AudioPlaybackService _instance = AudioPlaybackService._internal();
-  factory AudioPlaybackService() => _instance;
-  AudioPlaybackService._internal();
+  AudioPlaybackService();
 
   // Timing parameters
-  double _toneFrequency = 600.0;  // Default 600Hz
-  double _wpm = 20.0;            // Character speed
-  double _effWpm = 20.0;          // Effective speed (Farnsworth)
+  double _toneFrequency = 600.0; // Default 600Hz
+  double _wpm = 20.0; // Character speed
+  double _effWpm = 20.0; // Effective speed (Farnsworth)
   double _volume = 0.5;
-  double _extraWordSpace = 0.0;   // Extra space between words
+  double _extraWordSpace = 0.0; // Extra space between words
 
   // Pre-generated tone files
   String? _dotWavPath;
@@ -92,51 +93,13 @@ class AudioPlaybackService implements AudioService {
     _volume = volume.clamp(0.0, 1.0);
   }
 
-  Future<void> playCharacter(String character, {bool screenFlash = false, Function(bool)? onFlash}) async {
-    final pattern = MorseCodeMapper().getMorsePattern(character);
-    if (pattern == null) return;
-
-    await initialize();
-
-    for (int i = 0; i < pattern.length; i++) {
-      final symbol = pattern[i];
-      if (symbol == '.') {
-        await _playDot();
-        if (screenFlash) onFlash?.call(true);
-        if (i < pattern.length - 1) {
-          await Future.delayed(Duration(milliseconds: intraCharacterSpaceMs));
-        }
-        if (screenFlash) onFlash?.call(false);
-      } else {
-        await _playDash();
-        if (screenFlash) onFlash?.call(true);
-        if (i < pattern.length - 1) {
-          await Future.delayed(Duration(milliseconds: intraCharacterSpaceMs));
-        }
-        if (screenFlash) onFlash?.call(false);
-      }
-    }
-
-    // Inter-character space after full character
-    await Future.delayed(Duration(milliseconds: interCharacterSpaceMs));
-  }
-
-  Future<void> playWord(String word, {void Function(bool)? onFlash}) async {
-    final characters = word.toUpperCase().split('');
-    for (int i = 0; i < characters.length; i++) {
-      await playCharacter(characters[i], screenFlash: onFlash != null, onFlash: onFlash);
-      // playCharacter already adds interCharacterSpaceMs at the end
-      // No extra delay needed between letters
-    }
-  }
-
   Future<void> _ensureFileExists(String? path) async {
     if (path == null || !File(path).existsSync()) {
       await initialize();
     }
   }
 
-  Future<void> _playDot() async {
+  Future<void> playDot() async {
     if (_dotWavPath != null) {
       await _ensureFileExists(_dotWavPath);
       final result = await Process.run('aplay', ['-q', _dotWavPath!]);
@@ -148,7 +111,7 @@ class AudioPlaybackService implements AudioService {
     }
   }
 
-  Future<void> _playDash() async {
+  Future<void> playDash() async {
     if (_dashWavPath != null) {
       await _ensureFileExists(_dashWavPath);
       final result = await Process.run('aplay', ['-q', _dashWavPath!]);
@@ -158,6 +121,18 @@ class AudioPlaybackService implements AudioService {
         );
       }
     }
+  }
+
+  Future<void> intraCharacterPause() async {
+    await Future.delayed(Duration(milliseconds: intraCharacterSpaceMs));
+  }
+
+  Future<void> interCharacterPause() async {
+    await Future.delayed(Duration(milliseconds: interCharacterSpaceMs));
+  }
+
+  Future<void> interWordPause() async {
+    await Future.delayed(Duration(milliseconds: interWordSpaceMs));
   }
 
   // Start tone when key down - optimized for low latency

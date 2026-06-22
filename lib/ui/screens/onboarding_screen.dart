@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/settings_bloc.dart';
 import '../bloc/practice_session_bloc.dart';
-import '../../core/audio/morse_code_service.dart';
+import '../../core/audio/audio_playback_service.dart';
+import '../../core/audio/morse_code_coordinator.dart';
+import '../../core/audio/morse_code_mapper.dart';
 
 class OnboardingScreen extends StatefulWidget {
   final VoidCallback onComplete;
@@ -272,7 +274,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     await audio.initialize();
     audio.setWpm(_selectedWpm);
     audio.setToneFrequency(_selectedTone);
-    await audio.playCharacter('K');
+    final coordinator = MorseCodeCoordinator(MorseCodeMapper(), audio);
+    await coordinator.playCharacters('K');
   }
 
   void _completeOnboarding() {

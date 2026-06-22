@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:window_manager/window_manager.dart';
+import 'core/audio/audio_playback_service.dart';
 import 'core/audio/morse_code_mapper.dart';
-import 'core/audio/morse_code_service.dart';
+import 'core/audio/morse_code_coordinator.dart';
 import 'core/logging/logger.dart';
 import 'core/logging/log_constants.dart';
 import 'data/repositories/user_progress_repository.dart';
@@ -52,6 +53,15 @@ class MorseTrainerApp extends StatelessWidget {
         RepositoryProvider(
           create: (context) => GamificationService(context.read<UserProgressRepository>()),
         ),
+        RepositoryProvider<AudioPlaybackService>(
+          create: (_) => AudioPlaybackService(),
+        ),
+        RepositoryProvider<MorseCodeCoordinator>(
+          create: (context) => MorseCodeCoordinator(
+            context.read<MorseCodeMapper>(),
+            context.read<AudioPlaybackService>(),
+          ),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -70,7 +80,7 @@ class MorseTrainerApp extends StatelessWidget {
           BlocProvider(
             create: (context) => SettingsBloc(
               context.read<SettingsRepository>(),
-              audioService: AudioPlaybackService(),
+              audioService: context.read<AudioPlaybackService>(),
             )..add(const LoadSettings()),
           ),
         ],
@@ -203,21 +213,24 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Wi
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     windowManager.removeListener(this);
-    AudioPlaybackService().dispose();
     super.dispose();
   }
 
   @override
   void onWindowClose() async {
     // Dispose audio BEFORE window closes - critical for avoiding segfault
-    await AudioPlaybackService().dispose();
+    if (mounted) {
+      await context.read<AudioPlaybackService>().dispose();
+    }
     await windowManager.destroy();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.detached) {
-      AudioPlaybackService().dispose();
+      if (mounted) {
+        context.read<AudioPlaybackService>().dispose();
+      }
     }
   }
 

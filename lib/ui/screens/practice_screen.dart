@@ -4,8 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/practice_session_bloc.dart';
 import '../bloc/settings_bloc.dart';
-import '../../core/audio/morse_code_service.dart';
+import '../../core/audio/audio_playback_service.dart';
 import '../../core/audio/audio_service.dart';
+import '../../core/audio/morse_code_coordinator.dart';
+import '../../core/audio/morse_code_mapper.dart';
 import '../../core/input/keyboard_input_handler.dart';
 import '../../core/input/morse_command_handler.dart';
 import '../../core/logging/logger.dart';
@@ -15,8 +17,9 @@ import '../widgets/home_app_bar.dart';
 
 class PracticeScreen extends StatefulWidget {
   final AudioService? audioService;
+  final MorseCodeCoordinator? coordinator;
 
-  const PracticeScreen({super.key, this.audioService});
+  const PracticeScreen({super.key, this.audioService, this.coordinator});
 
   @override
   State<PracticeScreen> createState() => _PracticeScreenState();
@@ -24,6 +27,7 @@ class PracticeScreen extends StatefulWidget {
 
 class _PracticeScreenState extends State<PracticeScreen> {
   late final AudioService _audioService;
+  late final MorseCodeCoordinator _coordinator;
   KeyboardKeyerHandler? _keyerHandler;
   MorseCommandHandler? _commandHandler;
   String _currentPattern = '';
@@ -47,6 +51,8 @@ class _PracticeScreenState extends State<PracticeScreen> {
   void initState() {
     super.initState();
     _audioService = widget.audioService ?? AudioPlaybackService();
+    _coordinator = widget.coordinator ??
+        MorseCodeCoordinator(context.read<MorseCodeMapper>(), _audioService);
     _initAudio();
     _loadUserLevel();
   }
@@ -258,9 +264,14 @@ class _PracticeScreenState extends State<PracticeScreen> {
       enableFlash = settingsState.settings.enableScreenFlash;
     }
 
-    _audioService.playCharacter(character, screenFlash: enableFlash, onFlash: (on) {
-      if (mounted) setState(() => _screenFlash = on);
-    }).then((_) {
+    void Function(bool)? flashCallback;
+    if (enableFlash) {
+      flashCallback = (on) {
+        if (mounted) setState(() => _screenFlash = on);
+      };
+    }
+
+    _coordinator.playCharacters(character, onFlash: flashCallback).then((_) {
       if (mounted) {
         setState(() {
           _isAudioPlaying = false;

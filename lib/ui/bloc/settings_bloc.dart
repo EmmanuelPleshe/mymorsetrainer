@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../../data/models/settings.dart';
 import '../../data/repositories/settings_repository.dart';
-import '../../core/audio/morse_code_service.dart';
+import '../../core/audio/audio_service.dart';
 
 // Events
 abstract class SettingsEvent extends Equatable {
@@ -91,11 +91,11 @@ class SettingsError extends SettingsState {
 // BLoC
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   final SettingsRepository _settingsRepository;
-  final AudioPlaybackService? _audioService;
+  final AudioService? _audioService;
 
   SettingsBloc(
     this._settingsRepository, {
-    AudioPlaybackService? audioService,
+    AudioService? audioService,
   })  : _audioService = audioService,
         super(SettingsInitial()) {
     on<LoadSettings>(_onLoadSettings);

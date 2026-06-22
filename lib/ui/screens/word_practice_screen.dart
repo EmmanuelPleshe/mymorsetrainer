@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../core/audio/audio_playback_service.dart';
 import '../../core/audio/audio_service.dart';
-import '../../core/audio/morse_code_service.dart';
+import '../../core/audio/morse_code_coordinator.dart';
+import '../../core/audio/morse_code_mapper.dart';
 import '../../core/input/keyboard_input_handler.dart';
 import '../../data/models/word.dart';
 import '../../data/repositories/word_familiarity_repository.dart';
@@ -13,9 +16,15 @@ enum WordPhase { listening, keying, feedback }
 
 class WordPracticeScreen extends StatefulWidget {
   final AudioService? audioService;
+  final MorseCodeCoordinator? coordinator;
   final WordFamiliarityRepository? familiarityRepository;
 
-  const WordPracticeScreen({super.key, this.audioService, this.familiarityRepository});
+  const WordPracticeScreen({
+    super.key,
+    this.audioService,
+    this.coordinator,
+    this.familiarityRepository,
+  });
 
   @override
   State<WordPracticeScreen> createState() => _WordPracticeScreenState();
@@ -24,6 +33,7 @@ class WordPracticeScreen extends StatefulWidget {
 class _WordPracticeScreenState extends State<WordPracticeScreen> {
   final WordPracticeService _wordService = WordPracticeService();
   late final AudioService _audioService;
+  late final MorseCodeCoordinator _coordinator;
   late final WordFamiliarityRepository _familiarityRepo;
   List<Word>? _words;
   int _currentIndex = 0;
@@ -41,6 +51,8 @@ class _WordPracticeScreenState extends State<WordPracticeScreen> {
   void initState() {
     super.initState();
     _audioService = widget.audioService ?? AudioPlaybackService();
+    _coordinator = widget.coordinator ??
+        MorseCodeCoordinator(context.read<MorseCodeMapper>(), _audioService);
     _familiarityRepo = widget.familiarityRepository ?? WordFamiliarityRepository();
     _initWords();
   }
@@ -95,7 +107,7 @@ class _WordPracticeScreenState extends State<WordPracticeScreen> {
     }
 
     await _audioService.initialize();
-    await _audioService.playWord(word.text);
+    await _coordinator.playCharacters(word.text);
 
     if (mounted) {
       setState(() {
@@ -164,7 +176,7 @@ class _WordPracticeScreenState extends State<WordPracticeScreen> {
       _audioService.setWpm(originalWpm * 0.8);
     }
 
-    await _audioService.playWord(word.text);
+    await _coordinator.playCharacters(word.text);
 
     if (_isCorrect) {
       _audioService.setWpm(originalWpm);
