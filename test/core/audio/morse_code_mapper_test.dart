@@ -33,6 +33,18 @@ void main() {
       expect(mapper.getMorsePattern('@'), '.--.-.');
     });
 
+    test('returns correct pattern for prosigns', () {
+      expect(mapper.getMorsePattern('AR'), '.-.-.');
+      expect(mapper.getMorsePattern('BT'), '-...-');
+      expect(mapper.getMorsePattern('SK'), '...-.-');
+      expect(mapper.getMorsePattern('KN'), '-.--.');
+      expect(mapper.getMorsePattern('AS'), '.-...');
+      expect(mapper.getMorsePattern('SOS'), '...---...');
+      expect(mapper.getMorsePattern('CL'), '-.-..-..');
+      expect(mapper.getMorsePattern('CT'), '-.-.-');
+      expect(mapper.getMorsePattern('VE'), '...-.');
+    });
+
     test('returns null for unknown characters', () {
       expect(mapper.getMorsePattern('#'), isNull);
       expect(mapper.getMorsePattern('!'), isNull);
@@ -44,6 +56,35 @@ void main() {
       expect(mapper.getMorsePattern('k'), '-.-');
       expect(mapper.getMorsePattern('M'), '--');
       expect(mapper.getMorsePattern('z'), '--..');
+    });
+  });
+
+  group('isProsign', () {
+    test('returns true for all known prosigns', () {
+      expect(mapper.isProsign('AR'), isTrue);
+      expect(mapper.isProsign('BT'), isTrue);
+      expect(mapper.isProsign('SK'), isTrue);
+      expect(mapper.isProsign('KN'), isTrue);
+      expect(mapper.isProsign('AS'), isTrue);
+      expect(mapper.isProsign('SOS'), isTrue);
+      expect(mapper.isProsign('CL'), isTrue);
+      expect(mapper.isProsign('CT'), isTrue);
+      expect(mapper.isProsign('VE'), isTrue);
+    });
+
+    test('returns false for non-prosign entries', () {
+      expect(mapper.isProsign('A'), isFalse);
+      expect(mapper.isProsign('K'), isFalse);
+      expect(mapper.isProsign('0'), isFalse);
+      expect(mapper.isProsign('.'), isFalse);
+      expect(mapper.isProsign('/'), isFalse);
+      expect(mapper.isProsign('Z'), isFalse);
+    });
+
+    test('is case insensitive', () {
+      expect(mapper.isProsign('ar'), isTrue);
+      expect(mapper.isProsign('Sos'), isTrue);
+      expect(mapper.isProsign('bT'), isTrue);
     });
   });
 
@@ -69,12 +110,30 @@ void main() {
       expect(chars.length, MorseCodeMapper.kochSequence.length);
       expect(chars, MorseCodeMapper.kochSequence);
     });
+
+    test('kochSequence ends with prosigns in correct order', () {
+      const expectedProsigns = [
+        'AR', 'BT', 'SK', 'KN', 'AS', 'SOS', 'CL', 'CT', 'VE',
+      ];
+      final tail = MorseCodeMapper.kochSequence.sublist(
+        MorseCodeMapper.kochSequence.length - expectedProsigns.length,
+      );
+      expect(tail, expectedProsigns);
+    });
+
+    test('kochSequence length is 59 (50 base + 9 prosigns)', () {
+      expect(MorseCodeMapper.kochSequence.length, 59);
+    });
   });
 
   group('getTotalLevels', () {
     test('returns ceil of half the sequence length', () {
       final expected = (MorseCodeMapper.kochSequence.length / 2).ceil();
       expect(mapper.getTotalLevels(), expected);
+    });
+
+    test('returns 30 for the extended 59-character sequence', () {
+      expect(mapper.getTotalLevels(), 30);
     });
   });
 
@@ -94,7 +153,6 @@ void main() {
 
   group('wordToMorse', () {
     test('converts single word', () {
-      expect(mapper.wordToMorse('SOS'), '... --- ...');
       expect(mapper.wordToMorse('HELLO'), '.... . .-.. .-.. ---');
     });
 
@@ -111,7 +169,7 @@ void main() {
 
     test('is case insensitive', () {
       expect(mapper.wordToMorse('hello'), '.... . .-.. .-.. ---');
-      expect(mapper.wordToMorse('Sos'), '... --- ...');
+      expect(mapper.wordToMorse('ar'), '.-.-.');
     });
 
     test('skips unknown characters', () {
@@ -129,6 +187,33 @@ void main() {
 
     test('handles punctuation', () {
       expect(mapper.wordToMorse('A.B'), '.- .-.-.- -...');
+    });
+
+    test('treats SOS as a prosign (no inter-character spaces)', () {
+      // SOS is a prosign -> single continuous pattern, not three letters.
+      expect(mapper.wordToMorse('SOS'), '...---...');
+    });
+
+    test('treats AR as a prosign (not two letters)', () {
+      // AR is a prosign -> '.-.-.', not '.- .-.'
+      expect(mapper.wordToMorse('AR'), '.-.-.');
+    });
+
+    test('treats CL as a 3-char prosign', () {
+      expect(mapper.wordToMorse('CL'), '-.-..-..');
+    });
+
+    test('handles mixed words with prosigns', () {
+      // HI gets inter-character space between H and I; AR is a prosign.
+      expect(mapper.wordToMorse('HI AR'), '.... .. .-.-.');
+    });
+
+    test('does not misinterpret regular sequences as prosigns', () {
+      // 'SO' should not be matched as a prosign prefix; only the full 3-char
+      // 'SOS' is a prosign. 'SO' -> two letters.
+      expect(mapper.wordToMorse('SO'), '... ---');
+      // 'AR' at the end of a word should still be matched.
+      expect(mapper.wordToMorse('BAR'), '-... .-.-.');
     });
   });
 }

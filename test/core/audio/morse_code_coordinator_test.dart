@@ -259,5 +259,117 @@ void main() {
           audio.calls.where((c) => c == 'interWordPause').length;
       expect(interWordCount, 1);
     });
+
+    test('prosign AR plays as continuous pattern without interCharacterPause',
+        () async {
+      // AR = '.-.-.' -> 5 symbols (dot, dash, dot, dash, dot) with 4
+      // intraCharacterPauses, NO interCharacterPause after (prosign is a
+      // single logical unit).
+      await coordinator.playCharacters('AR');
+
+      expect(audio.calls, [
+        'playDot',
+        'intraCharacterPause',
+        'playDash',
+        'intraCharacterPause',
+        'playDot',
+        'intraCharacterPause',
+        'playDash',
+        'intraCharacterPause',
+        'playDot',
+      ]);
+      expect(audio.calls.contains('interCharacterPause'), isFalse);
+    });
+
+    test('regular character A still gets interCharacterPause after',
+        () async {
+      await coordinator.playCharacters('A');
+
+      expect(audio.calls, [
+        'playDot',
+        'intraCharacterPause',
+        'playDash',
+        'interCharacterPause',
+      ]);
+    });
+
+    test('prosign SOS plays as continuous pattern without interCharacterPause',
+        () async {
+      // SOS = '...---...' -> 9 symbols with 8 intraCharacterPauses, no inter.
+      await coordinator.playCharacters('SOS');
+
+      expect(audio.calls.contains('interCharacterPause'), isFalse);
+      expect(audio.calls.contains('interWordPause'), isFalse);
+      // 9 symbols, 8 intra pauses.
+      expect(audio.calls.where((c) => c == 'playDot').length, 6);
+      expect(audio.calls.where((c) => c == 'playDash').length, 3);
+      expect(
+          audio.calls.where((c) => c == 'intraCharacterPause').length, 8);
+    });
+
+    test('mixed HI AR — HI gets interCharacterPause, AR does not', () async {
+      // H = '....' -> 4 dots, 3 intra, 1 inter
+      // I = '..' -> 2 dots, 1 intra, 1 inter
+      // interWordPause between HI and AR
+      // AR = '.-.-.' -> continuous, no inter
+      await coordinator.playCharacters('HI AR');
+
+      // Verify the interWordPause separates the two words.
+      final interWordCount =
+          audio.calls.where((c) => c == 'interWordPause').length;
+      expect(interWordCount, 1);
+
+      // The calls before the interWordPause should end with
+      // interCharacterPause (closing 'I').
+      final iwIdx = audio.calls.indexOf('interWordPause');
+      expect(audio.calls[iwIdx - 1], 'interCharacterPause');
+
+      // After the interWordPause, the AR prosign plays. Find the segment
+      // after interWordPause and verify it has no interCharacterPause.
+      final afterWord = audio.calls.sublist(iwIdx + 1);
+      expect(afterWord.contains('interCharacterPause'), isFalse);
+      expect(afterWord, [
+        'playDot',
+        'intraCharacterPause',
+        'playDash',
+        'intraCharacterPause',
+        'playDot',
+        'intraCharacterPause',
+        'playDash',
+        'intraCharacterPause',
+        'playDot',
+      ]);
+    });
+
+    test('prosign inside a word still suppresses its interCharacterPause',
+        () async {
+      // 'BAR' -> B (with inter), AR prosign (no inter).
+      await coordinator.playCharacters('BAR');
+
+      // B = '-...' -> playDash, intra, playDot, intra, playDot, intra, playDot,
+      //   then interCharacterPause.
+      // AR = '.-.-.' -> continuous, no inter.
+      expect(audio.calls, [
+        // B
+        'playDash',
+        'intraCharacterPause',
+        'playDot',
+        'intraCharacterPause',
+        'playDot',
+        'intraCharacterPause',
+        'playDot',
+        'interCharacterPause',
+        // AR (prosign — no interCharacterPause)
+        'playDot',
+        'intraCharacterPause',
+        'playDash',
+        'intraCharacterPause',
+        'playDot',
+        'intraCharacterPause',
+        'playDash',
+        'intraCharacterPause',
+        'playDot',
+      ]);
+    });
   });
 }

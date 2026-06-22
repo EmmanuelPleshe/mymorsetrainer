@@ -9,8 +9,10 @@ import 'morse_code_mapper.dart';
 /// pause methods. This keeps the audio service focused on tone generation
 /// while all character/word assembly logic lives here.
 ///
-/// Prosign handling is intentionally deferred to a later change; every
-/// character currently receives an inter-character pause after it.
+/// Prosigns (multi-character entries such as 'AR' or 'SOS') are detected
+/// with a longest-first lookahead and played as a single continuous unit —
+/// only intra-character pauses separate their symbols, and no
+/// inter-character pause follows them.
 class MorseCodeCoordinator {
   final MorseCodeMapper _mapper;
   final AudioService _audioService;
@@ -49,10 +51,44 @@ class MorseCodeCoordinator {
         if (word.isEmpty) continue;
 
         final characters = word.toUpperCase().split('');
-        for (int c = 0; c < characters.length; c++) {
-          final character = characters[c];
-          final pattern = _mapper.getMorsePattern(character);
-          if (pattern == null) continue;
+        int c = 0;
+        while (c < characters.length) {
+          // Try to match a 3-char prosign (SOS, CL) then a 2-char prosign
+          // (AR, BT, SK, KN, AS, CT, VE) at the current position.
+          String? pattern;
+          bool isProsignMatch = false;
+          int consumed = 1;
+
+          if (c + 3 <= characters.length) {
+            final three = characters.sublist(c, c + 3).join();
+            if (_mapper.isProsign(three)) {
+              final p = _mapper.getMorsePattern(three);
+              if (p != null) {
+                pattern = p;
+                isProsignMatch = true;
+                consumed = 3;
+              }
+            }
+          }
+          if (pattern == null && c + 2 <= characters.length) {
+            final two = characters.sublist(c, c + 2).join();
+            if (_mapper.isProsign(two)) {
+              final p = _mapper.getMorsePattern(two);
+              if (p != null) {
+                pattern = p;
+                isProsignMatch = true;
+                consumed = 2;
+              }
+            }
+          }
+          if (pattern == null) {
+            final p = _mapper.getMorsePattern(characters[c]);
+            if (p == null) {
+              c += 1;
+              continue;
+            }
+            pattern = p;
+          }
 
           for (int s = 0; s < pattern.length; s++) {
             if (_isCancelled) {
@@ -80,12 +116,16 @@ class MorseCodeCoordinator {
             }
           }
 
-          // Inter-character pause after each character.
-          if (_isCancelled) {
-            await _audioService.keyerUp();
-            return;
+          // Inter-character pause after each regular character. Prosigns
+          // are a single logical unit and do NOT receive this pause.
+          if (!isProsignMatch) {
+            if (_isCancelled) {
+              await _audioService.keyerUp();
+              return;
+            }
+            await _audioService.interCharacterPause();
           }
-          await _audioService.interCharacterPause();
+          c += consumed;
         }
 
         // Inter-word pause between words (not after the last word).
