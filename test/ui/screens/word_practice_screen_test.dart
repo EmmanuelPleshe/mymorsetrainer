@@ -8,22 +8,25 @@ import 'package:morse_trainer/data/repositories/word_familiarity_repository.dart
 import 'package:morse_trainer/ui/screens/word_practice_screen.dart';
 
 import '../../helpers/mocks/mock_audio_service.dart';
+import '../../helpers/mocks/mock_morse_code_coordinator.dart';
 import '../../helpers/mocks/mock_word_familiarity_repository.dart';
 
 void main() {
   group('WordPracticeScreen', () {
     late MockAudioService mockAudioService;
+    late MockMorseCodeCoordinator mockCoordinator;
     late MockWordFamiliarityRepository mockRepo;
 
     setUp(() {
       mockAudioService = MockAudioService();
+      mockCoordinator = MockMorseCodeCoordinator();
       mockRepo = MockWordFamiliarityRepository();
       when(() => mockAudioService.initialize()).thenAnswer((_) async {});
-      when(() => mockAudioService.playWord(any(), onFlash: any(named: 'onFlash')))
-          .thenAnswer((_) async {});
       when(() => mockAudioService.keyerDown()).thenAnswer((_) async {});
       when(() => mockAudioService.keyerUp()).thenAnswer((_) async {});
       when(() => mockAudioService.playCorrectFeedback()).thenAnswer((_) async {});
+      when(() => mockCoordinator.playCharacters(any(), onFlash: any(named: 'onFlash')))
+          .thenAnswer((_) async {});
       when(() => mockRepo.getWeightedWords(any(), any())).thenAnswer((invocation) async {
         final words = invocation.positionalArguments[0] as List<Word>;
         final limit = invocation.positionalArguments[1] as int;
@@ -36,7 +39,11 @@ void main() {
 
     testWidgets('renders app bar with Word Practice title', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(home: WordPracticeScreen(audioService: mockAudioService, familiarityRepository: mockRepo)),
+        MaterialApp(home: WordPracticeScreen(
+          audioService: mockAudioService,
+          coordinator: mockCoordinator,
+          familiarityRepository: mockRepo,
+        )),
       );
 
       expect(find.text('Word Practice'), findsOneWidget);
@@ -45,7 +52,11 @@ void main() {
 
     testWidgets('shows loading then keying phase', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(home: WordPracticeScreen(audioService: mockAudioService, familiarityRepository: mockRepo)),
+        MaterialApp(home: WordPracticeScreen(
+          audioService: mockAudioService,
+          coordinator: mockCoordinator,
+          familiarityRepository: mockRepo,
+        )),
       );
 
       // Initially shows loading while words load
@@ -59,7 +70,11 @@ void main() {
 
     testWidgets('shows keying phase after audio finishes', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(home: WordPracticeScreen(audioService: mockAudioService, familiarityRepository: mockRepo)),
+        MaterialApp(home: WordPracticeScreen(
+          audioService: mockAudioService,
+          coordinator: mockCoordinator,
+          familiarityRepository: mockRepo,
+        )),
       );
       await tester.pump();
 
@@ -69,7 +84,11 @@ void main() {
 
     testWidgets('shows raw pattern while keying', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(home: WordPracticeScreen(audioService: mockAudioService, familiarityRepository: mockRepo)),
+        MaterialApp(home: WordPracticeScreen(
+          audioService: mockAudioService,
+          coordinator: mockCoordinator,
+          familiarityRepository: mockRepo,
+        )),
       );
       await tester.pump();
 
@@ -83,7 +102,11 @@ void main() {
 
     testWidgets('submit replays word audio on feedback', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(home: WordPracticeScreen(audioService: mockAudioService, familiarityRepository: mockRepo)),
+        MaterialApp(home: WordPracticeScreen(
+          audioService: mockAudioService,
+          coordinator: mockCoordinator,
+          familiarityRepository: mockRepo,
+        )),
       );
       await tester.pump();
 
@@ -96,12 +119,16 @@ void main() {
       await tester.pump();
 
       // Word audio should replay on feedback (initial play + replay)
-      verify(() => mockAudioService.playWord(any(), onFlash: any(named: 'onFlash'))).called(greaterThan(1));
+      verify(() => mockCoordinator.playCharacters(any(), onFlash: any(named: 'onFlash'))).called(greaterThan(1));
     });
 
     testWidgets('refresh button shuffles words', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(home: WordPracticeScreen(audioService: mockAudioService, familiarityRepository: mockRepo)),
+        MaterialApp(home: WordPracticeScreen(
+          audioService: mockAudioService,
+          coordinator: mockCoordinator,
+          familiarityRepository: mockRepo,
+        )),
       );
       await tester.pump();
 

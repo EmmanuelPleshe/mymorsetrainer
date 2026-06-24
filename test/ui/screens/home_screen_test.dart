@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:morse_trainer/core/audio/morse_code_mapper.dart';
 import 'package:morse_trainer/data/models/settings.dart';
 import 'package:morse_trainer/data/models/user_progress.dart';
 import 'package:morse_trainer/data/repositories/user_progress_repository.dart';
@@ -54,6 +55,9 @@ void main() {
         providers: [
           RepositoryProvider<GamificationService>.value(
             value: mockGamificationService,
+          ),
+          RepositoryProvider<MorseCodeMapper>(
+            create: (_) => MorseCodeMapper(),
           ),
         ],
         child: MultiBlocProvider(
