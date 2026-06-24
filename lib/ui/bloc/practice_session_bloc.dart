@@ -47,6 +47,10 @@ class CompleteOnboarding extends PracticeSessionEvent {
   const CompleteOnboarding({this.skipIntro = false});
 }
 
+class EndSession extends PracticeSessionEvent {
+  const EndSession();
+}
+
 // States
 abstract class PracticeSessionState extends Equatable {
   const PracticeSessionState();
@@ -165,6 +169,23 @@ class PracticeSessionBloc
     on<NextCharacter>(_onNextCharacter, transformer: sequential());
     on<PlayCurrentCharacter>(_onPlayCurrentCharacter, transformer: sequential());
     on<CompleteOnboarding>(_onCompleteOnboarding, transformer: sequential());
+    on<EndSession>(_onEndSession, transformer: sequential());
+  }
+
+  Future<void> _onEndSession(
+    EndSession event,
+    Emitter<PracticeSessionState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is! PracticeSessionActive) return;
+
+    await _gamificationService.completeSession();
+    emit(PracticeSessionComplete(
+      correctCount: currentState.correctCount,
+      totalQuestions: currentState.totalAnswered,
+      accuracy: currentState.accuracy,
+      unlockedNextLevel: currentState.showUnlockNotification,
+    ));
   }
 
   Future<void> _onCompleteOnboarding(

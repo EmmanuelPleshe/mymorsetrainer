@@ -12,6 +12,7 @@ import 'package:morse_trainer/ui/bloc/settings_bloc.dart';
 import 'package:morse_trainer/ui/screens/practice_screen.dart';
 
 import '../../helpers/mocks/mock_audio_service.dart';
+import '../../helpers/mocks/mock_morse_code_coordinator.dart';
 
 class MockPracticeSessionBloc extends MockBloc<PracticeSessionEvent, PracticeSessionState>
     implements PracticeSessionBloc {}
@@ -25,6 +26,7 @@ void main() {
   late MockPracticeSessionBloc mockPracticeBloc;
   late MockSettingsBloc mockSettingsBloc;
   late MockAudioService mockAudioService;
+  late MockMorseCodeCoordinator mockCoordinator;
 
   Widget buildTestWidget() {
     return MaterialApp(
@@ -33,7 +35,10 @@ void main() {
           BlocProvider<PracticeSessionBloc>.value(value: mockPracticeBloc),
           BlocProvider<SettingsBloc>.value(value: mockSettingsBloc),
         ],
-        child: PracticeScreen(audioService: mockAudioService),
+        child: PracticeScreen(
+          audioService: mockAudioService,
+          coordinator: mockCoordinator,
+        ),
       ),
     );
   }
@@ -58,14 +63,15 @@ void main() {
     mockPracticeBloc = MockPracticeSessionBloc();
     mockSettingsBloc = MockSettingsBloc();
     mockAudioService = MockAudioService();
+    mockCoordinator = MockMorseCodeCoordinator();
 
     when(() => mockAudioService.initialize()).thenAnswer((_) async {});
-    when(() => mockAudioService.playCharacter(any(), screenFlash: any(named: 'screenFlash'), onFlash: any(named: 'onFlash')))
-        .thenAnswer((_) async {});
     when(() => mockAudioService.keyerDown()).thenAnswer((_) async {});
     when(() => mockAudioService.keyerUp()).thenAnswer((_) async {});
     when(() => mockAudioService.playCorrectFeedback()).thenAnswer((_) async {});
     when(() => mockAudioService.dispose()).thenAnswer((_) async {});
+    when(() => mockCoordinator.playCharacters(any(), onFlash: any(named: 'onFlash')))
+        .thenAnswer((_) async {});
   });
 
   group('PracticeScreen', () {
@@ -371,7 +377,7 @@ void main() {
         await tester.pump();
 
         // BlocListener plays audio on initial state + replay tap = 2 calls
-        verify(() => mockAudioService.playCharacter('K', screenFlash: false, onFlash: any(named: 'onFlash'))).called(2);
+        verify(() => mockCoordinator.playCharacters('K', onFlash: any(named: 'onFlash'))).called(2);
       });
     });
 
@@ -389,7 +395,10 @@ void main() {
                 BlocProvider<PracticeSessionBloc>.value(value: mockPracticeBloc),
                 BlocProvider<SettingsBloc>.value(value: mockSettingsBloc),
               ],
-              child: PracticeScreen(audioService: mockAudioService),
+              child: PracticeScreen(
+                audioService: mockAudioService,
+                coordinator: mockCoordinator,
+              ),
             ),
             routes: {
               '/settings': (context) => const Scaffold(body: Text('Settings Page')),
@@ -416,7 +425,10 @@ void main() {
                 BlocProvider<PracticeSessionBloc>.value(value: mockPracticeBloc),
                 BlocProvider<SettingsBloc>.value(value: mockSettingsBloc),
               ],
-              child: PracticeScreen(audioService: mockAudioService),
+              child: PracticeScreen(
+                audioService: mockAudioService,
+                coordinator: mockCoordinator,
+              ),
             ),
             routes: {
               '/progress': (context) => const Scaffold(body: Text('Progress Page')),
@@ -520,8 +532,8 @@ void main() {
         expect(find.text('K'), findsOneWidget);
         // Keyer input area shown (even though disabled)
         expect(find.text('Key the character you heard:'), findsOneWidget);
-        // Does NOT call playCharacter because isRetrying skips audio
-        verifyNever(() => mockAudioService.playCharacter(any(), screenFlash: any(named: 'screenFlash'), onFlash: any(named: 'onFlash')));
+        // Does NOT call playCharacters because isRetrying skips audio
+        verifyNever(() => mockCoordinator.playCharacters(any(), onFlash: any(named: 'onFlash')));
       });
     });
 
