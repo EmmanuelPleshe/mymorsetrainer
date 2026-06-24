@@ -1,0 +1,4017 @@
+diff --git a/.claude/worktrees/.gitkeep b/.claude/worktrees/.gitkeep
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/.github/ISSUE_TEMPLATE/bug_report.yml b/.github/ISSUE_TEMPLATE/bug_report.yml
+deleted file mode 100644
+index ca43a0d..0000000
+--- a/.github/ISSUE_TEMPLATE/bug_report.yml
++++ /dev/null
+@@ -1,98 +0,0 @@
+-name: Bug Report
+-description: Report a bug or unexpected behavior
+-title: "[Bug]: "
+-labels: ["bug"]
+-body:
+-  - type: markdown
+-    attributes:
+-      value: |
+-        Thanks for taking the time to report a bug! To help us fix it quickly, please fill out the sections below.
+-
+-  - type: textarea
+-    id: description
+-    attributes:
+-      label: What happened?
+-      description: A clear and concise description of what the bug is.
+-      placeholder: "When I tap the practice button, the app crashes..."
+-    validations:
+-      required: true
+-
+-  - type: textarea
+-    id: reproduce
+-    attributes:
+-      label: Steps to reproduce
+-      description: How can we make this happen again?
+-      placeholder: |
+-        1. Go to '...'
+-        2. Tap on '...'
+-        3. See error
+-    validations:
+-      required: true
+-
+-  - type: textarea
+-    id: expected
+-    attributes:
+-      label: What did you expect to happen?
+-      placeholder: "I expected the practice screen to open..."
+-    validations:
+-      required: true
+-
+-  - type: dropdown
+-    id: platform
+-    attributes:
+-      label: Platform
+-      description: What platform are you running on?
+-      options:
+-        - Android
+-        - Linux
+-        - Windows
+-        - macOS
+-        - Web
+-        - Other
+-    validations:
+-      required: true
+-
+-  - type: input
+-    id: version
+-    attributes:
+-      label: App Version
+-      description: What version of the app are you using? (found in Settings → About or the release page)
+-      placeholder: "e.g., 20260523-abc123"
+-
+-  - type: markdown
+-    attributes:
+-      value: |
+-        ## Logs
+-
+-        Please attach your app logs so we can see what was happening when the bug occurred.
+-
+-        ### Where to find your logs
+-
+-        - **Android**: `/Android/data/com.morsetrainer.app/files/logs/` or use `adb logcat`
+-        - **Linux**: `~/.local/share/morse_trainer/logs/`
+-        - **Windows**: `%APPDATA%\morse_trainer\logs\`
+-        - **macOS**: `~/Library/Application Support/morse_trainer/logs/`
+-
+-        The log file is named `morse_trainer.log`. If you see multiple files (e.g., `morse_trainer_2026-05-23.log`), please attach the one from the day the bug occurred.
+-
+-  - type: textarea
+-    id: logs
+-    attributes:
+-      label: Log file contents
+-      description: If you can't attach the file directly, paste the relevant log lines here.
+-      render: text
+-      placeholder: "Paste log output here..."
+-
+-  - type: textarea
+-    id: screenshots
+-    attributes:
+-      label: Screenshots or screen recordings
+-      description: If applicable, add screenshots or a screen recording to help explain the problem.
+-      placeholder: "Drag and drop images or recordings here..."
+-
+-  - type: textarea
+-    id: additional
+-    attributes:
+-      label: Anything else?
+-      description: Add any other context about the problem here.
+-      placeholder: "I was on a train with spotty Wi-Fi..."
+diff --git a/.github/ISSUE_TEMPLATE/config.yml b/.github/ISSUE_TEMPLATE/config.yml
+deleted file mode 100644
+index 429ca92..0000000
+--- a/.github/ISSUE_TEMPLATE/config.yml
++++ /dev/null
+@@ -1,5 +0,0 @@
+-blank_issues_enabled: true
+-contact_links:
+-  - name: Morse Trainer Discussions
+-    url: https://github.com/EmmanuelPleshe/mymorsetrainer/discussions
+-    about: Ask questions, share tips, or show off your progress!
+diff --git a/.github/ISSUE_TEMPLATE/feature_request.yml b/.github/ISSUE_TEMPLATE/feature_request.yml
+deleted file mode 100644
+index 8bc2a82..0000000
+--- a/.github/ISSUE_TEMPLATE/feature_request.yml
++++ /dev/null
+@@ -1,51 +0,0 @@
+-name: Feature Request
+-description: Suggest an idea for this project
+-title: "[Feature]: "
+-labels: ["enhancement"]
+-body:
+-  - type: markdown
+-    attributes:
+-      value: |
+-        Thanks for sharing your idea! We love hearing what would make Morse Trainer better for you.
+-
+-  - type: textarea
+-    id: problem
+-    attributes:
+-      label: What problem are you trying to solve?
+-      description: Describe the pain point or missing capability.
+-      placeholder: "I'm always frustrated when..."
+-    validations:
+-      required: true
+-
+-  - type: textarea
+-    id: solution
+-    attributes:
+-      label: What would you like to see?
+-      description: A clear and concise description of what you want to happen.
+-      placeholder: "It would be great if the app could..."
+-    validations:
+-      required: true
+-
+-  - type: textarea
+-    id: alternatives
+-    attributes:
+-      label: Any alternatives you've considered?
+-      description: Describe any alternative solutions or features you've thought about.
+-      placeholder: "I tried using the word practice mode instead, but..."
+-
+-  - type: dropdown
+-    id: experience
+-    attributes:
+-      label: Your experience level
+-      description: This helps us understand who the feature is for.
+-      options:
+-        - New to CW / Morse code
+-        - Some experience, learning
+-        - Experienced CW operator
+-        - Other
+-
+-  - type: textarea
+-    id: additional
+-    attributes:
+-      label: Anything else?
+-      description: Add any other context, screenshots, or mockups here.
+diff --git a/.github/pull_request_template.md b/.github/pull_request_template.md
+deleted file mode 100644
+index 8b98848..0000000
+--- a/.github/pull_request_template.md
++++ /dev/null
+@@ -1,22 +0,0 @@
+-## Project name: __________
+-
+-## Summary
+-<!-- What does this PR do? -->
+-
+-## Related Issue
+-Closes #_____
+-
+-## Screenshots / Evidence
+-<!-- For UI changes or new features -->
+-
+-## Testing
+-- [ ] All tests pass (`pytest/tests/...`)
+-- [ ] New behavior has a failing test that was made to pass
+-- [ ] Manual verification done (if UI flow)
+-
+-## Review checklist
+-- [ ] No secrets or credentials committed
+-- [ ] Migrations included if models changed
+-- [ ] Documentation updated (CLAUDE.md / docs/) if behavior changes
+-- [ ] Tenant isolation verified (if multi-tenant)
+-- [ ] Agent-work is on a worktree, not `main`
+diff --git a/.github/workflows/flutter.yml b/.github/workflows/flutter.yml
+index 7303f65..981590c 100644
+--- a/.github/workflows/flutter.yml
++++ b/.github/workflows/flutter.yml
+@@ -2,9 +2,9 @@ name: Flutter CI
+ 
+ on:
+   push:
+-    branches: [ main, dev, '001-*', '002-*', '003-*', '004-*', '005-*', '006-*', '007-*', '008-*', '009-*', '010-*', '011-*', '012-*', '013-*', '014-*', '015-*', '016-*', '017-*', '018-*', '019-*', '020-*', '021-*', '022-*' ]
++    branches: [ main, '001-*', '002-*', '003-*', '004-*', '005-*' ]
+   pull_request:
+-    branches: [ main, dev ]
++    branches: [ main ]
+   workflow_dispatch:
+ 
+ jobs:
+@@ -78,14 +78,10 @@ jobs:
+       - name: Build Linux
+         run: flutter build linux --release
+ 
+-      - name: Sanitize ref name
+-        id: sanitize
+-        run: echo "SAFE_REF=${GITHUB_REF_NAME//\//-}" >> "$GITHUB_OUTPUT"
+-
+       - name: Upload Linux artifact
+         uses: actions/upload-artifact@v4
+         with:
+-          name: linux-build-${{ steps.sanitize.outputs.SAFE_REF }}
++          name: linux-build
+           path: build/linux/x64/release/bundle/
+ 
+   build-android:
+@@ -109,14 +105,10 @@ jobs:
+       - name: Build Android APK
+         run: flutter build apk --release
+ 
+-      - name: Sanitize ref name
+-        id: sanitize
+-        run: echo "SAFE_REF=${GITHUB_REF_NAME//\//-}" >> "$GITHUB_OUTPUT"
+-
+       - name: Upload Android artifact
+         uses: actions/upload-artifact@v4
+         with:
+-          name: android-build-${{ steps.sanitize.outputs.SAFE_REF }}
++          name: android-build
+           path: build/app/outputs/flutter-apk/app-release.apk
+ 
+   build-windows:
+@@ -141,14 +133,10 @@ jobs:
+       - name: Build Windows
+         run: flutter build windows --release
+ 
+-      - name: Sanitize ref name
+-        id: sanitize
+-        run: echo "SAFE_REF=${GITHUB_REF_NAME//\//-}" >> "$GITHUB_OUTPUT"
+-
+       - name: Upload Windows artifact
+         uses: actions/upload-artifact@v4
+         with:
+-          name: windows-build-${{ steps.sanitize.outputs.SAFE_REF }}
++          name: windows-build
+           path: build/windows/x64/runner/Release/
+ 
+   build-macos:
+@@ -173,20 +161,16 @@ jobs:
+       - name: Build macOS
+         run: flutter build macos --release
+ 
+-      - name: Sanitize ref name
+-        id: sanitize
+-        run: echo "SAFE_REF=${GITHUB_REF_NAME//\//-}" >> "$GITHUB_OUTPUT"
+-
+       - name: Upload macOS artifact
+         uses: actions/upload-artifact@v4
+         with:
+-          name: macos-build-${{ steps.sanitize.outputs.SAFE_REF }}
++          name: macos-build
+           path: build/macos/Build/Products/Release/
+ 
+   release:
+     runs-on: ubuntu-latest
+-    needs: [build-linux, build-windows, build-android, build-macos]
+-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev') && github.event_name == 'push'
++    needs: [build-linux, build-windows, build-android]
++    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+     permissions:
+       contents: write
+     steps:
+@@ -194,66 +178,43 @@ jobs:
+         with:
+           fetch-depth: 0
+ 
+-      - name: Sanitize ref name
+-        id: sanitize
+-        run: echo "SAFE_REF=${GITHUB_REF_NAME//\//-}" >> "$GITHUB_OUTPUT"
+-
+       - name: Download Linux
+         uses: actions/download-artifact@v4
+         with:
+-          name: linux-build-${{ steps.sanitize.outputs.SAFE_REF }}
++          name: linux-build
+           path: linux-build
+ 
+       - name: Download Windows
+         uses: actions/download-artifact@v4
+         with:
+-          name: windows-build-${{ steps.sanitize.outputs.SAFE_REF }}
++          name: windows-build
+           path: windows-build
+ 
+       - name: Download Android
+         uses: actions/download-artifact@v4
+         with:
+-          name: android-build-${{ steps.sanitize.outputs.SAFE_REF }}
++          name: android-build
+           path: android-build
+ 
+-      - name: Download macOS
+-        uses: actions/download-artifact@v4
+-        with:
+-          name: macos-build-${{ steps.sanitize.outputs.SAFE_REF }}
+-          path: macos-build
+-
+       - name: Create Release
+         env:
+           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         run: |
+-          SHORT_SHA=$(git rev-parse --short HEAD)
+-          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+-            VERSION=$(date +%Y%m%d)-$SHORT_SHA
+-            TAG="v$VERSION"
+-            TITLE="Release $VERSION"
+-            PRERELEASE=""
+-          else
+-            VERSION=$(date +%Y%m%d)-$SHORT_SHA-dev
+-            TAG="dev-$VERSION"
+-            TITLE="Dev Release $VERSION"
+-            PRERELEASE="--prerelease"
+-          fi
++          VERSION=$(date +%Y%m%d)-$(git rev-parse --short HEAD)
++          TAG="v$VERSION"
+ 
+           git config user.email "ci@morsetrainer.app"
+           git config user.name "CI Bot"
+-          git tag -a "$TAG" -m "$TITLE"
++          git tag -a "$TAG" -m "Release $TAG"
+           git push origin "$TAG"
+ 
+           # Zip each platform bundle
+           (cd linux-build && zip -r ../linux-release.zip .)
+           (cd windows-build && zip -r ../windows-release.zip .)
+-          (cd macos-build && zip -r ../macos-release.zip .)
+ 
+           gh release create "$TAG" \
+             linux-release.zip \
+             windows-release.zip \
+             android-build/app-release.apk \
+-            macos-release.zip \
+             --generate-notes \
+-            --title "$TITLE" \
+-            $PRERELEASE
+\ No newline at end of file
++            --title "Release $TAG"
+\ No newline at end of file
+diff --git a/.github/workflows/test.yml b/.github/workflows/test.yml
+deleted file mode 100644
+index f24e545..0000000
+--- a/.github/workflows/test.yml
++++ /dev/null
+@@ -1,29 +0,0 @@
+-name: Tests
+-
+-on:
+-  push:
+-    branches: ["dev", "main"]
+-  pull_request:
+-    branches: ["main", "dev"]
+-
+-jobs:
+-  test:
+-    name: Flutter tests
+-    runs-on: ubuntu-latest
+-
+-    steps:
+-      - uses: actions/checkout@v4
+-
+-      - name: Set up Flutter
+-        uses: subosito/flutter-action@v2
+-        with:
+-          channel: stable
+-
+-      - name: Install dependencies
+-        run: flutter pub get
+-
+-      - name: Analyze
+-        run: flutter analyze
+-
+-      - name: Run tests
+-        run: flutter test
+diff --git a/.gitignore b/.gitignore
+index 9464f49..93170ab 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -1,14 +1,2 @@
+-# Flutter/Dart generated files
+-.dart_tool/
+-build/
+-.flutter-plugins
+-.flutter-plugins-dependencies
+-.packages
+-pubspec.lock
+-
+-# IDE / tool directories
+-.claude/
+-.specify/
+-
+-# OS
+-.DS_Store
++# Spec Kit personal constitution
++.specify/
+\ No newline at end of file
+diff --git a/.specify/memory/constitution.md b/.specify/memory/constitution.md
+deleted file mode 100644
+index db4532e..0000000
+--- a/.specify/memory/constitution.md
++++ /dev/null
+@@ -1,77 +0,0 @@
+-# MorseTrainer Constitution
+-
+-## Core Principles
+-
+-### I. Cross-Platform Target
+-App must build and run on Linux and Android. Consider Qt6 or Flutter for cross-platform audio timing precision.
+-
+-### II. Multi-Input Support
+-Support four input methods: keyboard, touchscreen tap, game controller, and audio input (microphone or key plugged into mic/line-in port). All treated as a straight key. No special timing modes - real straight key emulation.
+-
+-### III. Koch Method Learning
+-Learning follows the Koch method: start with K and M only, achieve 90% accuracy before adding next letter, progressive alphabet acquisition.
+-
+-### IV. Interactive Keying Loop
+-Core interaction: play character audio → wait for user to key it back → verify accuracy → feedback → next character. Always this sequence, never passive listening only.
+-
+-### V. Spaced Repetition
+-Implement spaced repetition for memory reinforcement. Track per-character performance, schedule reviews based on Ebbinghaus forgetting curve. Intervals: 2 days → 7 days → 30 days → 90 days as mastery increases.
+-
+-### VI. Progressive Difficulty
+-Koch Level: 2 characters → 4 → 6 → full alphabet → common words → QSO phrases. Each level requires 90% accuracy before advancement.
+-
+-### VII. Gamification
+-Award points for correct responses, streak bonuses, level completions. Visual progress tracking to reinforce learning motivation.
+-
+-### VIII. Script + Skill (Cost Control Rule)
+-Never do the same manual sequence twice. If a workflow repeats, script it in `scripts/` and skill it in `.claude/skills/` or `~/.hermes/skills/`. Applies to: worktree creation, test + lint + commit, PR creation, release deploy, environment setup (Qt6/Flutter toolchain), running the full test suite. Future sessions execute skills in one turn instead of burning tokens repeating commands.
+-
+----
+-
+-## Git Workflow
+-
+-### Branch Policy
+-
+-| branch   | purpose                               | protected? |
+-|----------|---------------------------------------|------------|
+-| `main`   | production — deployable at all times | yes (PR required) |
+-| `dev`    | integration branch for PRs           | yes (PR required) |
+-| `feat/*` | feature work on worktrees             | no (personal) |
+-| `fix/*`  | bugfix work on worktrees              | no (personal) |
+-
+-### Worktree-First Rule
+-
+-Every AI-driven coding session MUST start on a fresh worktree.
+-
+-```bash
+-./scripts/worktree.sh my-feature
+-cd .claude/worktrees/my-feature
+-```
+-
+-All PRs from worktrees target the `dev` branch. Only `dev` merges to `main` after CI passes.
+-
+-### Test-Driven Development (TDD)
+-
+-Implement failing test first, then make it pass. For Qt6/Flutter projects, use `catch2` or QtTest for C++ and `flutter_test` for Dart. No code merges to main without passing tests.
+-
+-### Commit Style
+-
+-Issue-driven: `feat(koch): add level 5 characters (#22)`
+-All PRs must reference a GitHub issue.
+-
+----
+-
+-## Script + Skill Register
+-
+-| Skill / Script | Path | Purpose |
+-|----------------|------|---------|
+-| worktree.sh | `scripts/worktree.sh` | Create a new Git worktree for feature work |
+-| (add rows as created) | | |
+-
+----
+-
+-## Governance
+-
+-Amendments require description. Version: MAJOR for architecture, MINOR for principles, PATCH for clarifications.
+-
+-**Version**: 1.0.0 | **Ratified**: 2026-04-19 | **Last Amended**: 2026-04-19
+\ No newline at end of file
+diff --git a/CONTEXT.md b/CONTEXT.md
+new file mode 100644
+index 0000000..14db91b
+--- /dev/null
++++ b/CONTEXT.md
+@@ -0,0 +1,21 @@
++# Morse Trainer — Domain Glossary
++
++## Characters
++
++**Morse Code Character** — A single symbol represented as a sequence of dots (.) and dashes (-). The full character set follows ITU-R M.1677.
++
++**Koch Sequence** — The ordered list of characters introduced progressively during Koch-method training. Each lesson adds characters to the active pool; the learner must achieve 90% accuracy on all unlocked characters before advancing. The sequence covers letters, digits, punctuation (full ITU set), and common prosigns.
++
++**Prosign** — A procedural signal formed by two or three letters sent with *no inter-character space* (e.g., `AR` end of message, `SK` end of contact, `BT` break). Played as a single continuous sound, not as separate letters. Prosigns appear last in the Koch sequence because they require contextual understanding. The coordinator must suppress inter-character pauses when playing a prosign.
++
++**Q-Code** — A three-letter code starting with Q used in amateur radio (e.g., QSO = contact, QSL = acknowledgment, QRL = frequency in use). Sent as regular characters with normal spacing. Part of the QSO vocabulary practice set, not the Koch sequence.
++
++**CW Abbreviation** — A short shorthand used in CW contacts (e.g., CQ = calling any station, DE = from, K = over, 73 = best regards). Sent as regular characters with normal spacing. Part of the QSO vocabulary practice set, not the Koch sequence.
++
++## Modules
++
++**MorseCodeMapper** — A pure module that owns the Morse code character map and the Koch sequence. Translates between characters and dot/dash patterns, and determines which characters are active at a given Koch level. Has no dependency on audio, timing, or playback.
++
++**AudioPlaybackService** — The module responsible for tone generation and playback. Knows how to produce a tone at a given frequency for a given duration and how to insert silence. Owns timing parameters (WPM, Farnsworth speed, volume). Has no knowledge of Morse tables or Koch progression.
++
++**MorseCodeCoordinator** — The thin orchestration layer that depends on both MorseCodeMapper and AudioPlaybackService. Given a word or string, it asks the mapper for the Morse pattern, then sequences tones and pauses through the audio service. This is the only place where Morse logic and audio logic meet.
+\ No newline at end of file
+diff --git a/docs/adr/0001-split-morse-code-service.md b/docs/adr/0001-split-morse-code-service.md
+new file mode 100644
+index 0000000..b9217ed
+--- /dev/null
++++ b/docs/adr/0001-split-morse-code-service.md
+@@ -0,0 +1,52 @@
++# ADR-0001: Split MorseCodeService into Mapper, Coordinator, and AudioPlaybackService
++
++## Status
++
++Accepted
++
++## Context
++
++`MorseCodeService` mixed three concerns in a single shallow module: pure Morse code data (character-to-pattern map, Koch sequence), audio playback (WAV generation, process management, timing), and sequencing logic (iterating symbols, inserting pauses). The `AudioService` interface exposed high-level Morse methods like `playCharacter(String)` and `playWord(String)`, embedding Morse knowledge inside the audio seam.
++
++Three divergent copies of the Morse code table existed across the codebase:
++
++1. `MorseCodeService._morseCode` — 40 entries (letters, digits, 4 punctuation)
++2. `CharacterRepository.initializeCharacters()` — 26 entries (letters only, different Koch order)
++3. `Word.textToMorse()` — 37 entries (letters + digits, no punctuation)
++
++The Koch sequence also diverged: `MorseCodeService` had 38 characters, `CharacterRepository` had 25 in a different order.
++
++`MorseCodeService` was largely dead code — only `getMorsePattern()` was called (by `AudioPlaybackService` internally). The Koch sequence, `getCharactersForLevel`, `getTotalLevels`, `getAllCharacters`, and `wordToMorse` were unused.
++
++`AudioPlaybackService` used a singleton pattern (`factory` + private `_internal`) that fought the provider-tree dependency injection used elsewhere in the app, causing test state leakage.
++
++Inter-word spacing was computed by `MorseTimingEngine` but never inserted during playback — spaces in input strings were silently skipped.
++
++## Decision
++
++Split the monolith into three deep modules:
++
++- **`MorseCodeMapper`** — owns the Morse code character map (full ITU-R M.1677 set) and the expanded Koch sequence (letters, digits, full ITU punctuation, common prosigns). Pure data module with no audio, timing, or playback dependencies. Single source of truth for all character-to-pattern lookups, Koch level queries, and word-to-Morse conversion. Instance-based for injectability.
++
++- **`AudioPlaybackService`** — owns tone generation, WAV file management, playback process lifecycle, timing parameters (WPM, Farnsworth, volume), and the `MorseTimingEngine`. Exposes narrow audio primitives: `playDot()`, `playDash()`, `intraCharacterPause()`, `interCharacterPause()`, `interWordPause()`, `keyerDown()`, `keyerUp()`, `playCorrectFeedback()`. No knowledge of Morse tables or Koch progression. Singleton pattern dropped in favor of constructor injection.
++
++- **`MorseCodeCoordinator`** — thin orchestration layer that depends on `MorseCodeMapper` and `AudioService`. Given a string, asks the mapper for patterns, sequences dots/dashes/pauses through the audio service, handles inter-word spacing, and drives the `onFlash` visual callback. Only place where Morse logic and audio logic meet.
++
++`MorseCodeService` is deleted. `Word.textToMorse()` is deleted. `CharacterRepository.initializeCharacters()` reads from `MorseCodeMapper` instead of its inline map. `QSOService.phraseToMorse()` delegates to `MorseCodeMapper.wordToMorse()`.
++
++`SettingsBloc` depends on `AudioPlaybackService` directly for configuration (setters). Practice screens depend on `MorseCodeCoordinator` (playback), `AudioPlaybackService` (keyer, feedback), and `MorseCodeMapper` (level queries) — three clean seams.
++
++## Consequences
++
++**Positive:**
++- Each module testable in isolation: mapper (pure unit tests), audio service (timing, clamping, file lifecycle), coordinator (mock `AudioService`, verify sequencing)
++- Single source of truth for Morse code data — no more divergent tables
++- Audio backend swappable — `AudioService` interface is now audio primitives, so a Flutter plugin or web audio backend can implement it without Morse knowledge
++- Inter-word spacing bug fixed as a natural consequence of coordinator owning sequencing
++- Singleton removed — clean test isolation, consistent with app's DI pattern
++- Expanded Koch sequence covers full ITU character set + common prosigns (50+ characters)
++
++**Negative:**
++- Callers depend on two or three modules instead of one
++- More files and wiring at the composition root
++- `AudioService` interface change is a breaking change for any external consumers (none currently exist)
+\ No newline at end of file
+diff --git a/docs/superpowers/specs/2026-05-24-freeform-decoder-design.md b/docs/superpowers/specs/2026-05-24-freeform-decoder-design.md
+deleted file mode 100644
+index 9fa7fbd..0000000
+--- a/docs/superpowers/specs/2026-05-24-freeform-decoder-design.md
++++ /dev/null
+@@ -1,223 +0,0 @@
+-# Design: Freeform Decoder with MorseKeyerCore Extraction
+-
+-**Date**: 2026-05-24  
+-**Feature Branch**: `008-freeform-decoder`  
+-**Status**: Approved  
+-
+----
+-
+-## Summary
+-
+-Implement a Freeform Decoder mode where users tap Morse code freely via keyboard or touchscreen and see it decoded into text in real time. The decoder provides sidetone audio feedback, generous letter/word timing thresholds, and a clean text-only output.
+-
+-This feature serves as the **forcing function to extract `MorseKeyerCore`** — a shared, timing-aware Morse keying engine that eliminates duplicated logic across all input methods (keyboard, touch, future gamepad/audio).
+-
+----
+-
+-## Goals
+-
+-1. Extract `MorseKeyerCore` from `KeyboardKeyerHandler` so all input methods share one Morse semantic processor.
+-2. Refactor `KeyboardKeyerHandler` and `TouchscreenInputHandler` into thin input adapters.
+-3. Add a `DecoderScreen` that uses the core in "letter-mode" for live text decoding.
+-4. Add a mode selector on `PracticeScreen` so users choose between "Koch Letters" and "Freeform Decoder".
+-5. Preserve all existing behavior in `PracticeScreen` (Koch letters, Common Words at L2+) with zero regressions.
+-
+----
+-
+-## Architecture
+-
+-### Components
+-
+-| Component | Responsibility | Status |
+-|-----------|---------------|--------|
+-| `MorseKeyerCore` | Shared brain: accumulate symbols, classify dot/dash via `MorseTimingEngine`, pattern-to-char lookup, letter/word boundary timers, emit events | **New** |
+-| `KeyboardKeyerHandler` (refactored) | Detect hardware key events (spacebar), translate to `core.handleKeyDown()` / `core.handleKeyUp(durationMs)` | **Update** |
+-| `TouchscreenInputHandler` (refactored) | Detect touch events on screen/button, translate to core methods | **Update** |
+-| `MorseCommandHandler` (updated) | Wrap `KeyboardKeyerHandler`, accumulate `onLetterComplete` into words, fire commands on `onWordBoundary` | **Update** |
+-| `DecoderScreen` | Full-screen decoder UI: text field, keyer button, sidetone, clear, copy | **New** |
+-| `PracticeScreen` (updated) | Mode selector: two cards "Koch Letters" / "Freeform Decoder" before session starts | **Update** |
+-
+-### MorseKeyerCore Event Contract
+-
+-```dart
+-typedef SymbolCallback = void Function(String symbol);      // '.' or '-'
+-typedef LetterCallback = void Function(String char, String pattern);
+-typedef WordBoundaryCallback = void Function();
+-typedef UnknownPatternCallback = void Function(String pattern);
+-```
+-
+-Events are emitted in this order for a complete letter:
+-1. `onSymbol('.')` — on each key-up
+-2. `onLetterComplete('A', '.-')` — after inter-letter threshold or manual submit
+-3. `onWordBoundary()` — after inter-word threshold following a completed letter
+-
+-### Phases
+-
+-```
+-KeyboardKeyerHandler ──▶ MorseKeyerCore ──▶ onLetterComplete → MorseCommandHandler → command
+-TouchscreenInputHandler ──▶ MorseKeyerCore ──▶ onLetterComplete → DecoderScreen → text field
+-```
+-
+----
+-
+-## Design Decisions
+-
+-### Why `MorseKeyerCore` instead of mode flags in `KeyboardKeyerHandler`
+-
+-The existing `KeyboardKeyerHandler` is tightly coupled to word-level auto-submission (used by `MorseCommandHandler` for command parsing). The decoder needs letter-level auto-submission. Extracting a shared core avoids branching logic inside a single class and directly resolves issue #15, making every future input method (gamepad, audio keying, etc.) a thin adapter.
+-
+-### Why `DecoderScreen` is a standalone screen, not a BLoC
+-
+-The decoder is pure state machine with no persistence, no gamification, and no session history. A `StatefulWidget` with a `MorseKeyerCore` instance is sufficient. Adding a BLoC would be over-engineering. If complexity grows later (save sessions, export decoded text), we can introduce one then.
+-
+-### Why only finalized letters in the text field
+-
+-Per user preference: the text field shows only completed characters. No live pattern preview. This keeps the UI clean and avoids visual noise while the user is mid-key. Screen flash and sidetone provide real-time physical feedback instead.
+-
+-### Why the decoder uses the same `AudioPlaybackService.keyerDown/Up` as practice mode
+-
+-The practice screen already uses these hooks for real-time keyer audio. Reusing them gives the decoder the same feel: the user hears their own keyed tone at the configured frequency and volume. Settings changes (tone, volume) propagate automatically via the existing `SettingsBloc` → `AudioPlaybackService` pipeline.
+-
+----
+-
+-## Data Flow
+-
+-### Tapping a single letter ("S" = `...`)
+-
+-1. User taps keyer button → `TouchscreenInputHandler.onTouchDown()`
+-2. Handler calls `AudioPlaybackService.keyerDown()` for sidetone + screen flash
+-3. User releases after short duration → handler calls `core.handleKeyUp(80ms)`
+-4. Core classifies 80ms < threshold → symbol = `.`, emits `onSymbol('.')`, appends to `_pattern`
+-5. Core starts inter-letter timer (3 dits)
+-6. Steps 1–5 repeat two more times for the remaining dots
+-7. After third dot, user pauses > inter-letter threshold
+-8. Core finalizes: `_pattern = "..."`, looks up `'S'`, emits `onLetterComplete('S', '...')`
+-9. Core starts inter-word timer (7 dits)
+-10. `DecoderScreen` receives event, appends `'S'` to text field
+-11. If user pauses > inter-word threshold → core emits `onWordBoundary()`
+-12. `DecoderScreen` inserts space after `'S'`
+-
+-### Tapping an unknown pattern
+-
+-1. User keys pattern `.-.-.`
+-2. Inter-letter threshold expires
+-3. Core emits `onUnknownPattern('.-.-.')`
+-4. `DecoderScreen` receives event, appends `'?'` to text field, continues accepting input
+-
+----
+-
+-## UI Design
+-
+-### PracticeScreen — Mode Selector
+-
+-Before starting a session, the practice screen shows two cards stacked vertically:
+-
+-- **Card 1: Koch Letters** — icon `Icons.school`, current level picker below it, "Start Practice" button
+-- **Card 2: Freeform Decoder** — icon `Icons.keyboard`, subtitle "Tap Morse freely", button navigates to `DecoderScreen`
+-
+-The existing "Common Words" button (unlocks at L2+) remains below the cards.
+-
+-### DecoderScreen
+-
+-**Top half:**
+-- Scrollable `TextField` (read-only, multi-line) showing decoded text
+-- Controls row: `IconButton(Icons.delete)` for Clear, `IconButton(Icons.copy)` for Copy
+-
+-**Bottom half:**
+-- Large `GestureDetector` filling remaining space, colored like the practice circle (blue when idle, white flash on key-down)
+-- Label: "Tap and hold to key" when idle
+-- During key-down: label shows "..." or nothing, screen flashes white, sidetone active
+-
+-**No bottom navigation** — full-screen immersive experience. Back button returns to PracticeScreen.
+-
+----
+-
+-## Error Handling
+-
+-| Scenario | Behavior |
+-|----------|----------|
+-| Unknown Morse pattern | Append `?` to text field, continue |
+-| App backgrounded mid-key | On resume, check elapsed time since last key-up; if inter-letter threshold exceeded, finalize letter; if inter-word exceeded, insert space |
+-| Screen rotated | `DecoderScreen` state preserved via `AutomaticKeepAliveClientMixin` or `PageStorageKey` on text controller |
+-| Text field overflows | `TextField` scrolls vertically; decoder continues appending |
+-| Audio service not initialized | Sidetone is best-effort; visual flash always works |
+-| Core disposed mid-tap | Timers cancelled, pattern cleared, no crash |
+-
+----
+-
+-## Testing
+-
+-### `MorseKeyerCore` unit tests (new file: `test/unit/morse_keyer_core_test.dart`)
+-
+-- `test('classifies dot when duration < threshold')`
+-- `test('classifies dash when duration >= threshold')`
+-- `test('emits letter complete after inter-letter timeout')`
+-- `test('emits word boundary after inter-word timeout')`
+-- `test('manual submitNow emits immediately')`
+-- `test('unknown pattern emits onUnknownPattern')`
+-- `test('clear resets pattern and cancels timers')`
+-- `test('app backgrounding then resuming finalizes if threshold exceeded')`
+-
+-### `KeyboardKeyerHandler` unit tests (update existing)
+-
+-- Verify all existing tests still pass after refactoring
+-- Verify `onKeyDown` / `onKeyUp` callbacks still fire
+-
+-### `TouchscreenInputHandler` unit tests (new file: `test/unit/touchscreen_input_handler_test.dart`)
+-
+-- `test('reports down/up durations to core')`
+-
+-### `DecoderScreen` widget tests (new file: `test/widget/decoder_screen_test.dart`)
+-
+-- `testWidgets('tapping dot-dash pattern shows letter')`
+-- `testWidgets('long gap between letters inserts space')`
+-- `testWidgets('unknown pattern shows question mark')`
+-- `testWidgets('clear button empties text field')`
+-- `testWidgets('copy button copies text to clipboard')`
+-
+----
+-
+-## Integration with Existing Code
+-
+-### Files to modify
+-
+-| File | Change |
+-|------|--------|
+-| `lib/core/input/keyboard_input_handler.dart` | Extract `MorseKeyerCore`, keep thin adapter |
+-| `lib/core/input/touchscreen_input_handler.dart` | Replace hardcoded logic with thin adapter to core |
+-| `lib/core/input/morse_command_handler.dart` | Update to consume core events instead of wrapping handler internals |
+-| `lib/ui/screens/practice_screen.dart` | Add mode selector UI, push `DecoderScreen` |
+-| `lib/ui/screens/decoder_screen.dart` | **New** — decoder UI and state management |
+-| `lib/main.dart` | Add `/decoder` route |
+-| `lib/ui/screens/help_screen.dart` | Add decoder help section |
+-
+-### Files to create
+-
+-| File | Purpose |
+-|------|---------|
+-| `lib/core/input/morse_keyer_core.dart` | Shared keying engine |
+-| `test/unit/morse_keyer_core_test.dart` | Core unit tests |
+-| `test/unit/touchscreen_input_handler_test.dart` | Touch handler unit tests |
+-| `test/widget/decoder_screen_test.dart` | Decoder widget tests |
+-
+----
+-
+-## Risks and Mitigations
+-
+-| Risk | Mitigation |
+-|------|------------|
+-| Refactoring breaks existing practice mode | Run full widget test suite before and after; compare behavior on both keyboard and touch input |
+-| `MorseCommandHandler` behavior changes | Write explicit tests for word-level command detection before refactoring |
+-| Timing thresholds feel wrong in decoder | Decoder uses same `MorseTimingEngine` as practice; generous by design (inter-letter = 3 dits) |
+-| Screen flash conflicts with practice screen flash | Use a local `ValueNotifier<bool>` in `DecoderScreen` instead of `PracticeSessionBloc` state |
+-
+----
+-
+-## Success Criteria
+-
+-- [ ] Users can tap any message of up to 20 words without timing errors or rejections
+-- [ ] 95% of Morse messages tapped with pauses within threshold decode correctly
+-- [ ] Decoder output appears in text field within 300 ms of inter-letter threshold
+-- [ ] Keyboard and touch input behave identically (same core, same thresholds)
+-- [ ] Existing practice mode passes all tests with zero regressions
+-- [ ] Issue #15 is resolved (no duplicated Morse logic across input handlers)
+diff --git a/lib/core/audio/morse_code_service.dart b/lib/core/audio/audio_playback_service.dart
+similarity index 64%
+rename from lib/core/audio/morse_code_service.dart
+rename to lib/core/audio/audio_playback_service.dart
+index 49ff2fa..a1682fc 100644
+--- a/lib/core/audio/morse_code_service.dart
++++ b/lib/core/audio/audio_playback_service.dart
+@@ -5,70 +5,20 @@ import 'dart:typed_data';
+ import '../timing/morse_timing_engine.dart';
+ import 'audio_service.dart';
+ 
+-/// Morse code timing based on ARRL PARIS standard (50 units per word)
+-/// Reference: https://github.com/spasutto/cw-trainer
+-class MorseCodeService {
+-  static const Map<String, String> _morseCode = {
+-    'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.',
+-    'F': '..-.', 'G': '--.', 'H': '....', 'I': '..', 'J': '.---',
+-    'K': '-.-', 'L': '.-..', 'M': '--', 'N': '-.', 'O': '---',
+-    'P': '.--.', 'Q': '--.-', 'R': '.-.', 'S': '...', 'T': '-',
+-    'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-', 'Y': '-.--',
+-    'Z': '--..', '0': '-----', '1': '.----', '2': '..---', '3': '...--',
+-    '4': '....-', '5': '.....', '6': '-....', '7': '--...', '8': '---..',
+-    '9': '----.', '.': '.-.-.-', ',': '--..--', '?': '..--..', '/': '-..-.',
+-  };
+-
+-  static const List<String> kochSequence = [
+-    'K', 'M', 'R', 'S', 'U', 'A', 'P', 'L', 'W', 'I',
+-    '.', 'N', 'J', 'E', 'F', '0', 'Y', 'V', 'G', '5',
+-    '/', 'Q', '9', 'Z', 'H', '3', '8', 'B', '?', '4',
+-    '2', '7', 'C', '1', 'D', '6', 'X', ',',
+-  ];
+-
+-  String? getMorsePattern(String character) {
+-    return _morseCode[character.toUpperCase()];
+-  }
+-
+-  List<String> getAllCharacters() {
+-    return List.unmodifiable(_morseCode.keys.toList());
+-  }
+-
+-  List<String> getCharactersForLevel(int level) {
+-    final count = (level + 1) * 2;
+-    if (count >= kochSequence.length) return List.unmodifiable(kochSequence);
+-    return List.unmodifiable(kochSequence.sublist(0, count));
+-  }
+-
+-  int getTotalLevels() {
+-    return (kochSequence.length / 2).ceil();
+-  }
+-
+-  /// Convert a word to its Morse pattern string with spaces between letters.
+-  String wordToMorse(String word) {
+-    final patterns = <String>[];
+-    for (final char in word.toUpperCase().split('')) {
+-      final pattern = _morseCode[char];
+-      if (pattern != null) {
+-        patterns.add(pattern);
+-      }
+-    }
+-    return patterns.join(' ');
+-  }
+-}
+-
+-/// Audio playback with proper ARRL timing
++/// Concrete [AudioService] that plays pre-generated WAV tones via `aplay`.
++///
++/// Sequencing logic (assembling characters/words from dots, dashes, and
++/// pauses) lives in [MorseCodeCoordinator]; this class only owns timing
++/// configuration, tone generation, keyer control, and feedback sounds.
+ class AudioPlaybackService implements AudioService {
+-  static final AudioPlaybackService _instance = AudioPlaybackService._internal();
+-  factory AudioPlaybackService() => _instance;
+-  AudioPlaybackService._internal();
++  AudioPlaybackService();
+ 
+   // Timing parameters
+-  double _toneFrequency = 600.0;  // Default 600Hz
+-  double _wpm = 20.0;            // Character speed
+-  double _effWpm = 20.0;          // Effective speed (Farnsworth)
++  double _toneFrequency = 600.0; // Default 600Hz
++  double _wpm = 20.0; // Character speed
++  double _effWpm = 20.0; // Effective speed (Farnsworth)
+   double _volume = 0.5;
+-  double _extraWordSpace = 0.0;   // Extra space between words
++  double _extraWordSpace = 0.0; // Extra space between words
+ 
+   // Pre-generated tone files
+   String? _dotWavPath;
+@@ -143,51 +93,13 @@ class AudioPlaybackService implements AudioService {
+     _volume = volume.clamp(0.0, 1.0);
+   }
+ 
+-  Future<void> playCharacter(String character, {bool screenFlash = false, Function(bool)? onFlash}) async {
+-    final pattern = MorseCodeService().getMorsePattern(character);
+-    if (pattern == null) return;
+-
+-    await initialize();
+-
+-    for (int i = 0; i < pattern.length; i++) {
+-      final symbol = pattern[i];
+-      if (symbol == '.') {
+-        await _playDot();
+-        if (screenFlash) onFlash?.call(true);
+-        if (i < pattern.length - 1) {
+-          await Future.delayed(Duration(milliseconds: intraCharacterSpaceMs));
+-        }
+-        if (screenFlash) onFlash?.call(false);
+-      } else {
+-        await _playDash();
+-        if (screenFlash) onFlash?.call(true);
+-        if (i < pattern.length - 1) {
+-          await Future.delayed(Duration(milliseconds: intraCharacterSpaceMs));
+-        }
+-        if (screenFlash) onFlash?.call(false);
+-      }
+-    }
+-
+-    // Inter-character space after full character
+-    await Future.delayed(Duration(milliseconds: interCharacterSpaceMs));
+-  }
+-
+-  Future<void> playWord(String word, {void Function(bool)? onFlash}) async {
+-    final characters = word.toUpperCase().split('');
+-    for (int i = 0; i < characters.length; i++) {
+-      await playCharacter(characters[i], screenFlash: onFlash != null, onFlash: onFlash);
+-      // playCharacter already adds interCharacterSpaceMs at the end
+-      // No extra delay needed between letters
+-    }
+-  }
+-
+   Future<void> _ensureFileExists(String? path) async {
+     if (path == null || !File(path).existsSync()) {
+       await initialize();
+     }
+   }
+ 
+-  Future<void> _playDot() async {
++  Future<void> playDot() async {
+     if (_dotWavPath != null) {
+       await _ensureFileExists(_dotWavPath);
+       final result = await Process.run('aplay', ['-q', _dotWavPath!]);
+@@ -199,7 +111,7 @@ class AudioPlaybackService implements AudioService {
+     }
+   }
+ 
+-  Future<void> _playDash() async {
++  Future<void> playDash() async {
+     if (_dashWavPath != null) {
+       await _ensureFileExists(_dashWavPath);
+       final result = await Process.run('aplay', ['-q', _dashWavPath!]);
+@@ -211,6 +123,18 @@ class AudioPlaybackService implements AudioService {
+     }
+   }
+ 
++  Future<void> intraCharacterPause() async {
++    await Future.delayed(Duration(milliseconds: intraCharacterSpaceMs));
++  }
++
++  Future<void> interCharacterPause() async {
++    await Future.delayed(Duration(milliseconds: interCharacterSpaceMs));
++  }
++
++  Future<void> interWordPause() async {
++    await Future.delayed(Duration(milliseconds: interWordSpaceMs));
++  }
++
+   // Start tone when key down - optimized for low latency
+   Future<void> keyerDown() async {
+     // Kill any existing first to avoid overlapping (adds ~10ms but prevents audio glitches)
+diff --git a/lib/core/audio/audio_service.dart b/lib/core/audio/audio_service.dart
+index 68ef73c..72c7066 100644
+--- a/lib/core/audio/audio_service.dart
++++ b/lib/core/audio/audio_service.dart
+@@ -3,7 +3,11 @@ import 'dart:async';
+ import '../timing/morse_timing_engine.dart';
+ 
+ /// Abstract interface for audio playback services.
+-/// Allows injecting real [AudioPlaybackService] or fakes in tests.
++///
++/// The interface exposes primitive dot/dash playback and named pauses so
++/// that sequencing logic (character/word assembly, prosigns, etc.) can live
++/// in a dedicated coordinator ([MorseCodeCoordinator]) instead of being
++/// baked into the audio service itself.
+ abstract class AudioService {
+   double get toneFrequency;
+   double get wpm;
+@@ -28,13 +32,21 @@ abstract class AudioService {
+   void setExtraWordSpace(double seconds);
+   void setVolume(double volume);
+ 
+-  Future<void> playCharacter(
+-    String character, {
+-    bool screenFlash = false,
+-    void Function(bool)? onFlash,
+-  });
++  /// Plays a single dot tone.
++  Future<void> playDot();
+ 
+-  Future<void> playWord(String word, {void Function(bool)? onFlash});
++  /// Plays a single dash tone.
++  Future<void> playDash();
++
++  /// Pauses for [intraCharacterSpaceMs] — used between symbols within a
++  /// character.
++  Future<void> intraCharacterPause();
++
++  /// Pauses for [interCharacterSpaceMs] — used after a complete character.
++  Future<void> interCharacterPause();
++
++  /// Pauses for [interWordSpaceMs] — used between words.
++  Future<void> interWordPause();
+ 
+   Future<void> keyerDown();
+   Future<void> keyerUp();
+@@ -42,4 +54,4 @@ abstract class AudioService {
+   Future<void> playCorrectFeedback();
+ 
+   Future<void> dispose();
+-}
++}
+\ No newline at end of file
+diff --git a/lib/core/audio/morse_code_coordinator.dart b/lib/core/audio/morse_code_coordinator.dart
+new file mode 100644
+index 0000000..fcb6922
+--- /dev/null
++++ b/lib/core/audio/morse_code_coordinator.dart
+@@ -0,0 +1,154 @@
++import 'audio_service.dart';
++import 'morse_code_mapper.dart';
++
++/// Coordinates sequencing of Morse code playback.
++///
++/// Given an input string, [MorseCodeCoordinator] splits it into words and
++/// characters, looks up each character's pattern via [MorseCodeMapper], and
++/// drives an [AudioService] through the primitive `playDot`/`playDash` and
++/// pause methods. This keeps the audio service focused on tone generation
++/// while all character/word assembly logic lives here.
++///
++/// Prosigns (multi-character entries such as 'AR' or 'SOS') are detected
++/// with a longest-first lookahead and played as a single continuous unit —
++/// only intra-character pauses separate their symbols, and no
++/// inter-character pause follows them.
++class MorseCodeCoordinator {
++  final MorseCodeMapper _mapper;
++  final AudioService _audioService;
++  bool _isPlaying = false;
++  bool _isCancelled = false;
++
++  MorseCodeCoordinator(this._mapper, this._audioService);
++
++  /// Whether a [playCharacters] call is currently in progress.
++  bool get isPlaying => _isPlaying;
++
++  /// Plays the Morse representation of [input].
++  ///
++  /// [input] is split into words on spaces. Each word is split into
++  /// characters; each character's pattern is looked up via the mapper and
++  /// played symbol-by-symbol with appropriate intra-character, inter-character
++  /// and inter-word pauses in between.
++  ///
++  /// [onFlash], if provided, is invoked with `true` immediately before a
++  /// dot/dash is played and `false` during the pause that follows it. This
++  /// lets the UI drive a screen-flash effect in lockstep with the audio.
++  ///
++  /// Unknown characters (no pattern in the mapper) are skipped. Spaces are
++  /// treated as word separators only, not as characters.
++  ///
++  /// Call [stop] to cancel playback; the coordinator checks the cancellation
++  /// flag between symbols and pauses and breaks out of the loop as soon as
++  /// it is set, also calling [AudioService.keyerUp] to kill any in-flight tone.
++  Future<void> playCharacters(String input, {void Function(bool)? onFlash}) async {
++    _isCancelled = false;
++    _isPlaying = true;
++    try {
++      final words = input.split(' ');
++      for (int w = 0; w < words.length; w++) {
++        final word = words[w];
++        if (word.isEmpty) continue;
++
++        final characters = word.toUpperCase().split('');
++        int c = 0;
++        while (c < characters.length) {
++          // Try to match a 3-char prosign (SOS, CL) then a 2-char prosign
++          // (AR, BT, SK, KN, AS, CT, VE) at the current position.
++          String? pattern;
++          bool isProsignMatch = false;
++          int consumed = 1;
++
++          if (c + 3 <= characters.length) {
++            final three = characters.sublist(c, c + 3).join();
++            if (_mapper.isProsign(three)) {
++              final p = _mapper.getMorsePattern(three);
++              if (p != null) {
++                pattern = p;
++                isProsignMatch = true;
++                consumed = 3;
++              }
++            }
++          }
++          if (pattern == null && c + 2 <= characters.length) {
++            final two = characters.sublist(c, c + 2).join();
++            if (_mapper.isProsign(two)) {
++              final p = _mapper.getMorsePattern(two);
++              if (p != null) {
++                pattern = p;
++                isProsignMatch = true;
++                consumed = 2;
++              }
++            }
++          }
++          if (pattern == null) {
++            final p = _mapper.getMorsePattern(characters[c]);
++            if (p == null) {
++              c += 1;
++              continue;
++            }
++            pattern = p;
++          }
++
++          for (int s = 0; s < pattern.length; s++) {
++            if (_isCancelled) {
++              await _audioService.keyerUp();
++              return;
++            }
++            final symbol = pattern[s];
++            onFlash?.call(true);
++            if (symbol == '.') {
++              await _audioService.playDot();
++            } else if (symbol == '-') {
++              await _audioService.playDash();
++            }
++
++            // Pause between symbols within a character.
++            if (s < pattern.length - 1) {
++              if (_isCancelled) {
++                await _audioService.keyerUp();
++                return;
++              }
++              onFlash?.call(false);
++              await _audioService.intraCharacterPause();
++            } else {
++              onFlash?.call(false);
++            }
++          }
++
++          // Inter-character pause after each regular character. Prosigns
++          // are a single logical unit and do NOT receive this pause.
++          if (!isProsignMatch) {
++            if (_isCancelled) {
++              await _audioService.keyerUp();
++              return;
++            }
++            await _audioService.interCharacterPause();
++          }
++          c += consumed;
++        }
++
++        // Inter-word pause between words (not after the last word).
++        if (w < words.length - 1) {
++          if (_isCancelled) {
++            await _audioService.keyerUp();
++            return;
++          }
++          await _audioService.interWordPause();
++        }
++      }
++    } finally {
++      _isPlaying = false;
++    }
++  }
++
++  /// Requests cancellation of any in-progress [playCharacters] call.
++  ///
++  /// The cancellation flag is checked between symbols and pauses; when set,
++  /// the coordinator breaks out of its loop and calls
++  /// [AudioService.keyerUp] to silence any in-flight tone. The flag is reset
++  /// to `false` at the start of the next [playCharacters] call.
++  void stop() {
++    _isCancelled = true;
++  }
++}
+\ No newline at end of file
+diff --git a/lib/core/audio/morse_code_mapper.dart b/lib/core/audio/morse_code_mapper.dart
+new file mode 100644
+index 0000000..5fd62b7
+--- /dev/null
++++ b/lib/core/audio/morse_code_mapper.dart
+@@ -0,0 +1,131 @@
++/// Pure data module that consolidates the ITU-R M.1677 Morse code character
++/// map and the expanded Koch character sequence.
++///
++/// This class has no audio imports, no async, and no side effects. It is
++/// intended to be injected via the provider tree and consumed by services
++/// that need to translate characters to Morse patterns or walk the Koch
++/// progression.
++class MorseCodeMapper {
++  /// Full ITU-R M.1677 Morse code character map.
++  ///
++  /// Keys are uppercase single-character strings. Includes the 26 letters
++  /// (A-Z), the 10 digits (0-9), and the 14 standard punctuation marks.
++  static const Map<String, String> morseCodeMap = {
++    // Letters
++    'A': '.-',    'B': '-...',  'C': '-.-.',  'D': '-..',   'E': '.',
++    'F': '..-.',  'G': '--.',   'H': '....',  'I': '..',    'J': '.---',
++    'K': '-.-',   'L': '.-..',  'M': '--',    'N': '-.',    'O': '---',
++    'P': '.--.',  'Q': '--.-',  'R': '.-.',   'S': '...',   'T': '-',
++    'U': '..-',   'V': '...-',  'W': '.--',   'X': '-..-',  'Y': '-.--',
++    'Z': '--..',
++    // Digits
++    '0': '-----', '1': '.----', '2': '..---', '3': '...--', '4': '....-',
++    '5': '.....', '6': '-....', '7': '--...', '8': '---..', '9': '----.',
++    // ITU punctuation
++    '.': '.-.-.-', ',': '--..--', '?': '..--..', '/': '-..-.',
++    '=': '-...-',  '+': '.-.-.',  '"': '.-..-.',  "'": '.----.',
++    '@': '.--.-.', '(': '-.--.',  ')': '-.--.-', ':': '---...',
++    '-': '-....-', '&': '.-...',
++    // Prosigns (sent with no inter-character space)
++    'AR': '.-.-.',    'BT': '-...-',   'SK': '...-.-',
++    'KN': '-.--.',    'AS': '.-...',   'SOS': '...---...',
++    'CL': '-.-..-..', 'CT': '-.-.-',   'VE': '...-.',
++  };
++
++  /// Prosigns — sent as a single logical unit with no inter-character pause.
++  static const Set<String> _prosigns = {
++    'AR', 'BT', 'SK', 'KN', 'AS', 'SOS', 'CL', 'CT', 'VE',
++  };
++
++  /// Returns true if [entry] is a prosign (sent with no inter-character space).
++  bool isProsign(String entry) {
++    return _prosigns.contains(entry.toUpperCase());
++  }
++
++  /// Expanded Koch sequence based on the LCWO/DF2OK ordering.
++  ///
++  /// Includes letters, digits, and punctuation in the order they are
++  /// introduced by the Koch method as implemented on LCWO and DF2OK.
++  static const List<String> kochSequence = [
++    'K', 'M', 'U', 'R', 'E', 'S', 'N', 'A', 'P', 'T',
++    'L', 'W', 'I', '.', 'J', 'Z', '=', 'F', 'O', 'Y',
++    ',', 'V', 'G', '5', '/', 'Q', '9', '2', 'H', '3',
++    '8', 'B', '?', '4', '7', 'C', '1', 'D', '6', '0',
++    'X', '+', '"', "'", '@', '(', ')', ':', '-', '&',
++    // Prosigns (sent with no inter-character space)
++    'AR', 'BT', 'SK', 'KN', 'AS', 'SOS', 'CL', 'CT', 'VE',
++  ];
++
++  /// Returns the Morse pattern for [character], or `null` if the character
++  /// is not in the map. Lookup is case-insensitive (uppercase normalization).
++  String? getMorsePattern(String character) {
++    return morseCodeMap[character.toUpperCase()];
++  }
++
++  /// Converts [text] to a Morse pattern string with single spaces between
++  /// letter patterns. Unknown characters are skipped. Returns an empty
++  /// string if no characters in [text] are mappable.
++  ///
++  /// Prosigns (multi-character entries such as 'AR' or 'SOS') are matched
++  /// with a longest-first lookahead so that 'AR' yields '.-.-.' rather than
++  /// '.- .-.'
++  String wordToMorse(String text) {
++    final upper = text.toUpperCase();
++    final patterns = <String>[];
++    int i = 0;
++    while (i < upper.length) {
++      // Try 3-char prosign first (SOS, CL), then 2-char prosigns.
++      String? matched;
++      int consumed = 0;
++      if (i + 3 <= upper.length) {
++        final three = upper.substring(i, i + 3);
++        if (isProsign(three) && morseCodeMap.containsKey(three)) {
++          matched = morseCodeMap[three];
++          consumed = 3;
++        }
++      }
++      if (matched == null && i + 2 <= upper.length) {
++        final two = upper.substring(i, i + 2);
++        if (isProsign(two) && morseCodeMap.containsKey(two)) {
++          matched = morseCodeMap[two];
++          consumed = 2;
++        }
++      }
++      if (matched == null) {
++        final one = upper.substring(i, i + 1);
++        final pattern = morseCodeMap[one];
++        if (pattern != null) {
++          patterns.add(pattern);
++        }
++        i += 1;
++        continue;
++      }
++      patterns.add(matched);
++      i += consumed;
++    }
++    return patterns.join(' ');
++  }
++
++  /// Returns the list of characters introduced at Koch [level].
++  ///
++  /// Level 0 returns the first 2 characters, level 1 the first 4, and so on.
++  /// Results are capped at the full sequence length.
++  List<String> getCharactersForLevel(int level) {
++    final count = (level + 1) * 2;
++    if (count >= kochSequence.length) {
++      return List.unmodifiable(kochSequence);
++    }
++    return List.unmodifiable(kochSequence.sublist(0, count));
++  }
++
++  /// Returns the total number of Koch levels, computed as
++  /// `(kochSequence.length / 2).ceil()`.
++  int getTotalLevels() {
++    return (kochSequence.length / 2).ceil();
++  }
++
++  /// Returns all keys (characters) from the Morse code map.
++  List<String> getAllCharacters() {
++    return List.unmodifiable(morseCodeMap.keys.toList());
++  }
++}
+\ No newline at end of file
+diff --git a/lib/core/logging/logger.dart b/lib/core/logging/logger.dart
+index 34c0a68..3a9ad2b 100644
+--- a/lib/core/logging/logger.dart
++++ b/lib/core/logging/logger.dart
+@@ -106,20 +106,7 @@ class Logger {
+         ),
+       );
+ 
+-  /// Open GitHub issue page with bug report template
+-  Future<bool> openGitHubIssue() async {
+-    const url =
+-        'https://github.com/EmmanuelPleshe/mymorsetrainer/issues/new?template=bug_report.yml';
+-    final uri = Uri.parse(url);
+-
+-    if (await canLaunchUrl(uri)) {
+-      return await launchUrl(uri, mode: LaunchMode.externalApplication);
+-    }
+-    return false;
+-  }
+-
+-  /// Legacy: Open email client with log file path
+-  @Deprecated('Use openGitHubIssue() instead')
++  /// Open email client with log file path
+   Future<bool> sendLogs({String? to}) async {
+     if (_currentLogPath == null || _currentLogPath!.isEmpty) {
+       return false;
+diff --git a/lib/core/platform/app_initializer.dart b/lib/core/platform/app_initializer.dart
+deleted file mode 100644
+index 22cc6da..0000000
+--- a/lib/core/platform/app_initializer.dart
++++ /dev/null
+@@ -1,24 +0,0 @@
+-class AppInitializer {
+-  final Future<void> Function() initializeWindowManager;
+-  final void Function() initializeSqfliteFfi;
+-  final Future<void> Function() initializeLogger;
+-  final Future<void> Function() initializeCharacterRepo;
+-  final bool isDesktop;
+-
+-  AppInitializer({
+-    required this.initializeWindowManager,
+-    required this.initializeSqfliteFfi,
+-    required this.initializeLogger,
+-    required this.initializeCharacterRepo,
+-    required this.isDesktop,
+-  });
+-
+-  Future<void> initialize() async {
+-    if (isDesktop) {
+-      await initializeWindowManager();
+-      initializeSqfliteFfi();
+-    }
+-    await initializeLogger();
+-    await initializeCharacterRepo();
+-  }
+-}
+diff --git a/lib/data/models/word.dart b/lib/data/models/word.dart
+index 78338dc..0f24908 100644
+--- a/lib/data/models/word.dart
++++ b/lib/data/models/word.dart
+@@ -10,32 +10,6 @@ class Word {
+     required this.category,
+     this.difficulty = 1,
+   });
+-
+-  static String textToMorse(String text) {
+-    final morseMap = {
+-      'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.',
+-      'F': '..-.', 'G': '--.', 'H': '....', 'I': '..', 'J': '.---',
+-      'K': '-.-', 'L': '.-..', 'M': '--', 'N': '-.', 'O': '---',
+-      'P': '.--.', 'Q': '--.-', 'R': '.-.', 'S': '...', 'T': '-',
+-      'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-', 'Y': '-.--',
+-      'Z': '--..', '0': '-----', '1': '.----', '2': '..---', '3': '...--',
+-      '4': '....-', '5': '.....', '6': '-....', '7': '--...', '8': '---..',
+-      '9': '----.', ' ': ' ',
+-    };
+-
+-    final buffer = StringBuffer();
+-    for (var i = 0; i < text.length; i++) {
+-      final char = text[i].toUpperCase();
+-      final morse = morseMap[char];
+-      if (morse != null) {
+-        buffer.write(morse);
+-        if (i < text.length - 1 && text[i + 1] != ' ') {
+-          buffer.write(' '); // intra-character space
+-        }
+-      }
+-    }
+-    return buffer.toString();
+-  }
+ }
+ 
+ class QSOPhrase {
+diff --git a/lib/data/repositories/character_repository.dart b/lib/data/repositories/character_repository.dart
+index 86cb2d5..d35bc02 100644
+--- a/lib/data/repositories/character_repository.dart
++++ b/lib/data/repositories/character_repository.dart
+@@ -1,4 +1,5 @@
+ import 'package:sqflite/sqflite.dart';
++import '../../core/audio/morse_code_mapper.dart';
+ import '../database/database_helper.dart';
+ import '../models/character.dart';
+ 
+@@ -86,27 +87,15 @@ class CharacterRepository {
+     final existing = await getAllCharacters();
+     if (existing.isNotEmpty) return;
+ 
+-    final morseCode = {
+-      'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.',
+-      'F': '..-.', 'G': '--.', 'H': '....', 'I': '..', 'J': '.---',
+-      'K': '-.-', 'L': '.-..', 'M': '--', 'N': '-.', 'O': '---',
+-      'P': '.--.', 'Q': '--.-', 'R': '.-.', 'S': '...', 'T': '-',
+-      'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-', 'Y': '-.--',
+-      'Z': '--..',
+-    };
+-
+-    final kochSequence = [
+-      'K', 'M', 'R', 'S', 'U', 'A', 'P', 'L', 'W', 'I',
+-      'N', 'J', 'E', 'F', 'O', 'Y', 'V', 'G', 'Q', 'Z',
+-      'H', 'B', 'D', 'X', 'C',
+-    ];
++    final mapper = MorseCodeMapper();
++    final kochSequence = MorseCodeMapper.kochSequence;
+ 
+     for (int i = 0; i < kochSequence.length; i++) {
+       final symbol = kochSequence[i];
+       await insertCharacter(Character(
+         id: 'char_$symbol',
+         symbol: symbol,
+-        morsePattern: morseCode[symbol] ?? '',
++        morsePattern: mapper.getMorsePattern(symbol) ?? '',
+         kochOrder: i,
+         isUnlocked: i < 2,
+       ));
+diff --git a/lib/domain/koch/qso_service.dart b/lib/domain/koch/qso_service.dart
+index c83f47b..17f8598 100644
+--- a/lib/domain/koch/qso_service.dart
++++ b/lib/domain/koch/qso_service.dart
+@@ -1,3 +1,4 @@
++import '../../core/audio/morse_code_mapper.dart';
+ import '../../data/models/word.dart';
+ 
+ class QSOService {
+@@ -45,6 +46,6 @@ class QSOService {
+   }
+ 
+   String phraseToMorse(String text) {
+-    return Word.textToMorse(text);
++    return MorseCodeMapper().wordToMorse(text);
+   }
+ }
+\ No newline at end of file
+diff --git a/lib/main.dart b/lib/main.dart
+index 54a0df5..6f9fd84 100644
+--- a/lib/main.dart
++++ b/lib/main.dart
+@@ -1,13 +1,12 @@
+-import 'dart:io';
+-
+ import 'package:flutter/material.dart';
+ import 'package:flutter_bloc/flutter_bloc.dart';
+ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+ import 'package:window_manager/window_manager.dart';
+-import 'core/audio/morse_code_service.dart';
++import 'core/audio/audio_playback_service.dart';
++import 'core/audio/morse_code_mapper.dart';
++import 'core/audio/morse_code_coordinator.dart';
+ import 'core/logging/logger.dart';
+ import 'core/logging/log_constants.dart';
+-import 'core/platform/app_initializer.dart';
+ import 'data/repositories/user_progress_repository.dart';
+ import 'ui/screens/onboarding_screen.dart';
+ import 'data/repositories/character_repository.dart';
+@@ -23,31 +22,19 @@ import 'ui/screens/progress_screen.dart';
+ import 'ui/screens/settings_screen.dart';
+ import 'ui/screens/word_practice_screen.dart';
+ 
+-bool get _isDesktop {
+-  return Platform.isLinux || Platform.isMacOS || Platform.isWindows;
+-}
+-
+ Future<void> main() async {
+   WidgetsFlutterBinding.ensureInitialized();
++  await windowManager.ensureInitialized();
++  sqfliteFfiInit();
++  databaseFactory = databaseFactoryFfi;
+ 
+-  final initializer = AppInitializer(
+-    initializeWindowManager: windowManager.ensureInitialized,
+-    initializeSqfliteFfi: () {
+-      sqfliteFfiInit();
+-      databaseFactory = databaseFactoryFfi;
+-    },
+-    initializeLogger: () async {
+-      await Logger.instance.initialize();
+-      await Logger.instance.info(LogCategory.general, 'Application starting');
+-    },
+-    initializeCharacterRepo: () async {
+-      final characterRepo = CharacterRepository();
+-      await characterRepo.initializeCharacters();
+-    },
+-    isDesktop: _isDesktop,
+-  );
++  // Initialize logger
++  await Logger.instance.initialize();
++  await Logger.instance.info(LogCategory.general, 'Application starting');
+ 
+-  await initializer.initialize();
++  // Initialize database with default characters
++  final characterRepo = CharacterRepository();
++  await characterRepo.initializeCharacters();
+ 
+   runApp(const MorseTrainerApp());
+ }
+@@ -59,12 +46,22 @@ class MorseTrainerApp extends StatelessWidget {
+   Widget build(BuildContext context) {
+     return MultiRepositoryProvider(
+       providers: [
++        RepositoryProvider(create: (_) => MorseCodeMapper()),
+         RepositoryProvider(create: (_) => CharacterRepository()),
+         RepositoryProvider(create: (_) => UserProgressRepository()),
+         RepositoryProvider(create: (_) => SettingsRepository()),
+         RepositoryProvider(
+           create: (context) => GamificationService(context.read<UserProgressRepository>()),
+         ),
++        RepositoryProvider<AudioPlaybackService>(
++          create: (_) => AudioPlaybackService(),
++        ),
++        RepositoryProvider<MorseCodeCoordinator>(
++          create: (context) => MorseCodeCoordinator(
++            context.read<MorseCodeMapper>(),
++            context.read<AudioPlaybackService>(),
++          ),
++        ),
+       ],
+       child: MultiBlocProvider(
+         providers: [
+@@ -83,7 +80,7 @@ class MorseTrainerApp extends StatelessWidget {
+           BlocProvider(
+             create: (context) => SettingsBloc(
+               context.read<SettingsRepository>(),
+-              audioService: AudioPlaybackService(),
++              audioService: context.read<AudioPlaybackService>(),
+             )..add(const LoadSettings()),
+           ),
+         ],
+@@ -184,9 +181,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Wi
+   void initState() {
+     super.initState();
+     WidgetsBinding.instance.addObserver(this);
+-    if (_isDesktop) {
+-      windowManager.addListener(this);
+-    }
++    windowManager.addListener(this);
+     _screens = [
+       const PracticeScreen(),
+       const ProgressScreen(),
+@@ -217,25 +212,25 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Wi
+   @override
+   void dispose() {
+     WidgetsBinding.instance.removeObserver(this);
+-    if (_isDesktop) {
+-      windowManager.removeListener(this);
+-    }
+-    AudioPlaybackService().dispose();
++    windowManager.removeListener(this);
+     super.dispose();
+   }
+ 
+   @override
+   void onWindowClose() async {
+-    if (!_isDesktop) return;
+     // Dispose audio BEFORE window closes - critical for avoiding segfault
+-    await AudioPlaybackService().dispose();
++    if (mounted) {
++      await context.read<AudioPlaybackService>().dispose();
++    }
+     await windowManager.destroy();
+   }
+ 
+   @override
+   void didChangeAppLifecycleState(AppLifecycleState state) {
+     if (state == AppLifecycleState.detached) {
+-      AudioPlaybackService().dispose();
++      if (mounted) {
++        context.read<AudioPlaybackService>().dispose();
++      }
+     }
+   }
+ 
+@@ -255,42 +250,34 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver, Wi
+       );
+     }
+ 
+-    return BlocBuilder<PracticeSessionBloc, PracticeSessionState>(
+-      builder: (context, sessionState) {
+-        final hideBottomNav = _currentIndex == 0 && sessionState is PracticeSessionActive;
+-
+-        return Scaffold(
+-          body: _screens[_currentIndex],
+-          bottomNavigationBar: hideBottomNav
+-              ? null
+-              : NavigationBar(
+-                  selectedIndex: _currentIndex,
+-                  onDestinationSelected: (index) {
+-                    setState(() {
+-                      _currentIndex = index;
+-                    });
+-                  },
+-                  destinations: const [
+-                    NavigationDestination(
+-                      icon: Icon(Icons.school),
+-                      label: 'Practice',
+-                    ),
+-                    NavigationDestination(
+-                      icon: Icon(Icons.bar_chart),
+-                      label: 'Progress',
+-                    ),
+-                    NavigationDestination(
+-                      icon: Icon(Icons.settings),
+-                      label: 'Settings',
+-                    ),
+-                    NavigationDestination(
+-                      icon: Icon(Icons.help_outline),
+-                      label: 'Help',
+-                    ),
+-                  ],
+-                ),
+-        );
+-      },
++    return Scaffold(
++      body: _screens[_currentIndex],
++      bottomNavigationBar: NavigationBar(
++        selectedIndex: _currentIndex,
++        onDestinationSelected: (index) {
++          setState(() {
++            _currentIndex = index;
++          });
++        },
++        destinations: const [
++          NavigationDestination(
++            icon: Icon(Icons.school),
++            label: 'Practice',
++          ),
++          NavigationDestination(
++            icon: Icon(Icons.bar_chart),
++            label: 'Progress',
++          ),
++          NavigationDestination(
++            icon: Icon(Icons.settings),
++            label: 'Settings',
++          ),
++          NavigationDestination(
++            icon: Icon(Icons.help_outline),
++            label: 'Help',
++          ),
++        ],
++      ),
+     );
+   }
+ }
+diff --git a/lib/ui/bloc/practice_session_bloc.dart b/lib/ui/bloc/practice_session_bloc.dart
+index a11c525..95e68c9 100644
+--- a/lib/ui/bloc/practice_session_bloc.dart
++++ b/lib/ui/bloc/practice_session_bloc.dart
+@@ -47,10 +47,6 @@ class CompleteOnboarding extends PracticeSessionEvent {
+   const CompleteOnboarding({this.skipIntro = false});
+ }
+ 
+-class EndSession extends PracticeSessionEvent {
+-  const EndSession();
+-}
+-
+ // States
+ abstract class PracticeSessionState extends Equatable {
+   const PracticeSessionState();
+@@ -169,7 +165,6 @@ class PracticeSessionBloc
+     on<NextCharacter>(_onNextCharacter, transformer: sequential());
+     on<PlayCurrentCharacter>(_onPlayCurrentCharacter, transformer: sequential());
+     on<CompleteOnboarding>(_onCompleteOnboarding, transformer: sequential());
+-    on<EndSession>(_onEndSession, transformer: sequential());
+   }
+ 
+   Future<void> _onCompleteOnboarding(
+@@ -185,13 +180,6 @@ class PracticeSessionBloc
+     );
+   }
+ 
+-  void _onEndSession(
+-    EndSession event,
+-    Emitter<PracticeSessionState> emit,
+-  ) {
+-    emit(PracticeSessionInitial());
+-  }
+-
+   Future<void> _onStartSession(
+     StartSession event,
+     Emitter<PracticeSessionState> emit,
+diff --git a/lib/ui/bloc/settings_bloc.dart b/lib/ui/bloc/settings_bloc.dart
+index 1fdc1fa..ba72b9d 100644
+--- a/lib/ui/bloc/settings_bloc.dart
++++ b/lib/ui/bloc/settings_bloc.dart
+@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
+ import 'package:equatable/equatable.dart';
+ import '../../data/models/settings.dart';
+ import '../../data/repositories/settings_repository.dart';
+-import '../../core/audio/morse_code_service.dart';
++import '../../core/audio/audio_service.dart';
+ 
+ // Events
+ abstract class SettingsEvent extends Equatable {
+@@ -91,11 +91,11 @@ class SettingsError extends SettingsState {
+ // BLoC
+ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
+   final SettingsRepository _settingsRepository;
+-  final AudioPlaybackService? _audioService;
++  final AudioService? _audioService;
+ 
+   SettingsBloc(
+     this._settingsRepository, {
+-    AudioPlaybackService? audioService,
++    AudioService? audioService,
+   })  : _audioService = audioService,
+         super(SettingsInitial()) {
+     on<LoadSettings>(_onLoadSettings);
+diff --git a/lib/ui/screens/help_screen.dart b/lib/ui/screens/help_screen.dart
+index 0064ec0..7d8360f 100644
+--- a/lib/ui/screens/help_screen.dart
++++ b/lib/ui/screens/help_screen.dart
+@@ -98,10 +98,7 @@ class HelpScreen extends StatelessWidget {
+                 '→ Check your device volume and that Sound Effects are enabled in Settings.\n\n'
+                 'Keyboard not responding?\n'
+                 '→ Make sure the practice screen is focused (tap the blue circle) and '
+-                'you are using the Spacebar.\n\n'
+-                'Need to report a bug?\n'
+-                '→ Go to Settings → Report Issue on GitHub. The app will open your browser '
+-                'with a bug report template that explains how to attach your log file.',
++                'you are using the Spacebar.',
+           ),
+         ],
+       ),
+diff --git a/lib/ui/screens/onboarding_screen.dart b/lib/ui/screens/onboarding_screen.dart
+index 4d16c1d..53d61c6 100644
+--- a/lib/ui/screens/onboarding_screen.dart
++++ b/lib/ui/screens/onboarding_screen.dart
+@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
+ import 'package:flutter_bloc/flutter_bloc.dart';
+ import '../bloc/settings_bloc.dart';
+ import '../bloc/practice_session_bloc.dart';
+-import '../../core/audio/morse_code_service.dart';
++import '../../core/audio/audio_playback_service.dart';
++import '../../core/audio/morse_code_coordinator.dart';
++import '../../core/audio/morse_code_mapper.dart';
+ 
+ class OnboardingScreen extends StatefulWidget {
+   final VoidCallback onComplete;
+@@ -272,7 +274,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
+     await audio.initialize();
+     audio.setWpm(_selectedWpm);
+     audio.setToneFrequency(_selectedTone);
+-    await audio.playCharacter('K');
++    final coordinator = MorseCodeCoordinator(MorseCodeMapper(), audio);
++    await coordinator.playCharacters('K');
+   }
+ 
+   void _completeOnboarding() {
+diff --git a/lib/ui/screens/practice_screen.dart b/lib/ui/screens/practice_screen.dart
+index 48a58bd..6fe6e28 100644
+--- a/lib/ui/screens/practice_screen.dart
++++ b/lib/ui/screens/practice_screen.dart
+@@ -4,8 +4,10 @@ import 'package:flutter/services.dart';
+ import 'package:flutter_bloc/flutter_bloc.dart';
+ import '../bloc/practice_session_bloc.dart';
+ import '../bloc/settings_bloc.dart';
+-import '../../core/audio/morse_code_service.dart';
++import '../../core/audio/audio_playback_service.dart';
+ import '../../core/audio/audio_service.dart';
++import '../../core/audio/morse_code_coordinator.dart';
++import '../../core/audio/morse_code_mapper.dart';
+ import '../../core/input/keyboard_input_handler.dart';
+ import '../../core/input/morse_command_handler.dart';
+ import '../../core/logging/logger.dart';
+@@ -15,8 +17,9 @@ import '../widgets/home_app_bar.dart';
+ 
+ class PracticeScreen extends StatefulWidget {
+   final AudioService? audioService;
++  final MorseCodeCoordinator? coordinator;
+ 
+-  const PracticeScreen({super.key, this.audioService});
++  const PracticeScreen({super.key, this.audioService, this.coordinator});
+ 
+   @override
+   State<PracticeScreen> createState() => _PracticeScreenState();
+@@ -24,6 +27,7 @@ class PracticeScreen extends StatefulWidget {
+ 
+ class _PracticeScreenState extends State<PracticeScreen> {
+   late final AudioService _audioService;
++  late final MorseCodeCoordinator _coordinator;
+   KeyboardKeyerHandler? _keyerHandler;
+   MorseCommandHandler? _commandHandler;
+   String _currentPattern = '';
+@@ -47,6 +51,8 @@ class _PracticeScreenState extends State<PracticeScreen> {
+   void initState() {
+     super.initState();
+     _audioService = widget.audioService ?? AudioPlaybackService();
++    _coordinator = widget.coordinator ??
++        MorseCodeCoordinator(context.read<MorseCodeMapper>(), _audioService);
+     _initAudio();
+     _loadUserLevel();
+   }
+@@ -258,9 +264,14 @@ class _PracticeScreenState extends State<PracticeScreen> {
+       enableFlash = settingsState.settings.enableScreenFlash;
+     }
+ 
+-    _audioService.playCharacter(character, screenFlash: enableFlash, onFlash: (on) {
+-      if (mounted) setState(() => _screenFlash = on);
+-    }).then((_) {
++    void Function(bool)? flashCallback;
++    if (enableFlash) {
++      flashCallback = (on) {
++        if (mounted) setState(() => _screenFlash = on);
++      };
++    }
++
++    _coordinator.playCharacters(character, onFlash: flashCallback).then((_) {
+       if (mounted) {
+         setState(() {
+           _isAudioPlaying = false;
+diff --git a/lib/ui/screens/settings_screen.dart b/lib/ui/screens/settings_screen.dart
+index eea429c..d4055e0 100644
+--- a/lib/ui/screens/settings_screen.dart
++++ b/lib/ui/screens/settings_screen.dart
+@@ -141,9 +141,9 @@ class SettingsScreen extends StatelessWidget {
+         ),
+         ListTile(
+           leading: const Icon(Icons.bug_report),
+-          title: const Text('Report Issue on GitHub'),
+-          subtitle: const Text('Open GitHub with log location pre-filled'),
+-          onTap: () => _openGitHubIssue(context),
++          title: const Text('Send Logs'),
++          subtitle: const Text('Open email with log file for debugging'),
++          onTap: () => _sendLogs(context),
+         ),
+         _buildSectionHeader('Timing Info'),
+         const Card(
+@@ -321,24 +321,16 @@ class SettingsScreen extends StatelessWidget {
+     }
+   }
+ 
+-  Future<void> _openGitHubIssue(BuildContext context) async {
+-    final success = await Logger.instance.openGitHubIssue();
++  Future<void> _sendLogs(BuildContext context) async {
++    final success = await Logger.instance.sendLogs();
+     if (context.mounted) {
+       if (success) {
+         ScaffoldMessenger.of(context).showSnackBar(
+-          const SnackBar(content: Text('GitHub opened in browser')),
++          const SnackBar(content: Text('Email client opened')),
+         );
+       } else {
+         ScaffoldMessenger.of(context).showSnackBar(
+-          SnackBar(
+-            content: Text('Could not open browser. Log file: ${Logger.instance.currentLogPath}'),
+-            action: SnackBarAction(
+-              label: 'Copy Path',
+-              onPressed: () {
+-                // Clipboard not implemented; user can note path manually
+-              },
+-            ),
+-          ),
++          SnackBar(content: Text('Could not open email. Log file: ${Logger.instance.currentLogPath}')),
+         );
+       }
+     }
+diff --git a/lib/ui/screens/word_practice_screen.dart b/lib/ui/screens/word_practice_screen.dart
+index 43990d0..aa3e65f 100644
+--- a/lib/ui/screens/word_practice_screen.dart
++++ b/lib/ui/screens/word_practice_screen.dart
+@@ -1,8 +1,11 @@
+ import 'dart:async';
+ import 'package:flutter/material.dart';
+ import 'package:flutter/services.dart';
++import 'package:flutter_bloc/flutter_bloc.dart';
++import '../../core/audio/audio_playback_service.dart';
+ import '../../core/audio/audio_service.dart';
+-import '../../core/audio/morse_code_service.dart';
++import '../../core/audio/morse_code_coordinator.dart';
++import '../../core/audio/morse_code_mapper.dart';
+ import '../../core/input/keyboard_input_handler.dart';
+ import '../../data/models/word.dart';
+ import '../../data/repositories/word_familiarity_repository.dart';
+@@ -13,9 +16,15 @@ enum WordPhase { listening, keying, feedback }
+ 
+ class WordPracticeScreen extends StatefulWidget {
+   final AudioService? audioService;
++  final MorseCodeCoordinator? coordinator;
+   final WordFamiliarityRepository? familiarityRepository;
+ 
+-  const WordPracticeScreen({super.key, this.audioService, this.familiarityRepository});
++  const WordPracticeScreen({
++    super.key,
++    this.audioService,
++    this.coordinator,
++    this.familiarityRepository,
++  });
+ 
+   @override
+   State<WordPracticeScreen> createState() => _WordPracticeScreenState();
+@@ -24,6 +33,7 @@ class WordPracticeScreen extends StatefulWidget {
+ class _WordPracticeScreenState extends State<WordPracticeScreen> {
+   final WordPracticeService _wordService = WordPracticeService();
+   late final AudioService _audioService;
++  late final MorseCodeCoordinator _coordinator;
+   late final WordFamiliarityRepository _familiarityRepo;
+   List<Word>? _words;
+   int _currentIndex = 0;
+@@ -41,6 +51,8 @@ class _WordPracticeScreenState extends State<WordPracticeScreen> {
+   void initState() {
+     super.initState();
+     _audioService = widget.audioService ?? AudioPlaybackService();
++    _coordinator = widget.coordinator ??
++        MorseCodeCoordinator(context.read<MorseCodeMapper>(), _audioService);
+     _familiarityRepo = widget.familiarityRepository ?? WordFamiliarityRepository();
+     _initWords();
+   }
+@@ -55,7 +67,9 @@ class _WordPracticeScreenState extends State<WordPracticeScreen> {
+ 
+   void _initKeyer() {
+     _keyerHandler = KeyboardKeyerHandler(
+-      timingEngine: _audioService.timingEngine,
++      dotDurationMs: _audioService.dotDurationMs,
++      dashDurationMs: _audioService.dashDurationMs,
++      interWordThresholdMs: _audioService.dotDurationMs * 9,
+       onPatternComplete: (pattern) {
+         // Auto-submit on word boundary (long pause)
+         _submitPattern();
+@@ -93,7 +107,7 @@ class _WordPracticeScreenState extends State<WordPracticeScreen> {
+     }
+ 
+     await _audioService.initialize();
+-    await _audioService.playWord(word.text);
++    await _coordinator.playCharacters(word.text);
+ 
+     if (mounted) {
+       setState(() {
+@@ -162,7 +176,7 @@ class _WordPracticeScreenState extends State<WordPracticeScreen> {
+       _audioService.setWpm(originalWpm * 0.8);
+     }
+ 
+-    await _audioService.playWord(word.text);
++    await _coordinator.playCharacters(word.text);
+ 
+     if (_isCorrect) {
+       _audioService.setWpm(originalWpm);
+diff --git a/lib/ui/widgets/home_app_bar.dart b/lib/ui/widgets/home_app_bar.dart
+index 7819052..543b7d0 100644
+--- a/lib/ui/widgets/home_app_bar.dart
++++ b/lib/ui/widgets/home_app_bar.dart
+@@ -20,25 +20,20 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
+ 
+   @override
+   Widget build(BuildContext context) {
+-    final showBack = Navigator.of(context).canPop();
+-
+     return AppBar(
+       title: Text(title),
+-      leading: showBack
+-          ? IconButton(
+-              icon: const Icon(Icons.arrow_back),
+-              tooltip: 'Back',
+-              onPressed: () async {
+-                if (onHomePressed != null) {
+-                  await onHomePressed!();
+-                }
+-                if (context.mounted) {
+-                  Navigator.of(context).pop();
+-                }
+-              },
+-            )
+-          : null,
+-      automaticallyImplyLeading: false,
++      leading: IconButton(
++        icon: const Icon(Icons.arrow_back),
++        tooltip: 'Home',
++        onPressed: () async {
++          if (onHomePressed != null) {
++            await onHomePressed!();
++          }
++          if (context.mounted) {
++            Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
++          }
++        },
++      ),
+       actions: [
+         if (extraActions != null) ...extraActions!,
+         if (showNavIcons) ...[
+diff --git a/scripts/worktree.sh b/scripts/worktree.sh
+deleted file mode 100755
+index 5f57361..0000000
+--- a/scripts/worktree.sh
++++ /dev/null
+@@ -1,16 +0,0 @@
+-#!/usr/bin/env bash
+-set -euo pipefail
+-
+-# Project worktree helper — fits any repo
+-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+-FEATURE="${1:-$(whoami)-$(date +%s)}"
+-BRANCH="feat/${FEATURE}"
+-WTDIR="${REPO_ROOT}/.claude/worktrees/${FEATURE}"
+-
+-if [ -d "$WTDIR" ]; then
+-    echo "Worktree already exists at $WTDIR"
+-    exit 1
+-fi
+-
+-git -C "$REPO_ROOT" worktree add "$WTDIR" -b "$BRANCH"
+-echo "$WTDIR"
+diff --git a/specs/009-universal-home-nav/checklists/requirements.md b/specs/009-universal-home-nav/checklists/requirements.md
+new file mode 100644
+index 0000000..80dc9e2
+--- /dev/null
++++ b/specs/009-universal-home-nav/checklists/requirements.md
+@@ -0,0 +1,34 @@
++# Specification Quality Checklist: Universal Home Navigation
++
++**Purpose**: Validate specification completeness and quality before proceeding to planning
++**Created**: 2026-05-08
++**Feature**: [Link to spec.md](../spec.md)
++
++## Content Quality
++
++- [x] No implementation details (languages, frameworks, APIs)
++- [x] Focused on user value and business needs
++- [x] Written for non-technical stakeholders
++- [x] All mandatory sections completed
++
++## Requirement Completeness
++
++- [x] No [NEEDS CLARIFICATION] markers remain
++- [x] Requirements are testable and unambiguous
++- [x] Success criteria are measurable
++- [x] Success criteria are technology-agnostic (no implementation details)
++- [x] All acceptance scenarios are defined
++- [x] Edge cases are identified
++- [x] Scope is clearly bounded
++- [x] Dependencies and assumptions identified
++
++## Feature Readiness
++
++- [x] All functional requirements have clear acceptance criteria
++- [x] User scenarios cover primary flows
++- [x] Feature meets measurable outcomes defined in Success Criteria
++- [x] No implementation details leak into specification
++
++## Notes
++
++All checklist items pass. Specification is ready for `/speckit.clarify` or `/speckit.plan`.
+diff --git a/specs/009-universal-home-nav/spec.md b/specs/009-universal-home-nav/spec.md
+new file mode 100644
+index 0000000..beccfaa
+--- /dev/null
++++ b/specs/009-universal-home-nav/spec.md
+@@ -0,0 +1,106 @@
++# Feature Specification: Universal Home Navigation
++
++**Feature Branch**: `009-universal-home-nav`  
++**Created**: 2026-05-08  
++**Status**: Draft  
++**Input**: User description: "Feature: Universal Home Navigation. As a user, I want a consistent way to return to the home screen from any practice mode so that I can switch modes or exit without system back gestures."
++
++## User Scenarios & Testing *(mandatory)*
++
++### User Story 1 — Home Button on Non-Home Screens (Priority: P1)
++
++A user is on any screen other than the home screen and sees a consistent, visually distinct "<- Home" button in the upper left. Tapping it returns to the home screen cleanly.
++
++**Why this priority**: This is the core behavior of the feature — without a visible and reliable home button, users cannot easily exit practice modes.
++
++**Independent Test**: Can be tested by navigating to any non-home screen and verifying the home button is visible, tappable, and returns to the home screen.
++
++**Acceptance Scenarios**:
++
++1. **Given** I am on any screen that is NOT the home screen, **Then** I see a "<- Home" button in the upper left, **And** it is tappable and visually distinct.
++
++---
++
++### User Story 2 — No Home Button on Home Screen (Priority: P1)
++
++The home button does not appear on the home screen itself, since the user is already there.
++
++**Why this priority**: Showing a home button on the home screen would be confusing and redundant. This is part of the core completeness of the feature.
++
++**Independent Test**: Can be tested by verifying the home button is absent when on the home screen.
++
++**Acceptance Scenarios**:
++
++1. **Given** I am on the home screen, **Then** I do NOT see a "<- Home" button.
++
++---
++
++### User Story 3 — Clean State Reset on Navigation (Priority: P2)
++
++When the user taps "<- Home" from an active practice mode, the app cleanly stops all ongoing activity and saves progress before transitioning.
++
++**Why this priority**: Leaving audio playing or buffers uncleared would degrade user experience. Saving progress ensures learning data is not lost. However, the basic navigation works even without this cleanup.
++
++**Independent Test**: Can be tested by entering Common Words or Decoder mode, tapping "<- Home", and verifying audio stops, buffers clear, and session progress is saved.
++
++**Acceptance Scenarios**:
++
++1. **Given** I am in Common Words or Decoder mode, **When** I tap "<- Home", **Then** I return to the home screen, **And** any active audio stops, **And** any in-progress tapping buffers are cleared, **And** the Smart Repetition Engine saves current session progress.
++
++---
++
++### Edge Cases
++
++- What happens if the user taps "<- Home" while audio is still loading? The audio load is cancelled and the navigation proceeds.
++- What happens if the user double-taps "<- Home" rapidly? Only the first tap is processed; the second is ignored while the transition is in progress.
++- What happens if session save fails due to a storage error? The user is still navigated to the home screen; the failure is logged silently without blocking the UI.
++- What happens on screens that already have a system back button or gesture? The "<- Home" button coexists with system navigation; both lead to the home screen.
++- What happens on tablets or wide screens where the layout differs? The "<- Home" button maintains the same upper-left position and visibility rules regardless of screen size.
++- What happens if the user rotates the device while in a full-screen practice mode? The bottom nav stays hidden, and upper-left home + upper-right icons remain in place.
++- What happens if the user presses the system back button from a tabbed screen? Standard tab back behavior (exits app) — home button is not shown on tabbed screens, so this is unaffected.
++
++## Requirements *(mandatory)*
++
++### Functional Requirements
++
++- **FR-001**: The system MUST display a "<- Home" button in the upper left on every screen except the home screen (practice modes, settings, etc.).
++- **FR-002**: The home button MUST be visually distinct from other UI elements.
++- **FR-003**: The home button MUST be tappable and respond with visual feedback.
++- **FR-004**: The system MUST NOT display the "<- Home" button on the home screen itself.
++- **FR-005**: When the home button is tapped, the system MUST navigate to the home screen.
++- **FR-006**: When navigating home from an active practice mode, the system MUST stop any playing audio.
++- **FR-007**: When navigating home from an active practice mode, the system MUST clear any in-progress tapping buffers or keyer state.
++- **FR-008**: When navigating home from an active practice mode, the system MUST save current session progress to the Smart Repetition Engine before the transition completes.
++- **FR-009**: The system MUST ignore duplicate taps on the home button while a navigation transition is already in progress.
++- **FR-010**: If session save fails, the system MUST still complete navigation to the home screen and log the failure without showing an error to the user.
++- **FR-011**: In full-screen practice/game modes, the system MUST hide the bottom navigation bar and move Practice/Progress/Settings icons to the upper-right AppBar.
++- **FR-012**: The system MUST support the Android system back button/gesture to return home from any non-home screen.
++
++### Key Entities
++
++- **HomeButton**: A persistent navigation control present on all non-home screens. Key attributes: visibility (hidden on home screen), tap target, visual style.
++
++## Success Criteria *(mandatory)*
++
++### Measurable Outcomes
++
++- **SC-001**: Users can return to the home screen from any non-home screen in a single tap.
++- **SC-002**: 100% of non-home screens display the home button; 0% of home screen views display it.
++- **SC-003**: Audio stops within 200 ms of the home button being tapped.
++- **SC-004**: Session progress is saved successfully in ≥ 99% of home navigation events.
++- **SC-005**: Users rate the home navigation as "easy to find" in ≥ 90% of qualitative feedback responses.
++- **SC-006**: Bottom navigation bar is hidden on 100% of full-screen practice/game screens; upper-right icons are visible instead.
++
++## Clarifications
++
++### Session 2026-05-09
++
++- Q: Which screens get the home button vs. existing tabs? → A: Bottom nav bar is hidden in full-screen practice/game modes. Practice/Progress/Settings icons move to upper-right AppBar. Home/back button appears in upper-left. Settings screen also gets home button. Android back gesture/button supported on all non-home screens.
++
++## Assumptions
++
++- The app already has a home screen defined as the primary landing view.
++- The existing navigation system supports programmatic routing to the home screen.
++- The app has an active audio playback service that can be stopped on demand.
++- The Smart Repetition Engine supports saving partial session progress.
++- The "<- Home" button uses standard iconography (back arrow + "Home" text) and matches existing app theming.
+diff --git a/specs/009-universal-home-nav/tasks.md b/specs/009-universal-home-nav/tasks.md
+new file mode 100644
+index 0000000..5e7121e
+--- /dev/null
++++ b/specs/009-universal-home-nav/tasks.md
+@@ -0,0 +1,96 @@
++# Task List: Universal Home Navigation
++
++**Feature**: 009-universal-home-nav  
++**Branch**: `009-universal-home-nav`  
++**Generated**: 2026-05-09  
++**Total Tasks**: 16  
++
++---
++
++## Phase 1: Setup
++
++No new dependencies or project structure changes needed. This is a UI-only feature using existing Flutter/Bloc infrastructure.
++
++- [x] T001 Verify project builds cleanly on current branch (`flutter build linux`)
++
++---
++
++## Phase 2: Foundational — Reusable Navigation Widget
++
++**Goal**: Create a `HomeAppBar` widget that all non-home screens can reuse. It shows a home button on the left and optionally nav icons on the right. Hide bottom nav on full-screen practice modes.
++
++**Independent Test**: Widget test can instantiate `HomeAppBar` in isolation and assert icon visibility.
++
++- [x] T002 [P] Create `lib/ui/widgets/home_app_bar.dart` — reusable AppBar with home button + optional nav icons
++- [x] T003 Add unit test `test/unit/home_app_bar_test.dart` — assert home button visible, nav icons visible when `showNavIcons=true`
++- [x] T004 Add unit test `test/unit/home_app_bar_test.dart` — assert home button calls `onHomePressed` callback
++
++---
++
++## Phase 3: User Story 1 — Home Button on Non-Home Screens (P1)
++
++**Goal**: Every non-home screen shows a "<- Home" button in the upper-left AppBar. Full-screen practice modes hide bottom nav and show Practice/Progress/Settings icons in upper-right.
++
++**Independent Test**: Navigate to each non-home screen; verify home button is visible and tappable.
++
++- [x] T005 [US1] Update `lib/ui/screens/practice_screen.dart` — replace existing AppBar with `HomeAppBar`, hide bottom nav via `Scaffold`
++- [x] T006 [US1] Update `lib/ui/screens/progress_screen.dart` — add `HomeAppBar` with home button
++- [x] T007 [US1] Update `lib/ui/screens/settings_screen.dart` — add `HomeAppBar` with home button
++- [x] T008 [US1] Update `lib/ui/screens/word_practice_screen.dart` — add `HomeAppBar` with home + nav icons, hide bottom nav
++- [x] T009 [US1] Update `lib/ui/screens/qso_practice_screen.dart` — add `HomeAppBar` with home + nav icons, hide bottom nav
++- [x] T010 [P] [US1] Update `lib/main.dart` — add `/settings` route if missing; verify `MaterialApp` routes
++
++---
++
++## Phase 4: User Story 2 — No Home Button on Home Screen (P1)
++
++**Goal**: Home screen does NOT show a home button. Bottom nav remains visible.
++
++**Independent Test**: Verify home button is absent on home screen widget tree.
++
++- [x] T011 [US2] Verify `lib/ui/screens/home_screen.dart` (or `main.dart` `HomeScreen`) does NOT show `HomeAppBar` home button
++
++---
++
++## Phase 5: User Story 3 — Clean State Reset on Navigation (P2)
++
++**Goal**: Tapping home stops audio, clears keyer state, saves session progress, then navigates.
++
++**Independent Test**: Integration test: start practice, key a partial pattern, tap home. Assert audio stopped, pattern cleared.
++
++- [x] T012 [US3] Add cleanup logic to `HomeAppBar.onHomePressed` — call `AudioPlaybackService().keyerUp()`, `KeyboardKeyerHandler.clearPattern()`, session save
++- [x] T013 [US3] Add integration test `test/integration/navigation_flow_test.dart` — audio stops within 200ms of home tap
++- [x] T014 [US3] Add integration test `test/integration/navigation_flow_test.dart` — partial keyer pattern cleared on home tap
++- [x] T015 [P] [US3] Add Android back button support in `lib/main.dart` — wrap with `PopScope` to intercept back gesture on non-home screens
++
++---
++
++## Phase 6: Polish & Cross-Cutting
++
++- [x] T016 Run full test suite (`flutter test`) and verify all pass
++
++---
++
++## Dependencies
++
++```text
++T001 → T002
++T002 → T005, T006, T007, T008, T009
++T005 → T012
++T012 → T013, T014
++T015 can run in parallel with T005-T009
++```
++
++## Parallel Execution Examples
++
++**Story 1 parallel**: T005, T006, T007, T008, T009, T010 can all run together once T002 is done.
++
++## Implementation Strategy
++
++1. **MVP**: T002 (widget) + T005-T007 (3 core screens) → testable nav flow
++2. **Full practice modes**: T008-T009 (word/QSO screens) + T012 (cleanup)
++3. **Polish**: T013-T015 (tests + Android back)
++
++## Suggested Next Command
++
++`/speckit.implement --from T001`
+diff --git a/specs/010-central-morse-timing/spec.md b/specs/010-central-morse-timing/spec.md
+new file mode 100644
+index 0000000..53460d7
+--- /dev/null
++++ b/specs/010-central-morse-timing/spec.md
+@@ -0,0 +1,87 @@
++# Feature Specification: Central Morse Timing Module
++
++**Feature Branch**: `010-central-morse-timing`
++**Created**: 2026-05-10
++**Status**: Draft
++
++## User Scenarios & Testing *(mandatory)*
++
++### User Story 1 — Single Source of Truth (Priority: P1)
++
++As a developer, I want all Morse timing computed in one place so that changing WPM updates playback, keyer thresholds, and UI consistently.
++
++**Independent Test**: Unit test verifies `MorseTimingEngine` outputs correct durations at 20 WPM.
++
++**Acceptance Scenarios**:
++
++1. **Given** WPM=20 and effWPM=20, **When** timing engine computes durations, **Then** dot=60ms, dash=180ms, intra-char=60ms, inter-char=180ms, inter-word=420ms.
++2. **Given** WPM=20 and effWPM=10, **When** timing engine computes durations, **Then** dot and dash stay at 60ms/180ms, **And** inter-char and inter-word expand per Farnsworth formula.
++
++---
++
++### User Story 2 — Keyer Threshold Synchronization (Priority: P1)
++
++As a learner, I want keyer dot/dash classification and auto-submit thresholds to match the audio playback timing exactly, so my keyed input is judged against the same standard I hear.
++
++**Independent Test**: Unit test: keyer threshold at 20 WPM equals 3× dot duration from timing engine.
++
++**Acceptance Scenarios**:
++
++1. **Given** timing engine at 20 WPM, **When** keyer requests dot/dash threshold, **Then** threshold = 180ms (3 dits).
++2. **Given** timing engine at 20 WPM, **When** keyer requests inter-letter threshold, **Then** threshold = 180ms (3 dits).
++3. **Given** timing engine at 20 WPM, **When** keyer requests inter-word threshold, **Then** threshold = 540ms (9 dits).
++
++---
++
++### User Story 3 — Zero Drift Guarantee (Priority: P1)
++
++As a developer, I want a guarantee that playback timing and keyer thresholds never drift, so bug reports about "keyer too strict/loose" disappear.
++
++**Independent Test**: Regression test: change WPM, verify keyer threshold and playback dot duration both update proportionally.
++
++**Acceptance Scenarios**:
++
++1. **Given** WPM changed from 20 to 15, **When** timing engine recomputes, **Then** dot duration becomes 80ms, **And** keyer dot/dash threshold becomes 240ms (still 3× dot).
++
++---
++
++## Requirements *(mandatory)*
++
++### Functional Requirements
++
++- **FR-001**: `MorseTimingEngine` MUST compute `dotDurationMs` as `1200 / WPM` rounded to nearest integer.
++- **FR-002**: `MorseTimingEngine` MUST compute `dashDurationMs` as `dotDurationMs × 3`.
++- **FR-003**: `MorseTimingEngine` MUST compute `intraCharacterSpaceMs` as `dotDurationMs × 1`.
++- **FR-004**: `MorseTimingEngine` MUST compute `interCharacterSpaceMs` using ARRL Farnsworth formula when `effWPM < WPM`, otherwise `dotDurationMs × 3`. Result rounded to nearest integer ms.
++- **FR-005**: `MorseTimingEngine` MUST compute `interWordSpaceMs` using ARRL Farnsworth formula when `effWPM < WPM`, otherwise `dotDurationMs × 7`. Result rounded to nearest integer ms. Extra word space (default 0 ms) added on top.
++- **FR-006**: `MorseTimingEngine` MUST expose `keyerDotDashThresholdMs` as `dotDurationMs × 3`.
++- **FR-007**: `MorseTimingEngine` MUST expose `keyerInterLetterThresholdMs` as `dotDurationMs × 3`.
++- **FR-008**: `MorseTimingEngine` MUST expose `keyerInterWordThresholdMs` as `dotDurationMs × 9`.
++- **FR-009**: `AudioPlaybackService` MUST read all timing values from `MorseTimingEngine` and MUST NOT compute durations internally.
++- **FR-010**: `KeyboardKeyerHandler` MUST accept a `MorseTimingEngine` instance and read thresholds from it.
++- **FR-010a**: `GameControllerKeyerHandler` MUST accept a `MorseTimingEngine` instance and read thresholds from it.
++- **FR-010b**: `AudioKeyerHandler` MUST accept a `MorseTimingEngine` instance and read thresholds from it.
++- **FR-011**: Existing tests MUST be updated to assert against `MorseTimingEngine` values rather than hardcoded constants.
++- **FR-012**: `WpmCalculator` MUST be removed; all timing logic consolidated into `MorseTimingEngine`.
++- **FR-013**: `AudioPlaybackService.playWord` MUST use `interCharacterSpaceMs` (3 dits) between letters, not `intraCharacterSpaceMs * 2` (incorrect 5 dits).
++
++### Key Entities
++
++- **MorseTimingEngine**: Immutable timing calculator. Fields: wpm, effWpm, extraWordSpace (default 0). Computed getters for all durations and thresholds.
++- **AudioPlaybackService**: Reads timing from `MorseTimingEngine`. No internal timing calculations.
++- **KeyboardKeyerHandler**: Reads dot/dash, inter-letter, inter-word thresholds from `MorseTimingEngine`.
++- **GameControllerKeyerHandler**: Reads thresholds from `MorseTimingEngine`.
++- **AudioKeyerHandler**: Reads thresholds from `MorseTimingEngine`.
++- **WpmCalculator**: Replaced by `MorseTimingEngine`.
++
++## Success Criteria *(mandatory)*
++
++- **SC-001**: Changing WPM in one place updates playback timing and keyer thresholds identically.
++- **SC-002**: 100% of Morse timing constants in codebase come from `MorseTimingEngine`; zero hardcoded timing outside engine and tests.
++- **SC-004**: `AudioPlaybackService.playWord` inter-letter gap equals 3 dits (interCharacterSpaceMs), not 5 dits.
++- **SC-003**: All existing tests pass after refactor with no behavioral changes.
++
++## Assumptions
++
++- ARRL PARIS standard is the correct formula for all timing.
++- Rounding to nearest integer ms is acceptable for all durations.
+diff --git a/specs/023-goal-setting/spec.md b/specs/023-goal-setting/spec.md
+deleted file mode 100644
+index 2189d31..0000000
+--- a/specs/023-goal-setting/spec.md
++++ /dev/null
+@@ -1,233 +0,0 @@
+-# Feature Specification: Goal Setting and Personalized Learning Paths
+-
+-**Feature Branch**: `023-goal-setting`
+-**Created**: 2026-05-23
+-**Status**: Draft
+-**Input**: User description: "Create a feature that lets us define goals for users and help them pursue those goals. Some users are new to CW, others are brushing up or starting at a different level."
+-
+-## User Scenarios & Testing *(mandatory)*
+-
+-### User Story 1 — Pick a Learning Path (Priority: P1)
+-
+-A new user (or existing user) wants to set a clear direction for their Morse code learning. They are presented with 3–4 predefined goal paths based on their experience level, pick one, and see their first milestone.
+-
+-**Why this priority**: Without a clear goal, learners drift between modes without a sense of direction or accomplishment. A path provides motivation and structure.
+-
+-**Independent Test**: Can be tested by opening the goal selection screen, picking a path, and verifying the progress screen shows the active goal.
+-
+-**Acceptance Scenarios**:
+-
+-1. **Given** the user has not yet selected a goal path, **When** they visit the Progress screen, **Then** they see a "Choose Your Path" card prompting them to select one.
+-2. **Given** the user taps "Choose Your Path", **When** the Goal Selection screen opens, **Then** they see all available paths with descriptions and milestone counts.
+-3. **Given** the user selects a path, **When** they confirm, **Then** the path is saved as their active goal, **And** the first milestone is shown on the Progress screen.
+-
+----
+-
+-### User Story 2 — Track Milestone Progress (Priority: P1)
+-
+-A learner with an active goal path sees their current milestone and how close they are to completing it. After each practice session, the app checks whether the milestone criteria were met.
+-
+-**Why this priority**: Visibility into progress keeps learners motivated. Checking milestones automatically after sessions removes manual tracking friction.
+-
+-**Independent Test**: Can be tested by completing a practice session that meets a milestone criterion and verifying the milestone is marked complete.
+-
+-**Acceptance Scenarios**:
+-
+-1. **Given** a user on "Complete the Alphabet & Numbers" has completed 5/6 Koch letters in Level 1, **When** they finish another session with the 6th letter at 80% accuracy, **Then** Milestone 2 ("Complete Level 1") is marked complete.
+-2. **Given** a milestone is completed, **When** the user views the Progress screen, **Then** they see a celebratory indicator and the next milestone is displayed.
+-3. **Given** all milestones in a path are completed, **When** the user views the Progress screen, **Then** they see a "Path Complete!" badge and an option to select a new path.
+-
+----
+-
+-### User Story 3 — Switch or Re-select a Path (Priority: P2)
+-
+-A learner who picked the wrong path, finished a path, or wants a new challenge can switch to a different goal path at any time. Progress on the old path is preserved.
+-
+-**Why this priority**: Learners' needs change. Locking them into one path causes frustration. Preserving old path progress allows them to return later.
+-
+-**Independent Test**: Can be tested by switching from "Complete the Alphabet & Numbers" to "Speed Builder" and verifying the new milestone is tracked independently.
+-
+-**Acceptance Scenarios**:
+-
+-1. **Given** the user has an active path, **When** they tap "Change Goal" on the Progress screen, **Then** the Goal Selection screen opens with their current path highlighted.
+-2. **Given** the user selects a different path, **When** they confirm, **Then** the new path becomes active, **And** the old path's milestone progress is retained in storage.
+-3. **Given** the user re-selects a previously started path, **When** they confirm, **Then** their prior milestone progress is restored.
+-
+----
+-
+-## Goal Paths and Milestones
+-
+-### Path 1: Complete the Alphabet & Numbers
+-
+-**Audience**: New to CW
+-**Description**: Start from zero and build a solid foundation. Learn all 26 letters and digits 0–9 at a comfortable pace.
+-**Bonus Points on Completion**: 500
+-
+-| # | Milestone Title | Completion Criteria |
+-|---|-----------------|---------------------|
+-| 1 | First Steps | Complete 1 session with any 2 Koch letters |
+-| 2 | Level 1 Mastery | Complete all 6 letters in Koch Level 1 with >= 80% average accuracy |
+-| 3 | Halfway There | Complete all 12 letters in Koch Level 2 with >= 80% average accuracy |
+-| 4 | Full Alphabet | Complete all 26 letters with >= 80% average accuracy |
+-| 5 | Number Whiz | Master digits 0–9 with >= 80% average accuracy |
+-| 6 | Mixed Practice | Complete 3 sessions mixing letters and numbers at 10 WPM with >= 80% accuracy |
+-
+-### Path 2: Speed Builder
+-
+-**Audience**: Knows the alphabet, wants speed
+-**Description**: Push your copy speed higher. Focus on clean copy at increasing WPM.
+-**Bonus Points on Completion**: 750
+-
+-| # | Milestone Title | Completion Criteria |
+-|---|-----------------|---------------------|
+-| 1 | 15 WPM Club | Complete 3 sessions at 15 WPM with >= 90% accuracy |
+-| 2 | 20 WPM Club | Complete 3 sessions at 20 WPM with >= 90% accuracy |
+-| 3 | 25 WPM Club | Complete 3 sessions at 25 WPM with >= 90% accuracy |
+-| 4 | 30 WPM Master | Complete 3 sessions at 30 WPM with >= 90% accuracy |
+-
+-### Path 3: Rusty Refresher
+-
+-**Audience**: Experienced but out of practice
+-**Description**: Get back up to speed with an assessment and structured refresh.
+-**Bonus Points on Completion**: 500
+-
+-| # | Milestone Title | Completion Criteria |
+-|---|-----------------|---------------------|
+-| 1 | Assessment | Complete 1 assessment session to determine current level |
+-| 2 | Back in the Saddle | Complete 5 sessions at assessed WPM level |
+-| 3 | Level Up | Complete 3 sessions at +5 WPM from assessed level |
+-| 4 | Consistency King | Maintain a 7-day practice streak |
+-
+-### Path 4: Numbers Specialist
+-
+-**Audience**: Knows letters, struggles with numbers
+-**Description**: Targeted practice on the 10 Morse digits. A common weak point for CW operators.
+-**Bonus Points on Completion**: 500
+-
+-| # | Milestone Title | Completion Criteria |
+-|---|-----------------|---------------------|
+-| 1 | Digits 0–4 | Master digits 0–4 with >= 80% accuracy |
+-| 2 | Digits 5–9 | Master digits 5–9 with >= 80% accuracy |
+-| 3 | Full Range | Master all digits 0–9 with >= 90% accuracy |
+-| 4 | Speedy Numbers | Complete 3 sessions with digits only at 15 WPM with >= 90% accuracy |
+-
+-### Path 5: Prosign Specialist
+-
+-**Audience**: Knows letters and numbers, wants to learn CW shorthand
+-**Description**: Master the most common prosigns and Q-signals used in real CW QSOs. Essential for on-air communication.
+-**Bonus Points on Completion**: 500
+-
+-| # | Milestone Title | Completion Criteria |
+-|---|-----------------|---------------------|
+-| 1 | Q-Codes | Master QSO, QRM, QRN, QSB, QSL, QTH with >= 80% accuracy |
+-| 2 | Prosign Basics | Master AR, AS, SK, BK, KN with >= 80% accuracy |
+-| 3 | Full Prosign Set | Master all common prosigns with >= 90% accuracy |
+-| 4 | QSO Ready | Complete 3 QSO practice sessions using prosigns with >= 90% accuracy |
+-
+----
+-
+-## Requirements *(mandatory)*
+-
+-### Functional Requirements
+-
+-- **FR-001**: System MUST present at least 5 predefined goal paths.
+-- **FR-002**: System MUST allow the user to select one active goal path at a time.
+-- **FR-003**: System MUST display the current milestone and completion status on the Progress screen.
+-- **FR-004**: System MUST automatically check milestone criteria after each completed practice session.
+-- **FR-005**: System MUST award bonus points when a milestone or full path is completed.
+-- **FR-006**: System MUST allow the user to switch goal paths without losing prior path progress.
+-- **FR-007**: System MUST show a celebratory indicator when a milestone is completed.
+-- **FR-008**: System MUST show a "Path Complete" state when all milestones in a path are finished.
+-- **FR-009**: System MUST persist goal path selection and milestone progress across app sessions.
+-
+-### Key Entities
+-
+-- **GoalPath**: A named learning journey containing an ordered list of Milestones.
+-- **Milestone**: A concrete objective with a title, description, criteria type, and target parameters.
+-- **UserGoal**: Tracks which GoalPath is active, current milestone index, per-milestone completion status, and completion timestamps.
+-- **MilestoneCriteria**: An enum defining how completion is checked (e.g., `kochLevelAccuracy`, `sessionsAtWpm`, `streakDays`, `assessmentComplete`).
+-
+----
+-
+-## Success Criteria *(mandatory)*
+-
+-### Measurable Outcomes
+-
+-- Users can select and view an active goal path within 2 taps from the Progress screen.
+-- Milestone completion is detected automatically with zero manual steps from the user.
+-- At least 80% of users who select a goal path complete at least one milestone within 7 days.
+-
+----
+-
+-## UI Changes
+-
+-### Progress Screen
+-- Add a `GoalCard` widget at the top showing:
+-  - Active path name (e.g., "Complete the Alphabet & Numbers")
+-  - Current milestone title and description
+-  - Linear progress indicator (e.g., "Milestone 2 of 6")
+-  - A "Change Goal" button to open Goal Selection
+-
+-### Goal Selection Screen
+-- Full-screen list of available paths
+-- Each path shows: name, description, number of milestones, estimated time
+-- Tapping a path expands to show its milestone list
+-- "Select This Path" button to confirm
+-- Current active path is highlighted
+-
+-### Practice Completion / Session End
+-- If a milestone was completed during the session, show a brief banner: "Milestone Complete: [Title] +[Points] pts"
+-- If the final milestone of a path was completed, show a celebration modal with path completion summary
+-
+----
+-
+-## Architecture Overview
+-
+-```
+-GoalPath (immutable definitions)
+-  └── List<Milestone>
+-        └── MilestoneCriteria
+-
+-UserGoal (per-user persisted state)
+-  └── goalPathId, currentMilestoneIndex, List<bool> completedMilestones
+-
+-GoalService
+-  ├── loadUserGoal() → UserGoal
+-  ├── selectGoalPath(String pathId) → void
+-  ├── checkMilestones(SessionResult result) → List<Milestone> completed
+-  ├── getActivePath() → GoalPath
+-  └── awardMilestonePoints(Milestone) → void
+-
+-Integration Points:
+-  - PracticeSessionBloc → on session complete, calls GoalService.checkMilestones()
+-  - GamificationService → GoalService calls awardPoints() for milestone bonuses
+-  - ProgressScreen → reads UserGoal via GoalService to display GoalCard
+-```
+-
+-## Files to Create / Modify
+-
+-| File | Action | Responsibility |
+-|------|--------|---------------|
+-| `lib/data/models/goal_path.dart` | Create | GoalPath, Milestone, MilestoneCriteria models |
+-| `lib/data/models/user_goal.dart` | Create | UserGoal model with persistence methods |
+-| `lib/domain/goals/goal_service.dart` | Create | Business logic for goal selection and milestone checking |
+-| `lib/ui/screens/goal_selection_screen.dart` | Create | Screen to browse and select goal paths |
+-| `lib/ui/widgets/goal_card.dart` | Create | Reusable widget showing current goal progress |
+-| `lib/ui/screens/progress_screen.dart` | Modify | Add GoalCard at top of Progress screen |
+-| `lib/ui/bloc/practice_session_bloc.dart` | Modify | Call GoalService after session completion |
+-| `lib/data/database/database_helper.dart` | Modify | Add tables for UserGoal persistence |
+-
+----
+-
+-## Open Questions / Dependencies
+-
+-- **Digits tracking**: The "Complete the Alphabet & Numbers" and "Numbers Specialist" paths assume digits 0–9 are tracked for accuracy. If the database does not yet have digit records, `CharacterRepository` (or a new `DigitRepository`) must be extended to include them.
+-- **Assessment session**: The "Rusty Refresher" assessment milestone requires a dedicated assessment mode or a special flag on a normal session to determine the user's current level. This can be a simplified session that samples characters at multiple WPM levels.
+-- **Mixed practice mode**: Milestone 6 of "Complete the Alphabet & Numbers" requires a session that mixes letters and numbers. If no mixed mode exists, this can initially be simulated by alternating character types within a normal session.
+-- **Prosign tracking**: Individual prosigns (AR, AS, SK, BK, KN) and Q-codes (QSO, QRM, etc.) are embedded within QSO phrases but not tracked separately. The "Prosign Specialist" milestones can initially be satisfied by completing QSO practice sessions that include those elements, or by adding a dedicated prosign practice subset to `QSOService`.
+-
+-## Tech Stack
+-
+-- Flutter / Dart
+-- Existing: `UserProgress`, `GamificationService`, `KochProgressionService`, `PracticeSessionBloc`
+-- Testing: flutter_test, mocktail, bloc_test
+diff --git a/test/bloc/practice_session_bloc_test.dart b/test/bloc/practice_session_bloc_test.dart
+index 46a3b26..61f62ab 100644
+--- a/test/bloc/practice_session_bloc_test.dart
++++ b/test/bloc/practice_session_bloc_test.dart
+@@ -326,51 +326,6 @@ void main() {
+         },
+       );
+     });
+-
+-    group('EndSession', () {
+-      blocTest<PracticeSessionBloc, PracticeSessionState>(
+-        'returns to initial state from active session',
+-        build: () => PracticeSessionBloc(
+-          kochService: mockKochService,
+-          gamificationService: mockGamificationService,
+-          spacedRepetitionService: mockSpacedRepetitionService,
+-          userProgressRepository: mockUserProgressRepository,
+-        ),
+-        act: (bloc) async {
+-          bloc.add(const StartSession(1));
+-          await Future.delayed(const Duration(milliseconds: 50));
+-          bloc.add(const EndSession());
+-        },
+-        expect: () => [
+-          isA<PracticeSessionLoading>(),
+-          isA<PracticeSessionActive>(),
+-          isA<PracticeSessionInitial>(),
+-        ],
+-      );
+-
+-      blocTest<PracticeSessionBloc, PracticeSessionState>(
+-        'returns to initial state from complete state',
+-        build: () => PracticeSessionBloc(
+-          kochService: mockKochService,
+-          gamificationService: mockGamificationService,
+-          spacedRepetitionService: mockSpacedRepetitionService,
+-          userProgressRepository: mockUserProgressRepository,
+-        ),
+-        act: (bloc) async {
+-          bloc.add(const StartSession(1));
+-          await Future.delayed(const Duration(milliseconds: 50));
+-          bloc.add(const SubmitMorsePattern('-.-'));
+-          await Future.delayed(const Duration(milliseconds: 500));
+-          bloc.add(const SubmitMorsePattern('--'));
+-          await Future.delayed(const Duration(milliseconds: 500));
+-          bloc.add(const EndSession());
+-        },
+-        wait: const Duration(milliseconds: 200),
+-        verify: (bloc) {
+-          expect(bloc.state, isA<PracticeSessionInitial>());
+-        },
+-      );
+-    });
+   });
+ }
+ 
+diff --git a/test/core/audio/morse_code_service_test.dart b/test/core/audio/audio_playback_service_test.dart
+similarity index 90%
+rename from test/core/audio/morse_code_service_test.dart
+rename to test/core/audio/audio_playback_service_test.dart
+index 459dc82..2217ed6 100644
+--- a/test/core/audio/morse_code_service_test.dart
++++ b/test/core/audio/audio_playback_service_test.dart
+@@ -1,18 +1,9 @@
+ import 'dart:io';
+ 
+ import 'package:flutter_test/flutter_test.dart';
+-import 'package:morse_trainer/core/audio/morse_code_service.dart';
+-
+-late bool _aplayAvailable;
++import 'package:morse_trainer/core/audio/audio_playback_service.dart';
+ 
+ void main() {
+-  try {
+-    final result = Process.runSync('which', ['aplay']);
+-    _aplayAvailable = result.exitCode == 0;
+-  } catch (_) {
+-    _aplayAvailable = false;
+-  }
+-
+   group('AudioPlaybackService', () {
+     late AudioPlaybackService service;
+ 
+@@ -45,7 +36,6 @@ void main() {
+ 
+       test(
+         'keyerDown recreates missing keyer file instead of silently failing',
+-        skip: !_aplayAvailable,
+         () async {
+           await service.initialize();
+           expect(File('/tmp/morse_keyer.wav').existsSync(), true);
+@@ -62,8 +52,7 @@ void main() {
+       );
+ 
+       test(
+-        'playCharacter recreates missing dot/dash files instead of silently failing',
+-        skip: !_aplayAvailable,
++        'playDot/playDash recreate missing dot/dash files instead of silently failing',
+         () async {
+           await service.initialize();
+ 
+@@ -71,17 +60,23 @@ void main() {
+           File('/tmp/morse_dot.wav').deleteSync();
+           File('/tmp/morse_dash.wav').deleteSync();
+ 
+-          // Character 'A' = '.-' needs dot and dash
+-          await service.playCharacter('A');
+-
++          // playDot/playDash need the files to exist; ensureFileExists should
++          // regenerate them. We don't assert on aplay success (no sound card
++          // in CI), only that the files are recreated.
++          try {
++            await service.playDot();
++          } catch (_) {}
+           expect(File('/tmp/morse_dot.wav').existsSync(), true);
++
++          try {
++            await service.playDash();
++          } catch (_) {}
+           expect(File('/tmp/morse_dash.wav').existsSync(), true);
+         },
++        skip: 'Requires aplay (no sound card in CI container)',
+       );
+ 
+-      test('playCorrectFeedback recreates its own file',
+-        skip: !_aplayAvailable,
+-        () async {
++      test('playCorrectFeedback recreates its own file', () async {
+         await service.initialize();
+ 
+         // Delete the feedback file if it exists from a previous run
+diff --git a/test/core/audio/morse_code_coordinator_test.dart b/test/core/audio/morse_code_coordinator_test.dart
+new file mode 100644
+index 0000000..b0e1dec
+--- /dev/null
++++ b/test/core/audio/morse_code_coordinator_test.dart
+@@ -0,0 +1,375 @@
++import 'package:flutter_test/flutter_test.dart';
++import 'package:morse_trainer/core/audio/audio_service.dart';
++import 'package:morse_trainer/core/audio/morse_code_coordinator.dart';
++import 'package:morse_trainer/core/audio/morse_code_mapper.dart';
++import 'package:morse_trainer/core/timing/morse_timing_engine.dart';
++
++/// Records every call made to it so tests can assert on the sequence of
++/// primitives the coordinator drives.
++class _RecordingAudioService implements AudioService {
++  final List<String> calls = [];
++
++  @override
++  Future<void> playDot() async => calls.add('playDot');
++
++  @override
++  Future<void> playDash() async => calls.add('playDash');
++
++  @override
++  Future<void> intraCharacterPause() async => calls.add('intraCharacterPause');
++
++  @override
++  Future<void> interCharacterPause() async => calls.add('interCharacterPause');
++
++  @override
++  Future<void> interWordPause() async => calls.add('interWordPause');
++
++  @override
++  Future<void> keyerDown() async => calls.add('keyerDown');
++
++  @override
++  Future<void> keyerUp() async => calls.add('keyerUp');
++
++  @override
++  Future<void> playCorrectFeedback() async => calls.add('playCorrectFeedback');
++
++  @override
++  Future<void> initialize() async {}
++
++  @override
++  Future<void> dispose() async {}
++
++  // --- configuration / timing stubs (not exercised by coordinator tests) ---
++
++  @override
++  double get toneFrequency => 600.0;
++
++  @override
++  double get wpm => 20.0;
++
++  @override
++  double get effWpm => 20.0;
++
++  @override
++  double get volume => 0.5;
++
++  @override
++  double get extraWordSpace => 0.0;
++
++  @override
++  int get unitMs => 60;
++
++  @override
++  int get dotDurationMs => 60;
++
++  @override
++  int get dashDurationMs => 180;
++
++  @override
++  int get intraCharacterSpaceMs => 60;
++
++  @override
++  int get interCharacterSpaceMs => 180;
++
++  @override
++  int get interWordSpaceMs => 420;
++
++  @override
++  MorseTimingEngine get timingEngine =>
++      MorseTimingEngine(wpm: 20, effWpm: 20);
++
++  @override
++  void setToneFrequency(double frequency) {}
++
++  @override
++  void setWpm(double wpm) {}
++
++  @override
++  void setEffWpm(double effWpm) {}
++
++  @override
++  void setExtraWordSpace(double seconds) {}
++
++  @override
++  void setVolume(double volume) {}
++}
++
++void main() {
++  late MorseCodeMapper mapper;
++  late _RecordingAudioService audio;
++  late MorseCodeCoordinator coordinator;
++
++  setUp(() {
++    mapper = MorseCodeMapper();
++    audio = _RecordingAudioService();
++    coordinator = MorseCodeCoordinator(mapper, audio);
++  });
++
++  group('MorseCodeCoordinator', () {
++    test('single character A produces dot, intra pause, dash, inter pause',
++        () async {
++      // A = '.-'
++      await coordinator.playCharacters('A');
++
++      expect(audio.calls, [
++        'playDot',
++        'intraCharacterPause',
++        'playDash',
++        'interCharacterPause',
++      ]);
++    });
++
++    test('single character E (just dot) produces dot then inter pause',
++        () async {
++      // E = '.'
++      await coordinator.playCharacters('E');
++
++      expect(audio.calls, ['playDot', 'interCharacterPause']);
++    });
++
++    test('multi-character word HELLO produces correct sequence', () async {
++      // H = '....', E = '.', L = '.-..', L = '.-..', O = '---'
++      await coordinator.playCharacters('HELLO');
++
++      // Build expected call list programmatically.
++      final expected = <String>[];
++      for (final entry in [
++        ('....',), ('.',), ('.-..',), ('.-..',), ('---',),
++      ]) {
++        final pattern = entry.$1;
++        for (int i = 0; i < pattern.length; i++) {
++          if (pattern[i] == '.') {
++            expected.add('playDot');
++          } else {
++            expected.add('playDash');
++          }
++          if (i < pattern.length - 1) {
++            expected.add('intraCharacterPause');
++          }
++        }
++        expected.add('interCharacterPause');
++      }
++
++      expect(audio.calls, expected);
++      // No interWordPause within a single word.
++      expect(audio.calls.contains('interWordPause'), isFalse);
++    });
++
++    test('multi-word string inserts interWordPause between words', () async {
++      // HI WORLD
++      // H = '....', I = '..', space, W = '.--', O = '---', R = '.-.', L = '.-..', D = '-..'
++      await coordinator.playCharacters('HI WORLD');
++
++      // There must be exactly one interWordPause between the two words and
++      // no interWordPause after the last word.
++      final interWordCount =
++          audio.calls.where((c) => c == 'interWordPause').length;
++      expect(interWordCount, 1);
++
++      // The interWordPause must occur after the interCharacterPause that
++      // closes 'I' (the last char of the first word) and before 'playDot'
++      // (the first symbol of 'W').
++      final idx = audio.calls.indexOf('interWordPause');
++      expect(idx, greaterThan(0));
++      expect(audio.calls[idx - 1], 'interCharacterPause');
++      expect(audio.calls[idx + 1], 'playDot');
++    });
++
++    test('isPlaying is true during playback and false after', () async {
++      final duringPlayback = <bool>[];
++      // Use a word long enough that we can sample isPlaying mid-flight.
++      final fut = coordinator.playCharacters('HELLO').then((_) {
++        duringPlayback.add(coordinator.isPlaying);
++      });
++
++      // Sample immediately after starting (before the future completes).
++      duringPlayback.add(coordinator.isPlaying);
++      await fut;
++
++      // While the call was in flight, isPlaying was true; after it resolves,
++      // it is false.
++      expect(duringPlayback.first, isTrue);
++      expect(duringPlayback.last, isFalse);
++      expect(coordinator.isPlaying, isFalse);
++    });
++
++    test('stop() breaks the loop and calls keyerUp', () async {
++      // Use a long multi-word input so there are many checkpoints.
++      coordinator.stop(); // pre-set cancellation flag
++      // playCharacters resets _isCancelled at start, so we need to stop
++      // mid-flight. Schedule stop() on the next microtask.
++      final future = coordinator.playCharacters('HELLO WORLD');
++      coordinator.stop();
++      await future;
++
++      // The coordinator should have broken out and called keyerUp at least
++      // once (the cancellation path).
++      expect(audio.calls.contains('keyerUp'), isTrue);
++      // It should not have completed the full sequence.
++      expect(audio.calls.length, lessThan(50));
++      expect(coordinator.isPlaying, isFalse);
++    });
++
++    test('unknown characters are skipped', () async {
++      // '#' is not in the morse map; surrounding known chars should still play.
++      await coordinator.playCharacters('A#B');
++
++      // A = '.-' then interCharacterPause, # skipped (no calls), B = '-...'
++      // then interCharacterPause.
++      expect(audio.calls, [
++        'playDot',
++        'intraCharacterPause',
++        'playDash',
++        'interCharacterPause',
++        'playDash',
++        'intraCharacterPause',
++        'playDot',
++        'intraCharacterPause',
++        'playDot',
++        'intraCharacterPause',
++        'playDot',
++        'interCharacterPause',
++      ]);
++    });
++
++    test('onFlash callback fires true before and false after each symbol',
++        () async {
++      final flashes = <bool>[];
++      // A = '.-' -> two symbols.
++      await coordinator.playCharacters('A', onFlash: flashes.add);
++
++      // For each symbol we get true (before) then false (after the symbol,
++      // emitted before the following pause or at end of character).
++      expect(flashes, [true, false, true, false]);
++    });
++
++    test('onFlash not required — null callback works', () async {
++      // Should not throw.
++      await coordinator.playCharacters('A');
++      expect(audio.calls, isNotEmpty);
++    });
++
++    test('extra spaces between words do not produce empty-word calls',
++        () async {
++      // Double space should not create phantom interWordPauses beyond the
++      // single separator between actual words.
++      await coordinator.playCharacters('A  B');
++
++      final interWordCount =
++          audio.calls.where((c) => c == 'interWordPause').length;
++      expect(interWordCount, 1);
++    });
++
++    test('prosign AR plays as continuous pattern without interCharacterPause',
++        () async {
++      // AR = '.-.-.' -> 5 symbols (dot, dash, dot, dash, dot) with 4
++      // intraCharacterPauses, NO interCharacterPause after (prosign is a
++      // single logical unit).
++      await coordinator.playCharacters('AR');
++
++      expect(audio.calls, [
++        'playDot',
++        'intraCharacterPause',
++        'playDash',
++        'intraCharacterPause',
++        'playDot',
++        'intraCharacterPause',
++        'playDash',
++        'intraCharacterPause',
++        'playDot',
++      ]);
++      expect(audio.calls.contains('interCharacterPause'), isFalse);
++    });
++
++    test('regular character A still gets interCharacterPause after',
++        () async {
++      await coordinator.playCharacters('A');
++
++      expect(audio.calls, [
++        'playDot',
++        'intraCharacterPause',
++        'playDash',
++        'interCharacterPause',
++      ]);
++    });
++
++    test('prosign SOS plays as continuous pattern without interCharacterPause',
++        () async {
++      // SOS = '...---...' -> 9 symbols with 8 intraCharacterPauses, no inter.
++      await coordinator.playCharacters('SOS');
++
++      expect(audio.calls.contains('interCharacterPause'), isFalse);
++      expect(audio.calls.contains('interWordPause'), isFalse);
++      // 9 symbols, 8 intra pauses.
++      expect(audio.calls.where((c) => c == 'playDot').length, 6);
++      expect(audio.calls.where((c) => c == 'playDash').length, 3);
++      expect(
++          audio.calls.where((c) => c == 'intraCharacterPause').length, 8);
++    });
++
++    test('mixed HI AR — HI gets interCharacterPause, AR does not', () async {
++      // H = '....' -> 4 dots, 3 intra, 1 inter
++      // I = '..' -> 2 dots, 1 intra, 1 inter
++      // interWordPause between HI and AR
++      // AR = '.-.-.' -> continuous, no inter
++      await coordinator.playCharacters('HI AR');
++
++      // Verify the interWordPause separates the two words.
++      final interWordCount =
++          audio.calls.where((c) => c == 'interWordPause').length;
++      expect(interWordCount, 1);
++
++      // The calls before the interWordPause should end with
++      // interCharacterPause (closing 'I').
++      final iwIdx = audio.calls.indexOf('interWordPause');
++      expect(audio.calls[iwIdx - 1], 'interCharacterPause');
++
++      // After the interWordPause, the AR prosign plays. Find the segment
++      // after interWordPause and verify it has no interCharacterPause.
++      final afterWord = audio.calls.sublist(iwIdx + 1);
++      expect(afterWord.contains('interCharacterPause'), isFalse);
++      expect(afterWord, [
++        'playDot',
++        'intraCharacterPause',
++        'playDash',
++        'intraCharacterPause',
++        'playDot',
++        'intraCharacterPause',
++        'playDash',
++        'intraCharacterPause',
++        'playDot',
++      ]);
++    });
++
++    test('prosign inside a word still suppresses its interCharacterPause',
++        () async {
++      // 'BAR' -> B (with inter), AR prosign (no inter).
++      await coordinator.playCharacters('BAR');
++
++      // B = '-...' -> playDash, intra, playDot, intra, playDot, intra, playDot,
++      //   then interCharacterPause.
++      // AR = '.-.-.' -> continuous, no inter.
++      expect(audio.calls, [
++        // B
++        'playDash',
++        'intraCharacterPause',
++        'playDot',
++        'intraCharacterPause',
++        'playDot',
++        'intraCharacterPause',
++        'playDot',
++        'interCharacterPause',
++        // AR (prosign — no interCharacterPause)
++        'playDot',
++        'intraCharacterPause',
++        'playDash',
++        'intraCharacterPause',
++        'playDot',
++        'intraCharacterPause',
++        'playDash',
++        'intraCharacterPause',
++        'playDot',
++      ]);
++    });
++  });
++}
+\ No newline at end of file
+diff --git a/test/core/audio/morse_code_mapper_test.dart b/test/core/audio/morse_code_mapper_test.dart
+new file mode 100644
+index 0000000..dff8336
+--- /dev/null
++++ b/test/core/audio/morse_code_mapper_test.dart
+@@ -0,0 +1,219 @@
++import 'package:flutter_test/flutter_test.dart';
++import 'package:morse_trainer/core/audio/morse_code_mapper.dart';
++
++void main() {
++  late MorseCodeMapper mapper;
++
++  setUp(() {
++    mapper = MorseCodeMapper();
++  });
++
++  group('getMorsePattern', () {
++    test('returns correct pattern for known letters', () {
++      expect(mapper.getMorsePattern('A'), '.-');
++      expect(mapper.getMorsePattern('K'), '-.-');
++      expect(mapper.getMorsePattern('M'), '--');
++      expect(mapper.getMorsePattern('E'), '.');
++      expect(mapper.getMorsePattern('Z'), '--..');
++    });
++
++    test('returns correct pattern for known digits', () {
++      expect(mapper.getMorsePattern('0'), '-----');
++      expect(mapper.getMorsePattern('5'), '.....');
++      expect(mapper.getMorsePattern('9'), '----.');
++    });
++
++    test('returns correct pattern for known punctuation', () {
++      expect(mapper.getMorsePattern('/'), '-..-.');
++      expect(mapper.getMorsePattern('.'), '.-.-.-');
++      expect(mapper.getMorsePattern(','), '--..--');
++      expect(mapper.getMorsePattern('?'), '..--..');
++      expect(mapper.getMorsePattern('='), '-...-');
++      expect(mapper.getMorsePattern('+'), '.-.-.');
++      expect(mapper.getMorsePattern('@'), '.--.-.');
++    });
++
++    test('returns correct pattern for prosigns', () {
++      expect(mapper.getMorsePattern('AR'), '.-.-.');
++      expect(mapper.getMorsePattern('BT'), '-...-');
++      expect(mapper.getMorsePattern('SK'), '...-.-');
++      expect(mapper.getMorsePattern('KN'), '-.--.');
++      expect(mapper.getMorsePattern('AS'), '.-...');
++      expect(mapper.getMorsePattern('SOS'), '...---...');
++      expect(mapper.getMorsePattern('CL'), '-.-..-..');
++      expect(mapper.getMorsePattern('CT'), '-.-.-');
++      expect(mapper.getMorsePattern('VE'), '...-.');
++    });
++
++    test('returns null for unknown characters', () {
++      expect(mapper.getMorsePattern('#'), isNull);
++      expect(mapper.getMorsePattern('!'), isNull);
++      expect(mapper.getMorsePattern(';'), isNull);
++    });
++
++    test('is case insensitive', () {
++      expect(mapper.getMorsePattern('a'), '.-');
++      expect(mapper.getMorsePattern('k'), '-.-');
++      expect(mapper.getMorsePattern('M'), '--');
++      expect(mapper.getMorsePattern('z'), '--..');
++    });
++  });
++
++  group('isProsign', () {
++    test('returns true for all known prosigns', () {
++      expect(mapper.isProsign('AR'), isTrue);
++      expect(mapper.isProsign('BT'), isTrue);
++      expect(mapper.isProsign('SK'), isTrue);
++      expect(mapper.isProsign('KN'), isTrue);
++      expect(mapper.isProsign('AS'), isTrue);
++      expect(mapper.isProsign('SOS'), isTrue);
++      expect(mapper.isProsign('CL'), isTrue);
++      expect(mapper.isProsign('CT'), isTrue);
++      expect(mapper.isProsign('VE'), isTrue);
++    });
++
++    test('returns false for non-prosign entries', () {
++      expect(mapper.isProsign('A'), isFalse);
++      expect(mapper.isProsign('K'), isFalse);
++      expect(mapper.isProsign('0'), isFalse);
++      expect(mapper.isProsign('.'), isFalse);
++      expect(mapper.isProsign('/'), isFalse);
++      expect(mapper.isProsign('Z'), isFalse);
++    });
++
++    test('is case insensitive', () {
++      expect(mapper.isProsign('ar'), isTrue);
++      expect(mapper.isProsign('Sos'), isTrue);
++      expect(mapper.isProsign('bT'), isTrue);
++    });
++  });
++
++  group('getCharactersForLevel', () {
++    test('level 0 returns 2 characters (K, M)', () {
++      final chars = mapper.getCharactersForLevel(0);
++      expect(chars.length, 2);
++      expect(chars[0], 'K');
++      expect(chars[1], 'M');
++    });
++
++    test('level 1 returns 4 characters', () {
++      final chars = mapper.getCharactersForLevel(1);
++      expect(chars.length, 4);
++      expect(chars[0], 'K');
++      expect(chars[1], 'M');
++      expect(chars[2], 'U');
++      expect(chars[3], 'R');
++    });
++
++    test('caps at full sequence length', () {
++      final chars = mapper.getCharactersForLevel(1000);
++      expect(chars.length, MorseCodeMapper.kochSequence.length);
++      expect(chars, MorseCodeMapper.kochSequence);
++    });
++
++    test('kochSequence ends with prosigns in correct order', () {
++      const expectedProsigns = [
++        'AR', 'BT', 'SK', 'KN', 'AS', 'SOS', 'CL', 'CT', 'VE',
++      ];
++      final tail = MorseCodeMapper.kochSequence.sublist(
++        MorseCodeMapper.kochSequence.length - expectedProsigns.length,
++      );
++      expect(tail, expectedProsigns);
++    });
++
++    test('kochSequence length is 59 (50 base + 9 prosigns)', () {
++      expect(MorseCodeMapper.kochSequence.length, 59);
++    });
++  });
++
++  group('getTotalLevels', () {
++    test('returns ceil of half the sequence length', () {
++      final expected = (MorseCodeMapper.kochSequence.length / 2).ceil();
++      expect(mapper.getTotalLevels(), expected);
++    });
++
++    test('returns 30 for the extended 59-character sequence', () {
++      expect(mapper.getTotalLevels(), 30);
++    });
++  });
++
++  group('getAllCharacters', () {
++    test('returns all keys from the Morse map', () {
++      final all = mapper.getAllCharacters();
++      expect(all.length, MorseCodeMapper.morseCodeMap.length);
++      expect(all.contains('A'), true);
++      expect(all.contains('Z'), true);
++      expect(all.contains('0'), true);
++      expect(all.contains('/'), true);
++      expect(all.contains('.'), true);
++      expect(all.contains('@'), true);
++      expect(all.contains('&'), true);
++    });
++  });
++
++  group('wordToMorse', () {
++    test('converts single word', () {
++      expect(mapper.wordToMorse('HELLO'), '.... . .-.. .-.. ---');
++    });
++
++    test('converts single letter', () {
++      expect(mapper.wordToMorse('A'), '.-');
++      expect(mapper.wordToMorse('E'), '.');
++    });
++
++    test('handles numbers', () {
++      expect(mapper.wordToMorse('5'), '.....');
++      expect(mapper.wordToMorse('0'), '-----');
++      expect(mapper.wordToMorse('73'), '--... ...--');
++    });
++
++    test('is case insensitive', () {
++      expect(mapper.wordToMorse('hello'), '.... . .-.. .-.. ---');
++      expect(mapper.wordToMorse('ar'), '.-.-.');
++    });
++
++    test('skips unknown characters', () {
++      expect(mapper.wordToMorse('A#B'), '.- -...');
++      expect(mapper.wordToMorse('A!B'), '.- -...');
++    });
++
++    test('returns empty string for empty input', () {
++      expect(mapper.wordToMorse(''), '');
++    });
++
++    test('returns empty string when no characters are mappable', () {
++      expect(mapper.wordToMorse('#!;'), '');
++    });
++
++    test('handles punctuation', () {
++      expect(mapper.wordToMorse('A.B'), '.- .-.-.- -...');
++    });
++
++    test('treats SOS as a prosign (no inter-character spaces)', () {
++      // SOS is a prosign -> single continuous pattern, not three letters.
++      expect(mapper.wordToMorse('SOS'), '...---...');
++    });
++
++    test('treats AR as a prosign (not two letters)', () {
++      // AR is a prosign -> '.-.-.', not '.- .-.'
++      expect(mapper.wordToMorse('AR'), '.-.-.');
++    });
++
++    test('treats CL as a 3-char prosign', () {
++      expect(mapper.wordToMorse('CL'), '-.-..-..');
++    });
++
++    test('handles mixed words with prosigns', () {
++      // HI gets inter-character space between H and I; AR is a prosign.
++      expect(mapper.wordToMorse('HI AR'), '.... .. .-.-.');
++    });
++
++    test('does not misinterpret regular sequences as prosigns', () {
++      // 'SO' should not be matched as a prosign prefix; only the full 3-char
++      // 'SOS' is a prosign. 'SO' -> two letters.
++      expect(mapper.wordToMorse('SO'), '... ---');
++      // 'AR' at the end of a word should still be matched.
++      expect(mapper.wordToMorse('BAR'), '-... .-.-.');
++    });
++  });
++}
+\ No newline at end of file
+diff --git a/test/core/platform/app_initializer_test.dart b/test/core/platform/app_initializer_test.dart
+deleted file mode 100644
+index 18203fd..0000000
+--- a/test/core/platform/app_initializer_test.dart
++++ /dev/null
+@@ -1,46 +0,0 @@
+-import 'package:flutter_test/flutter_test.dart';
+-import 'package:morse_trainer/core/platform/app_initializer.dart';
+-
+-void main() {
+-  group('AppInitializer', () {
+-    test('does not call desktop-only APIs on mobile platforms', () async {
+-      bool windowManagerCalled = false;
+-      bool sqfliteFfiCalled = false;
+-
+-      final initializer = AppInitializer(
+-        initializeWindowManager: () async => windowManagerCalled = true,
+-        initializeSqfliteFfi: () => sqfliteFfiCalled = true,
+-        initializeLogger: () async {},
+-        initializeCharacterRepo: () async {},
+-        isDesktop: false,
+-      );
+-
+-      await initializer.initialize();
+-
+-      expect(windowManagerCalled, isFalse,
+-          reason: 'windowManager should not be initialized on mobile');
+-      expect(sqfliteFfiCalled, isFalse,
+-          reason: 'sqflite FFI should not be initialized on mobile');
+-    });
+-
+-    test('calls desktop-only APIs on desktop platforms', () async {
+-      bool windowManagerCalled = false;
+-      bool sqfliteFfiCalled = false;
+-
+-      final initializer = AppInitializer(
+-        initializeWindowManager: () async => windowManagerCalled = true,
+-        initializeSqfliteFfi: () => sqfliteFfiCalled = true,
+-        initializeLogger: () async {},
+-        initializeCharacterRepo: () async {},
+-        isDesktop: true,
+-      );
+-
+-      await initializer.initialize();
+-
+-      expect(windowManagerCalled, isTrue,
+-          reason: 'windowManager should be initialized on desktop');
+-      expect(sqfliteFfiCalled, isTrue,
+-          reason: 'sqflite FFI should be initialized on desktop');
+-    });
+-  });
+-}
+diff --git a/test/data/models/word_test.dart b/test/data/models/word_test.dart
+index 175fd20..2fad387 100644
+--- a/test/data/models/word_test.dart
++++ b/test/data/models/word_test.dart
+@@ -3,41 +3,6 @@ import 'package:morse_trainer/data/models/word.dart';
+ 
+ void main() {
+   group('Word', () {
+-    test('textToMorse converts single letter', () {
+-      expect(Word.textToMorse('A'), '.-');
+-      expect(Word.textToMorse('B'), '-...');
+-      expect(Word.textToMorse('E'), '.');
+-    });
+-
+-    test('textToMorse converts uppercase regardless of input case', () {
+-      expect(Word.textToMorse('a'), '.-');
+-      expect(Word.textToMorse('k'), '-.-');
+-    });
+-
+-    test('textToMorse converts word with intra-character spaces', () {
+-      expect(Word.textToMorse('SOS'), '... --- ...');
+-      expect(Word.textToMorse('HELLO'), '.... . .-.. .-.. ---');
+-    });
+-
+-    test('textToMorse handles numbers', () {
+-      expect(Word.textToMorse('5'), '.....');
+-      expect(Word.textToMorse('0'), '-----');
+-      expect(Word.textToMorse('73'), '--... ...--');
+-    });
+-
+-    test('textToMorse preserves word spaces', () {
+-      // Space char produces one space, plus intra-char space before next letter
+-      expect(Word.textToMorse('DE K'), '-.. .  -.-');
+-    });
+-
+-    test('textToMorse skips unknown characters', () {
+-      expect(Word.textToMorse('A@B'), '.- -...');
+-    });
+-
+-    test('textToMorse returns empty string for empty input', () {
+-      expect(Word.textToMorse(''), '');
+-    });
+-
+     test('Word constructor stores fields', () {
+       const word = Word(
+         text: 'HELLO',
+@@ -51,6 +16,15 @@ void main() {
+       expect(word.difficulty, 2);
+     });
+ 
++    test('Word default difficulty is 1', () {
++      const word = Word(
++        text: 'TEST',
++        morseCode: '- . ... -',
++        category: 'basic',
++      );
++      expect(word.difficulty, 1);
++    });
++
+     test('QSOPhrase constructor stores fields', () {
+       const phrase = QSOPhrase(
+         text: 'CQ CQ DE',
+@@ -62,4 +36,4 @@ void main() {
+       expect(phrase.category, 'calling');
+     });
+   });
+-}
++}
+\ No newline at end of file
+diff --git a/test/data/repositories/character_repository_test.dart b/test/data/repositories/character_repository_test.dart
+index 69f36fb..26da308 100644
+--- a/test/data/repositories/character_repository_test.dart
++++ b/test/data/repositories/character_repository_test.dart
+@@ -1,6 +1,7 @@
+ import 'package:flutter_test/flutter_test.dart';
+ import 'package:mocktail/mocktail.dart';
+ import 'package:sqflite/sqflite.dart';
++import 'package:morse_trainer/core/audio/morse_code_mapper.dart';
+ import 'package:morse_trainer/data/database/database_helper.dart';
+ import 'package:morse_trainer/data/models/character.dart';
+ import 'package:morse_trainer/data/repositories/character_repository.dart';
+@@ -243,7 +244,7 @@ void main() {
+       await repo.initializeCharacters();
+ 
+       final calls = verify(() => mockDb.insert('characters', captureAny(), conflictAlgorithm: any(named: 'conflictAlgorithm'))).captured;
+-      expect(calls.length, 25); // kochSequence.length
++      expect(calls.length, MorseCodeMapper.kochSequence.length);
+ 
+       // Verify first two are unlocked
+       final firstMap = calls[0] as Map<String, dynamic>;
+@@ -255,7 +256,7 @@ void main() {
+ 
+       // Verify third is locked
+       final thirdMap = calls[2] as Map<String, dynamic>;
+-      expect(thirdMap['symbol'], 'R');
++      expect(thirdMap['symbol'], 'U');
+       expect(thirdMap['isUnlocked'], 0);
+     });
+   });
+diff --git a/test/domain/koch/qso_service_test.dart b/test/domain/koch/qso_service_test.dart
+index bcd6d05..abcb811 100644
+--- a/test/domain/koch/qso_service_test.dart
++++ b/test/domain/koch/qso_service_test.dart
+@@ -81,13 +81,14 @@ void main() {
+     });
+ 
+     test('ignores unknown characters', () {
+-      expect(service.phraseToMorse('!@#'), '');
++      // ! and # are not in the ITU Morse map; @ is, so exclude it
++      expect(service.phraseToMorse('!#'), '');
+     });
+ 
+     test('preserves spaces between words as spaces in morse', () {
+       final morse = service.phraseToMorse('A B');
+-      // A = .-, space = ' ', B = -...
+-      expect(morse, '.-  -...');
++      // A = .-, B = -..., space between words is skipped (single space between letters)
++      expect(morse, '.- -...');
+     });
+   });
+ }
+diff --git a/test/integration/settings_startup_test.dart b/test/integration/settings_startup_test.dart
+index 26d3d9c..131a9bc 100644
+--- a/test/integration/settings_startup_test.dart
++++ b/test/integration/settings_startup_test.dart
+@@ -3,9 +3,12 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+ import 'package:morse_trainer/data/database/database_helper.dart';
+ import 'package:morse_trainer/data/repositories/settings_repository.dart';
+ import 'package:morse_trainer/ui/bloc/settings_bloc.dart';
+-import 'package:morse_trainer/core/audio/morse_code_service.dart';
++import 'package:morse_trainer/core/audio/audio_playback_service.dart';
+ 
+ void main() {
++  // Shared instance across tests in this file (replaces the old singleton).
++  late AudioPlaybackService audioService;
++
+   setUpAll(() {
+     sqfliteFfiInit();
+     databaseFactory = databaseFactoryFfi;
+@@ -14,10 +17,11 @@ void main() {
+   setUp(() async {
+     DatabaseHelper.setTestDbPath(':memory:');
+     DatabaseHelper.resetInstance();
+-    AudioPlaybackService().setWpm(20.0);
+-    AudioPlaybackService().setEffWpm(20.0);
+-    AudioPlaybackService().setToneFrequency(600.0);
+-    AudioPlaybackService().setVolume(0.5);
++    audioService = AudioPlaybackService();
++    audioService.setWpm(20.0);
++    audioService.setEffWpm(20.0);
++    audioService.setToneFrequency(600.0);
++    audioService.setVolume(0.5);
+   });
+ 
+   tearDown(() async {
+@@ -34,7 +38,7 @@ void main() {
+     );
+ 
+     // Act: simulate cold start by creating a new BLoC
+-    final bloc = SettingsBloc(repo, audioService: AudioPlaybackService());
++    final bloc = SettingsBloc(repo, audioService: audioService);
+     bloc.add(const LoadSettings());
+ 
+     // Assert: state transitions to SettingsLoaded
+@@ -47,10 +51,10 @@ void main() {
+     expect(settings.volume, 0.3);
+ 
+     // Assert: audio service is initialized with persisted values
+-    expect(AudioPlaybackService().wpm, 25.0);
+-    expect(AudioPlaybackService().effWpm, 18.0);
+-    expect(AudioPlaybackService().toneFrequency, 700.0);
+-    expect(AudioPlaybackService().volume, 0.3);
++    expect(audioService.wpm, 25.0);
++    expect(audioService.effWpm, 18.0);
++    expect(audioService.toneFrequency, 700.0);
++    expect(audioService.volume, 0.3);
+ 
+     await bloc.close();
+   });
+diff --git a/test/unit/home_app_bar_test.dart b/test/unit/home_app_bar_test.dart
+index 3f2873e..2315c15 100644
+--- a/test/unit/home_app_bar_test.dart
++++ b/test/unit/home_app_bar_test.dart
+@@ -4,51 +4,30 @@ import 'package:morse_trainer/ui/widgets/home_app_bar.dart';
+ 
+ void main() {
+   group('HomeAppBar', () {
+-    Future<void> pumpWithPushedRoute(WidgetTester tester, Widget appBar) async {
++    testWidgets('shows home button and title', (tester) async {
+       await tester.pumpWidget(
+         MaterialApp(
+-          home: Builder(
+-            builder: (context) => ElevatedButton(
+-              onPressed: () => Navigator.of(context).push(
+-                MaterialPageRoute(
+-                  builder: (_) => Scaffold(appBar: appBar as PreferredSizeWidget),
+-                ),
+-              ),
+-              child: const Text('Push'),
+-            ),
++          home: Scaffold(
++            appBar: const HomeAppBar(title: 'Test'),
+           ),
+         ),
+       );
+-      await tester.tap(find.text('Push'));
+-      await tester.pumpAndSettle();
+-    }
+-
+-    testWidgets('shows back button when route can pop', (tester) async {
+-      await pumpWithPushedRoute(tester, const HomeAppBar(title: 'Test'));
+ 
+       expect(find.byIcon(Icons.arrow_back), findsOneWidget);
+       expect(find.text('Test'), findsOneWidget);
+     });
+ 
+-    testWidgets('hides back button when on first route', (tester) async {
++    testWidgets('shows nav icons when showNavIcons=true', (tester) async {
+       await tester.pumpWidget(
+-        const MaterialApp(
++        MaterialApp(
+           home: Scaffold(
+-            appBar: HomeAppBar(title: 'Test'),
++            appBar: const HomeAppBar(
++              title: 'Practice',
++              showNavIcons: true,
++            ),
+           ),
+         ),
+       );
+-      await tester.pumpAndSettle();
+-
+-      expect(find.byIcon(Icons.arrow_back), findsNothing);
+-      expect(find.text('Test'), findsOneWidget);
+-    });
+-
+-    testWidgets('shows nav icons when showNavIcons=true', (tester) async {
+-      await pumpWithPushedRoute(
+-        tester,
+-        const HomeAppBar(title: 'Practice', showNavIcons: true),
+-      );
+ 
+       expect(find.byIcon(Icons.school), findsOneWidget);
+       expect(find.byIcon(Icons.bar_chart), findsOneWidget);
+@@ -56,9 +35,15 @@ void main() {
+     });
+ 
+     testWidgets('hides nav icons when showNavIcons=false', (tester) async {
+-      await pumpWithPushedRoute(
+-        tester,
+-        const HomeAppBar(title: 'Settings', showNavIcons: false),
++      await tester.pumpWidget(
++        MaterialApp(
++          home: Scaffold(
++            appBar: const HomeAppBar(
++              title: 'Settings',
++              showNavIcons: false,
++            ),
++          ),
++        ),
+       );
+ 
+       expect(find.byIcon(Icons.school), findsNothing);
+@@ -66,14 +51,17 @@ void main() {
+       expect(find.byIcon(Icons.settings), findsNothing);
+     });
+ 
+-    testWidgets('back button calls onHomePressed then pops', (tester) async {
++    testWidgets('home button calls onHomePressed callback', (tester) async {
+       bool pressed = false;
+ 
+-      await pumpWithPushedRoute(
+-        tester,
+-        HomeAppBar(
+-          title: 'Test',
+-          onHomePressed: () async => pressed = true,
++      await tester.pumpWidget(
++        MaterialApp(
++          home: Scaffold(
++            appBar: HomeAppBar(
++              title: 'Test',
++              onHomePressed: () async => pressed = true,
++            ),
++          ),
+         ),
+       );
+ 
+@@ -91,20 +79,9 @@ void main() {
+           initialRoute: '/practice',
+           routes: {
+             '/practice': (context) => Scaffold(
+-                  body: Builder(
+-                    builder: (context) => ElevatedButton(
+-                      onPressed: () => Navigator.of(context).push(
+-                        MaterialPageRoute(
+-                          builder: (_) => Scaffold(
+-                            appBar: const HomeAppBar(
+-                              title: 'Practice',
+-                              showNavIcons: true,
+-                            ),
+-                          ),
+-                        ),
+-                      ),
+-                      child: const Text('Push'),
+-                    ),
++                  appBar: const HomeAppBar(
++                    title: 'Practice',
++                    showNavIcons: true,
+                   ),
+                 ),
+             '/progress': (context) {
+@@ -118,8 +95,6 @@ void main() {
+           },
+         ),
+       );
+-      await tester.tap(find.text('Push'));
+-      await tester.pumpAndSettle();
+ 
+       await tester.tap(find.byTooltip('Progress'));
+       await tester.pumpAndSettle();
+diff --git a/test/unit/morse_code_service_test.dart b/test/unit/morse_code_service_test.dart
+deleted file mode 100644
+index 3ae6f24..0000000
+--- a/test/unit/morse_code_service_test.dart
++++ /dev/null
+@@ -1,65 +0,0 @@
+-import 'package:flutter_test/flutter_test.dart';
+-import 'package:morse_trainer/core/audio/morse_code_service.dart';
+-
+-void main() {
+-  group('MorseCodeService', () {
+-    late MorseCodeService service;
+-
+-    setUp(() {
+-      service = MorseCodeService();
+-    });
+-
+-    test('getMorsePattern returns correct pattern for A', () {
+-      expect(service.getMorsePattern('A'), '.-');
+-    });
+-
+-    test('getMorsePattern returns correct pattern for K', () {
+-      expect(service.getMorsePattern('K'), '-.-');
+-    });
+-
+-    test('getMorsePattern returns correct pattern for M', () {
+-      expect(service.getMorsePattern('M'), '--');
+-    });
+-
+-    test('getMorsePattern returns null for unknown character', () {
+-      expect(service.getMorsePattern('@'), isNull);
+-    });
+-
+-    test('getCharactersForLevel returns 2 characters for level 0', () {
+-      final characters = service.getCharactersForLevel(0);
+-      expect(characters.length, 2);
+-      expect(characters[0], 'K');
+-      expect(characters[1], 'M');
+-    });
+-
+-    test('getCharactersForLevel returns 4 characters for level 1', () {
+-      final characters = service.getCharactersForLevel(1);
+-      expect(characters.length, 4);
+-    });
+-
+-    test('getCharactersForLevel caps at max sequence length', () {
+-      final characters = service.getCharactersForLevel(100);
+-      expect(characters.length, MorseCodeService.kochSequence.length);
+-    });
+-
+-    test('getTotalLevels returns ceil of half sequence length', () {
+-      expect(service.getTotalLevels(), (MorseCodeService.kochSequence.length / 2).ceil());
+-    });
+-
+-    test('getAllCharacters returns all keys', () {
+-      final all = service.getAllCharacters();
+-      expect(all.length, 40);
+-      expect(all.contains('A'), true);
+-      expect(all.contains('Z'), true);
+-      expect(all.contains('0'), true);
+-      expect(all.contains('/'), true);
+-    });
+-
+-    test('getMorsePattern is case insensitive', () {
+-      expect(service.getMorsePattern('a'), '.-');
+-      expect(service.getMorsePattern('k'), '-.-');
+-      expect(service.getMorsePattern('M'), '--');
+-    });
+-  });
+-
+-}
+diff --git a/test/unit/settings_bloc_test.dart b/test/unit/settings_bloc_test.dart
+index 875a6be..0c097c1 100644
+--- a/test/unit/settings_bloc_test.dart
++++ b/test/unit/settings_bloc_test.dart
+@@ -3,9 +3,12 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+ import 'package:morse_trainer/data/database/database_helper.dart';
+ import 'package:morse_trainer/data/repositories/settings_repository.dart';
+ import 'package:morse_trainer/ui/bloc/settings_bloc.dart';
+-import 'package:morse_trainer/core/audio/morse_code_service.dart';
++import 'package:morse_trainer/core/audio/audio_playback_service.dart';
+ 
+ void main() {
++  // Shared instance across tests in this file (replaces the old singleton).
++  late AudioPlaybackService audioService;
++
+   setUpAll(() {
+     sqfliteFfiInit();
+     databaseFactory = databaseFactoryFfi;
+@@ -15,10 +18,11 @@ void main() {
+     DatabaseHelper.setTestDbPath(':memory:');
+     DatabaseHelper.resetInstance();
+     // Reset audio service to known defaults
+-    AudioPlaybackService().setWpm(20.0);
+-    AudioPlaybackService().setEffWpm(20.0);
+-    AudioPlaybackService().setToneFrequency(600.0);
+-    AudioPlaybackService().setVolume(0.5);
++    audioService = AudioPlaybackService();
++    audioService.setWpm(20.0);
++    audioService.setEffWpm(20.0);
++    audioService.setToneFrequency(600.0);
++    audioService.setVolume(0.5);
+   });
+ 
+   tearDown(() async {
+@@ -30,10 +34,10 @@ void main() {
+     test('calls setWpm with persisted WPM', () async {
+       final repo = SettingsRepository();
+       await repo.updateWpm(25.0);
+-      final bloc = SettingsBloc(repo, audioService: AudioPlaybackService());
++      final bloc = SettingsBloc(repo, audioService: audioService);
+       bloc.add(const LoadSettings());
+       await bloc.stream.firstWhere((s) => s is SettingsLoaded);
+-      expect(AudioPlaybackService().wpm, 25.0);
++      expect(audioService.wpm, 25.0);
+       await bloc.close();
+     });
+ 
+@@ -41,10 +45,10 @@ void main() {
+       final repo = SettingsRepository();
+       final current = await repo.getSettings();
+       await repo.updateSettings(current.copyWith(effWpm: 18.0));
+-      final bloc = SettingsBloc(repo, audioService: AudioPlaybackService());
++      final bloc = SettingsBloc(repo, audioService: audioService);
+       bloc.add(const LoadSettings());
+       await bloc.stream.firstWhere((s) => s is SettingsLoaded);
+-      expect(AudioPlaybackService().effWpm, 18.0);
++      expect(audioService.effWpm, 18.0);
+       await bloc.close();
+     });
+   });
+@@ -52,53 +56,53 @@ void main() {
+   group('SettingsBloc audio sync on update', () {
+     test('calls setWpm on UpdateWpm', () async {
+       final repo = SettingsRepository();
+-      final bloc = SettingsBloc(repo, audioService: AudioPlaybackService());
++      final bloc = SettingsBloc(repo, audioService: audioService);
+       bloc.add(const LoadSettings());
+       await bloc.stream.firstWhere((s) => s is SettingsLoaded);
+ 
+       bloc.add(const UpdateWpm(30.0));
+       await bloc.stream.firstWhere((s) => s is SettingsLoaded);
+ 
+-      expect(AudioPlaybackService().wpm, 30.0);
++      expect(audioService.wpm, 30.0);
+       await bloc.close();
+     });
+ 
+     test('calls setEffWpm on UpdateEffWpm', () async {
+       final repo = SettingsRepository();
+-      final bloc = SettingsBloc(repo, audioService: AudioPlaybackService());
++      final bloc = SettingsBloc(repo, audioService: audioService);
+       bloc.add(const LoadSettings());
+       await bloc.stream.firstWhere((s) => s is SettingsLoaded);
+ 
+       bloc.add(const UpdateEffWpm(12.0));
+       await bloc.stream.firstWhere((s) => s is SettingsLoaded);
+ 
+-      expect(AudioPlaybackService().effWpm, 12.0);
++      expect(audioService.effWpm, 12.0);
+       await bloc.close();
+     });
+ 
+     test('calls setToneFrequency on UpdateToneFrequency', () async {
+       final repo = SettingsRepository();
+-      final bloc = SettingsBloc(repo, audioService: AudioPlaybackService());
++      final bloc = SettingsBloc(repo, audioService: audioService);
+       bloc.add(const LoadSettings());
+       await bloc.stream.firstWhere((s) => s is SettingsLoaded);
+ 
+       bloc.add(const UpdateToneFrequency(700.0));
+       await bloc.stream.firstWhere((s) => s is SettingsLoaded);
+ 
+-      expect(AudioPlaybackService().toneFrequency, 700.0);
++      expect(audioService.toneFrequency, 700.0);
+       await bloc.close();
+     });
+ 
+     test('calls setVolume on UpdateVolume', () async {
+       final repo = SettingsRepository();
+-      final bloc = SettingsBloc(repo, audioService: AudioPlaybackService());
++      final bloc = SettingsBloc(repo, audioService: audioService);
+       bloc.add(const LoadSettings());
+       await bloc.stream.firstWhere((s) => s is SettingsLoaded);
+ 
+       bloc.add(const UpdateVolume(0.3));
+       await bloc.stream.firstWhere((s) => s is SettingsLoaded);
+ 
+-      expect(AudioPlaybackService().volume, 0.3);
++      expect(audioService.volume, 0.3);
+       await bloc.close();
+     });
+   });
+@@ -106,54 +110,54 @@ void main() {
+   group('SettingsBloc validation', () {
+     test('clamps WPM below 5.0 to 5.0', () async {
+       final repo = SettingsRepository();
+-      final bloc = SettingsBloc(repo, audioService: AudioPlaybackService());
++      final bloc = SettingsBloc(repo, audioService: audioService);
+       bloc.add(const LoadSettings());
+       await bloc.stream.firstWhere((s) => s is SettingsLoaded);
+ 
+       bloc.add(const UpdateWpm(2.0));
+       await bloc.stream.firstWhere((s) => s is SettingsLoaded);
+ 
+-      expect(AudioPlaybackService().wpm, 5.0);
++      expect(audioService.wpm, 5.0);
+       await bloc.close();
+     });
+ 
+     test('clamps WPM above 40.0 to 40.0', () async {
+       final repo = SettingsRepository();
+-      final bloc = SettingsBloc(repo, audioService: AudioPlaybackService());
++      final bloc = SettingsBloc(repo, audioService: audioService);
+       bloc.add(const LoadSettings());
+       await bloc.stream.firstWhere((s) => s is SettingsLoaded);
+ 
+       bloc.add(const UpdateWpm(50.0));
+       await bloc.stream.firstWhere((s) => s is SettingsLoaded);
+ 
+-      expect(AudioPlaybackService().wpm, 40.0);
++      expect(audioService.wpm, 40.0);
+       await bloc.close();
+     });
+ 
+     test('clamps tone frequency below 300 to 300', () async {
+       final repo = SettingsRepository();
+-      final bloc = SettingsBloc(repo, audioService: AudioPlaybackService());
++      final bloc = SettingsBloc(repo, audioService: audioService);
+       bloc.add(const LoadSettings());
+       await bloc.stream.firstWhere((s) => s is SettingsLoaded);
+ 
+       bloc.add(const UpdateToneFrequency(100.0));
+       await bloc.stream.firstWhere((s) => s is SettingsLoaded);
+ 
+-      expect(AudioPlaybackService().toneFrequency, 300.0);
++      expect(audioService.toneFrequency, 300.0);
+       await bloc.close();
+     });
+ 
+     test('clamps volume above 1.0 to 1.0', () async {
+       final repo = SettingsRepository();
+-      final bloc = SettingsBloc(repo, audioService: AudioPlaybackService());
++      final bloc = SettingsBloc(repo, audioService: audioService);
+       bloc.add(const LoadSettings());
+       await bloc.stream.firstWhere((s) => s is SettingsLoaded);
+ 
+       bloc.add(const UpdateVolume(1.5));
+       await bloc.stream.firstWhere((s) => s is SettingsLoaded);
+ 
+-      expect(AudioPlaybackService().volume, 1.0);
++      expect(audioService.volume, 1.0);
+       await bloc.close();
+     });
+   });
+-}
++}
+\ No newline at end of file
