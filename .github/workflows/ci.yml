@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: "3.22.0"
+
+      - name: Cache pub packages
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.HOME }}/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run dart format check
+        run: dart format --set-exit-if-changed .
+
+      - name: Run static analysis
+        run: flutter analyze --fatal-infos
+
+      - name: Run unit tests with coverage
+        run: |
+          flutter test --coverage
+          # Optional: enforce a coverage threshold (80%)
+          # Uncomment the following lines if you want to enforce coverage.
+          # lcovPath=coverage/lcov.info
+          # total=$(lcov --list $lcovPath | grep -E "lines..:|functions..:" | awk '{print $2}' | paste -sd+ - | bc)
+          # covered=$(lcov --list $lcovPath | grep -E "lines..:|functions..:" | awk '{print $4}' | paste -sd+ - | bc)
+          # percent=$(echo "scale=2; $covered*100/$total" | bc)
+          # echo "Coverage: $percent%"
+          # if (( $(echo "$percent < 80" | bc -l) )); then exit 1; fi
+
+      - name: Build APK and AAB
+        run: |
+          flutter build apk --release
+          flutter build appbundle --release
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: APK
+          path: build/app/outputs/flutter-apk/*.apk
+
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AAB
+          path: build/app/outputs/bundle/release/*.aab
